@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useEffect } from 'react';
 import { GeometricOctagon } from './GeometricOctagon';
 import type { Account, Organization } from '../data/themes';
 
@@ -9,16 +10,23 @@ interface WelcomeScreenProps {
 }
 
 export function WelcomeScreen({ account, organization, onComplete }: WelcomeScreenProps) {
+  
+  // Auto-advance after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onComplete();
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
       style={{ background: '#FAF6E9' }}
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 1.2, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      onAnimationComplete={() => {
-        setTimeout(onComplete, 2800);
-      }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
     >
       {/* Animated Octagon Background */}
       <div className="absolute inset-0">
