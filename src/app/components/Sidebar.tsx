@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { DashboardIcon, RegistryIcon, EventsIcon, SettingsIcon, LobbiOctagon } from './icons/LobbiIcons';
+import { DashboardIcon, RegistryIcon, EventsIcon, SettingsIcon } from './icons/LobbiIcons';
+import { Briefcase, Shield, LogOut } from 'lucide-react';
 import type { Account, Organization } from '../data/themes';
 
 interface SidebarProps {
@@ -9,21 +10,33 @@ interface SidebarProps {
   onToggleCollapse: () => void;
   organization: Organization;
   account: Account;
+  onLogout?: () => void;
 }
 
-export function Sidebar({ 
-  currentPage, 
-  onNavigate, 
-  isCollapsed, 
+// Simple icon wrappers for lucide icons to match the LobbiIcon signature
+function BriefcaseNav({ className = "" }: { className?: string }) {
+  return <Briefcase className={className} />;
+}
+function ShieldNav({ className = "" }: { className?: string }) {
+  return <Shield className={className} />;
+}
+
+export function Sidebar({
+  currentPage,
+  onNavigate,
+  isCollapsed,
   organization,
   account,
+  onLogout,
 }: SidebarProps) {
-  
+
   const menuItems = [
     { id: 'dashboard', label: 'The Front Desk', icon: DashboardIcon },
     { id: 'registry', label: 'The Registry', icon: RegistryIcon },
     { id: 'events', label: 'Events Pavilion', icon: EventsIcon },
-    { id: 'settings', label: 'Guest Services', icon: SettingsIcon },
+    { id: 'business', label: 'Business Center', icon: BriefcaseNav },
+    { id: 'vault', label: 'The Vault', icon: ShieldNav },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   return (
@@ -95,8 +108,8 @@ export function Sidebar({
       {/* User Profile */}
       <div className="p-4 border-t" style={{ borderColor: `rgba(${organization.theme.primaryRgb}, 0.08)` }}>
         <div className="flex items-center gap-3">
-          <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium"
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium shrink-0"
             style={{
               background: organization.theme.gradientBtn,
             }}
@@ -114,6 +127,15 @@ export function Sidebar({
             </div>
           )}
         </div>
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center gap-3 px-3 py-2 mt-3 rounded-lg transition-all text-[#8A8578] hover:text-[#F0ECE2] hover:bg-white/5"
+          >
+            <LogOut className="w-4 h-4" />
+            {!isCollapsed && <span className="text-xs">Sign Out</span>}
+          </button>
+        )}
       </div>
     </motion.aside>
   );

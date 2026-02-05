@@ -11,6 +11,13 @@ import { TopNav } from './components/TopNav';
 import { AIBellhop } from './components/AIBellhop';
 import { CinematicBackground } from './components/CinematicBackground';
 import { GeometricOctagon } from './components/GeometricOctagon';
+import { DemoBanner } from './components/DemoBanner';
+import { RegistryPage } from './components/RegistryPage';
+import { EventsPage } from './components/EventsPage';
+import { BusinessCenterPage } from './components/BusinessCenterPage';
+import { VaultPage } from './components/VaultPage';
+import { SettingsPage } from './components/SettingsPage';
+import { MemberPortal } from './components/MemberPortal';
 import { ACCOUNTS, ORGANIZATIONS, type Account, type Organization } from './data/themes';
 
 type Stage = 'logo' | 'landing' | 'email' | 'orgLogin' | 'welcome' | 'dashboardEntry' | 'dashboard';
@@ -25,6 +32,11 @@ export default function App() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isBellhopOpen, setIsBellhopOpen] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+
+  // Demo banner state
+  const [currentPhase, setCurrentPhase] = useState(1);
+  const [currentRole, setCurrentRole] = useState('National Admin');
+  const [isMemberPortalOpen, setIsMemberPortalOpen] = useState(false);
 
   // Auto-progress from logo to landing
   useEffect(() => {
@@ -74,10 +86,30 @@ export default function App() {
     setStage('dashboard');
   };
 
+  const handleLogout = () => {
+    setShowDashboard(false);
+    setSelectedAccount(null);
+    setSelectedOrg(null);
+    setSelectedEmail('');
+    setCurrentPage('dashboard');
+    setIsMemberPortalOpen(false);
+    setStage('landing');
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard organization={selectedOrg || undefined} account={selectedAccount || undefined} />;
+      case 'registry':
+        return <RegistryPage organization={selectedOrg || undefined} account={selectedAccount || undefined} />;
+      case 'events':
+        return <EventsPage organization={selectedOrg || undefined} account={selectedAccount || undefined} />;
+      case 'business':
+        return <BusinessCenterPage organization={selectedOrg || undefined} account={selectedAccount || undefined} />;
+      case 'vault':
+        return <VaultPage organization={selectedOrg || undefined} account={selectedAccount || undefined} />;
+      case 'settings':
+        return <SettingsPage organization={selectedOrg || undefined} account={selectedAccount || undefined} />;
       default:
         return <Dashboard organization={selectedOrg || undefined} account={selectedAccount || undefined} />;
     }
@@ -87,6 +119,19 @@ export default function App() {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#FAF6E9]">
+      {/* Demo Banner - Always visible when dashboard is showing */}
+      {stage === 'dashboard' && showDashboard && selectedOrg && selectedAccount && (
+        <DemoBanner
+          organization={selectedOrg}
+          account={selectedAccount}
+          currentPhase={currentPhase}
+          onPhaseChange={setCurrentPhase}
+          currentRole={currentRole}
+          onRoleChange={setCurrentRole}
+          onMemberPortalClick={() => setIsMemberPortalOpen(true)}
+        />
+      )}
+
       {/* Cinematic Background - Only for non-dashboard stages */}
       {stage !== 'dashboard' && (
         <CinematicBackground primaryRgb={currentRgb} stage={stage} />
@@ -112,7 +157,7 @@ export default function App() {
       {/* STAGE 4: ORG-SPECIFIC LOGIN */}
       <AnimatePresence>
         {stage === 'orgLogin' && selectedAccount && selectedOrg && (
-          <OrgLogin 
+          <OrgLogin
             account={selectedAccount}
             organization={selectedOrg}
             onLogin={handleOrgLogin}
@@ -123,7 +168,7 @@ export default function App() {
       {/* STAGE 5: WELCOME SCREEN */}
       <AnimatePresence>
         {stage === 'welcome' && selectedAccount && selectedOrg && (
-          <WelcomeScreen 
+          <WelcomeScreen
             onComplete={handleWelcomeComplete}
             organization={selectedOrg}
             account={selectedAccount}
@@ -134,7 +179,7 @@ export default function App() {
       {/* STAGE 6: DASHBOARD ENTRY ANIMATION */}
       <AnimatePresence>
         {stage === 'dashboardEntry' && selectedAccount && selectedOrg && (
-          <DashboardEntryAnimation 
+          <DashboardEntryAnimation
             onCompleted={handleDashboardEntryComplete}
             organization={selectedOrg}
             account={selectedAccount}
@@ -150,6 +195,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
             className="fixed inset-0 z-60 flex bg-gray-50"
+            style={{ paddingTop: 40 }}
           >
             {/* Desktop sidebar */}
             <div className="hidden md:block">
@@ -160,6 +206,7 @@ export default function App() {
                 onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                 organization={selectedOrg}
                 account={selectedAccount}
+                onLogout={handleLogout}
               />
             </div>
 
@@ -176,6 +223,7 @@ export default function App() {
                   />
                   <motion.div
                     className="fixed left-0 top-0 h-full z-[80] md:hidden"
+                    style={{ paddingTop: 40 }}
                     initial={{ x: -240 }}
                     animate={{ x: 0 }}
                     exit={{ x: -240 }}
@@ -191,6 +239,7 @@ export default function App() {
                       onToggleCollapse={() => setIsMobileSidebarOpen(false)}
                       organization={selectedOrg}
                       account={selectedAccount}
+                      onLogout={handleLogout}
                     />
                   </motion.div>
                 </>
@@ -238,6 +287,14 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Member Portal Overlay */}
+      <MemberPortal
+        isOpen={isMemberPortalOpen}
+        onClose={() => setIsMemberPortalOpen(false)}
+        organization={selectedOrg || undefined}
+        account={selectedAccount || undefined}
+      />
     </div>
   );
 }

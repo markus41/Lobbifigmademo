@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { motion } from 'motion/react';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Eye, EyeOff, Lock, Mail, ArrowLeft, Wand2 } from 'lucide-react';
 import { Organization, Account } from '@/app/data/themes';
 
 interface OrgLoginProps {
@@ -13,6 +13,8 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginMode, setLoginMode] = useState<'password' | 'magic-link' | 'forgot'>('password');
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -415,169 +417,395 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             </motion.div>
           </div>
 
-          {/* Form */}
-          <motion.form
-            onSubmit={handleSubmit}
-            className="space-y-5 relative z-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-            {/* Email (Read-only) */}
-            <div>
-              <label
-                className="block text-xs uppercase tracking-widest mb-2 font-medium"
-                style={{ color: primary, opacity: 0.6, letterSpacing: '0.2em' }}
-              >
-                Email Address
-              </label>
-              <div className="relative group">
-                <Mail
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-[16px] h-[16px]"
-                  style={{ color: primary, opacity: 0.35 }}
-                />
-                <input
-                  type="email"
-                  value={account.email}
-                  readOnly
-                  className="w-full pl-11 pr-5 py-3.5 border outline-none cursor-not-allowed"
-                  style={{
-                    background: `rgba(${rgb}, 0.03)`,
-                    borderColor: `rgba(${rgb}, 0.12)`,
-                    borderRadius: visuals.inputRadius,
-                    color: '#2C2A25',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '14px',
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label
-                className="block text-xs uppercase tracking-widest mb-2 font-medium"
-                style={{ color: primary, opacity: 0.6, letterSpacing: '0.2em' }}
-              >
-                Password
-              </label>
-              <div className="relative group">
-                <Lock
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-[16px] h-[16px]"
-                  style={{ color: primary, opacity: 0.35 }}
-                />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                  className="w-full pl-11 pr-14 py-3.5 bg-white border transition-all outline-none placeholder:text-[rgba(138,133,120,0.35)]"
-                  style={{
-                    borderColor: `rgba(${rgb}, 0.15)`,
-                    borderRadius: visuals.inputRadius,
-                    color: '#2C2A25',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '14px',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = `rgba(${rgb}, 0.5)`;
-                    e.target.style.boxShadow = `0 0 0 3px rgba(${rgb}, 0.06), 0 4px 16px rgba(${rgb}, 0.08)`;
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = `rgba(${rgb}, 0.15)`;
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-100"
-                  style={{ color: primary, opacity: 0.4 }}
+          {/* Form Area */}
+          <div className="relative z-10">
+            <AnimatePresence mode="wait">
+              {loginMode === 'password' && (
+                <motion.form
+                  key="password-form"
+                  onSubmit={handleSubmit}
+                  className="space-y-5"
+                  initial={{ opacity: 0, x: 0 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {showPassword ? <EyeOff className="w-[16px] h-[16px]" /> : <Eye className="w-[16px] h-[16px]" />}
-                </button>
-              </div>
-            </div>
+                  {/* Email (Read-only) */}
+                  <div>
+                    <label
+                      className="block text-xs uppercase tracking-widest mb-2 font-medium"
+                      style={{ color: primary, opacity: 0.6, letterSpacing: '0.2em' }}
+                    >
+                      Email Address
+                    </label>
+                    <div className="relative group">
+                      <Mail
+                        className="absolute left-4 top-1/2 -translate-y-1/2 w-[16px] h-[16px]"
+                        style={{ color: primary, opacity: 0.35 }}
+                      />
+                      <input
+                        type="email"
+                        value={account.email}
+                        readOnly
+                        className="w-full pl-11 pr-5 py-3.5 border outline-none cursor-not-allowed"
+                        style={{
+                          background: `rgba(${rgb}, 0.03)`,
+                          borderColor: `rgba(${rgb}, 0.12)`,
+                          borderRadius: visuals.inputRadius,
+                          color: '#2C2A25',
+                          fontFamily: 'DM Sans, sans-serif',
+                          fontSize: '14px',
+                        }}
+                      />
+                    </div>
+                  </div>
 
-            {/* Remember & Forgot */}
-            <div className="flex items-center justify-between text-xs pt-1">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    className="peer w-4 h-4 cursor-pointer appearance-none border rounded transition-all"
-                    style={{ borderColor: `rgba(${rgb}, 0.25)` }}
-                  />
-                  <svg
-                    className="absolute inset-0 w-4 h-4 pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
-                    style={{ color: primary }}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                  {/* Password */}
+                  <div>
+                    <label
+                      className="block text-xs uppercase tracking-widest mb-2 font-medium"
+                      style={{ color: primary, opacity: 0.6, letterSpacing: '0.2em' }}
+                    >
+                      Password
+                    </label>
+                    <div className="relative group">
+                      <Lock
+                        className="absolute left-4 top-1/2 -translate-y-1/2 w-[16px] h-[16px]"
+                        style={{ color: primary, opacity: 0.35 }}
+                      />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        required
+                        className="w-full pl-11 pr-14 py-3.5 bg-white border transition-all outline-none placeholder:text-[rgba(138,133,120,0.35)]"
+                        style={{
+                          borderColor: `rgba(${rgb}, 0.15)`,
+                          borderRadius: visuals.inputRadius,
+                          color: '#2C2A25',
+                          fontFamily: 'DM Sans, sans-serif',
+                          fontSize: '14px',
+                        }}
+                        onFocus={(e) => {
+                          e.target.style.borderColor = `rgba(${rgb}, 0.5)`;
+                          e.target.style.boxShadow = `0 0 0 3px rgba(${rgb}, 0.06), 0 4px 16px rgba(${rgb}, 0.08)`;
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor = `rgba(${rgb}, 0.15)`;
+                          e.target.style.boxShadow = 'none';
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-100"
+                        style={{ color: primary, opacity: 0.4 }}
+                      >
+                        {showPassword ? <EyeOff className="w-[16px] h-[16px]" /> : <Eye className="w-[16px] h-[16px]" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Remember & Forgot */}
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          className="peer w-4 h-4 cursor-pointer appearance-none border rounded transition-all"
+                          style={{ borderColor: `rgba(${rgb}, 0.25)` }}
+                        />
+                        <svg
+                          className="absolute inset-0 w-4 h-4 pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
+                          style={{ color: primary }}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      </div>
+                      <span style={{ color: '#8A8578' }}>Remember me</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setLoginMode('forgot')}
+                      className="transition-opacity hover:opacity-100"
+                      style={{ color: primary, opacity: 0.6 }}
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+
+                  {/* Submit Button */}
+                  <motion.button
+                    type="submit"
+                    disabled={isLoggingIn || !password}
+                    className="relative w-full py-3.5 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                    style={{
+                      background: organization.theme.gradientBtn,
+                      color: '#fff',
+                      marginTop: '1.5rem',
+                      boxShadow: `0 4px 16px rgba(${rgb}, 0.2)`,
+                      borderRadius: visuals.inputRadius,
+                    }}
+                    whileHover={!isLoggingIn && password ? {
+                      y: -2,
+                      boxShadow: `0 8px 24px rgba(${rgb}, 0.3)`,
+                      transition: { duration: 0.3 }
+                    } : {}}
+                    whileTap={!isLoggingIn && password ? {
+                      y: -1,
+                      transition: { duration: 0.1 }
+                    } : {}}
                   >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <span style={{ color: '#8A8578' }}>Remember me</span>
-              </label>
-              <a
-                href="#"
-                className="transition-opacity hover:opacity-100"
-                style={{ color: primary, opacity: 0.6 }}
-              >
-                Forgot password?
-              </a>
-            </div>
+                    {isLoggingIn ? (
+                      <div className="flex items-center justify-center gap-3">
+                        <motion.div
+                          className="w-4 h-4 border-2 border-current border-t-transparent rounded-full"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+                        />
+                        Entering...
+                      </div>
+                    ) : (
+                      'Enter The Lobbi'
+                    )}
 
-            {/* Submit Button */}
-            <motion.button
-              type="submit"
-              disabled={isLoggingIn || !password}
-              className="relative w-full py-3.5 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
-              style={{
-                background: organization.theme.gradientBtn,
-                color: '#fff',
-                marginTop: '1.5rem',
-                boxShadow: `0 4px 16px rgba(${rgb}, 0.2)`,
-                borderRadius: visuals.inputRadius,
-              }}
-              whileHover={!isLoggingIn && password ? {
-                y: -2,
-                boxShadow: `0 8px 24px rgba(${rgb}, 0.3)`,
-                transition: { duration: 0.3 }
-              } : {}}
-              whileTap={!isLoggingIn && password ? {
-                y: -1,
-                transition: { duration: 0.1 }
-              } : {}}
-            >
-              {isLoggingIn ? (
-                <div className="flex items-center justify-center gap-3">
-                  <motion.div
-                    className="w-4 h-4 border-2 border-current border-t-transparent rounded-full"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-                  />
-                  Entering...
-                </div>
-              ) : (
-                'Enter The Lobbi'
+                    {/* Shimmer effect */}
+                    {!isLoggingIn && password && (
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                        animate={{ x: ['-200%', '200%'] }}
+                        transition={{ duration: 3, repeat: Infinity, repeatDelay: 1.5, ease: 'linear' }}
+                      />
+                    )}
+                  </motion.button>
+
+                  {/* Divider */}
+                  <div className="flex items-center gap-3 pt-2">
+                    <div className="flex-1 h-px" style={{ background: `rgba(${rgb}, 0.1)` }} />
+                    <span className="text-[10px] uppercase tracking-widest" style={{ color: '#B8B0A0' }}>or continue with</span>
+                    <div className="flex-1 h-px" style={{ background: `rgba(${rgb}, 0.1)` }} />
+                  </div>
+
+                  {/* Social Auth */}
+                  <div className="grid grid-cols-4 gap-3">
+                    {[
+                      { name: 'Google', svg: <svg viewBox="0 0 24 24" className="w-4 h-4"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> },
+                      { name: 'Microsoft', svg: <svg viewBox="0 0 24 24" className="w-4 h-4"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="13" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="13" width="10" height="10" fill="#00A4EF"/><rect x="13" y="13" width="10" height="10" fill="#FFB900"/></svg> },
+                      { name: 'LinkedIn', svg: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> },
+                      { name: 'Facebook', svg: <svg viewBox="0 0 24 24" className="w-4 h-4" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> },
+                    ].map((provider) => (
+                      <motion.button
+                        key={provider.name}
+                        type="button"
+                        onClick={() => {
+                          setIsLoggingIn(true);
+                          setTimeout(onLogin, 1200);
+                        }}
+                        className="flex items-center justify-center py-2.5 border transition-all hover:shadow-sm"
+                        style={{
+                          borderColor: `rgba(${rgb}, 0.12)`,
+                          borderRadius: visuals.inputRadius,
+                          background: 'rgba(255,255,255,0.8)',
+                        }}
+                        whileHover={{ y: -1, boxShadow: `0 4px 12px rgba(${rgb}, 0.08)` }}
+                        whileTap={{ scale: 0.97 }}
+                        title={`Sign in with ${provider.name}`}
+                      >
+                        {provider.svg}
+                      </motion.button>
+                    ))}
+                  </div>
+
+                  {/* Magic Link */}
+                  <button
+                    type="button"
+                    onClick={() => setLoginMode('magic-link')}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 text-xs font-medium transition-all hover:opacity-100"
+                    style={{ color: primary, opacity: 0.7 }}
+                  >
+                    <Wand2 className="w-3.5 h-3.5" />
+                    Send me a magic link instead
+                  </button>
+                </motion.form>
               )}
 
-              {/* Shimmer effect */}
-              {!isLoggingIn && password && (
+              {loginMode === 'magic-link' && (
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  animate={{ x: ['-200%', '200%'] }}
-                  transition={{ duration: 3, repeat: Infinity, repeatDelay: 1.5, ease: 'linear' }}
-                />
+                  key="magic-link-form"
+                  className="space-y-5"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <button
+                    onClick={() => { setLoginMode('password'); setMagicLinkSent(false); }}
+                    className="flex items-center gap-1.5 text-xs mb-4 transition-opacity hover:opacity-100"
+                    style={{ color: primary, opacity: 0.6 }}
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    Back to password
+                  </button>
+
+                  {!magicLinkSent ? (
+                    <>
+                      <div className="text-center mb-4">
+                        <div className="w-14 h-14 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: `rgba(${rgb}, 0.08)` }}>
+                          <Wand2 className="w-6 h-6" style={{ color: primary }} />
+                        </div>
+                        <h3 className="text-lg font-medium mb-1" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#2C2A25' }}>
+                          Magic Link
+                        </h3>
+                        <p className="text-xs" style={{ color: '#8A8578' }}>
+                          We&apos;ll send a secure login link to your email
+                        </p>
+                      </div>
+
+                      <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-[16px] h-[16px]" style={{ color: primary, opacity: 0.35 }} />
+                        <input
+                          type="email"
+                          value={account.email}
+                          readOnly
+                          className="w-full pl-11 pr-5 py-3.5 border outline-none cursor-not-allowed"
+                          style={{
+                            background: `rgba(${rgb}, 0.03)`,
+                            borderColor: `rgba(${rgb}, 0.12)`,
+                            borderRadius: visuals.inputRadius,
+                            color: '#2C2A25',
+                            fontFamily: 'DM Sans, sans-serif',
+                            fontSize: '14px',
+                          }}
+                        />
+                      </div>
+
+                      <motion.button
+                        type="button"
+                        onClick={() => setMagicLinkSent(true)}
+                        className="w-full py-3.5 text-sm font-semibold tracking-wider uppercase"
+                        style={{
+                          background: organization.theme.gradientBtn,
+                          color: '#fff',
+                          boxShadow: `0 4px 16px rgba(${rgb}, 0.2)`,
+                          borderRadius: visuals.inputRadius,
+                        }}
+                        whileHover={{ y: -2 }}
+                        whileTap={{ y: -1 }}
+                      >
+                        Send Magic Link
+                      </motion.button>
+                    </>
+                  ) : (
+                    <motion.div
+                      className="text-center py-4"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                    >
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: `rgba(${rgb}, 0.08)` }}>
+                        <Mail className="w-7 h-7" style={{ color: primary }} />
+                      </div>
+                      <h3 className="text-lg font-medium mb-2" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#2C2A25' }}>
+                        Check Your Email
+                      </h3>
+                      <p className="text-xs mb-4" style={{ color: '#8A8578' }}>
+                        We&apos;ve sent a login link to <strong>{account.email}</strong>
+                      </p>
+                      <motion.button
+                        type="button"
+                        onClick={() => {
+                          setIsLoggingIn(true);
+                          setTimeout(onLogin, 800);
+                        }}
+                        className="text-xs font-medium underline"
+                        style={{ color: primary }}
+                      >
+                        (Demo: Click here to simulate clicking the link)
+                      </motion.button>
+                    </motion.div>
+                  )}
+                </motion.div>
               )}
-            </motion.button>
-          </motion.form>
+
+              {loginMode === 'forgot' && (
+                <motion.div
+                  key="forgot-form"
+                  className="space-y-5"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <button
+                    onClick={() => setLoginMode('password')}
+                    className="flex items-center gap-1.5 text-xs mb-4 transition-opacity hover:opacity-100"
+                    style={{ color: primary, opacity: 0.6 }}
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    Back to login
+                  </button>
+
+                  <div className="text-center mb-4">
+                    <div className="w-14 h-14 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: `rgba(${rgb}, 0.08)` }}>
+                      <Lock className="w-6 h-6" style={{ color: primary }} />
+                    </div>
+                    <h3 className="text-lg font-medium mb-1" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#2C2A25' }}>
+                      Reset Password
+                    </h3>
+                    <p className="text-xs" style={{ color: '#8A8578' }}>
+                      Enter your email and we&apos;ll send reset instructions
+                    </p>
+                  </div>
+
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-[16px] h-[16px]" style={{ color: primary, opacity: 0.35 }} />
+                    <input
+                      type="email"
+                      value={account.email}
+                      readOnly
+                      className="w-full pl-11 pr-5 py-3.5 border outline-none cursor-not-allowed"
+                      style={{
+                        background: `rgba(${rgb}, 0.03)`,
+                        borderColor: `rgba(${rgb}, 0.12)`,
+                        borderRadius: visuals.inputRadius,
+                        color: '#2C2A25',
+                        fontFamily: 'DM Sans, sans-serif',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </div>
+
+                  <motion.button
+                    type="button"
+                    onClick={() => {
+                      setLoginMode('password');
+                    }}
+                    className="w-full py-3.5 text-sm font-semibold tracking-wider uppercase"
+                    style={{
+                      background: organization.theme.gradientBtn,
+                      color: '#fff',
+                      boxShadow: `0 4px 16px rgba(${rgb}, 0.2)`,
+                      borderRadius: visuals.inputRadius,
+                    }}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ y: -1 }}
+                  >
+                    Send Reset Link
+                  </motion.button>
+
+                  <p className="text-[11px] text-center" style={{ color: '#B8B0A0' }}>
+                    Demo mode: This will return you to the login screen
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           {/* Powered by The Lobbi */}
           <motion.div
