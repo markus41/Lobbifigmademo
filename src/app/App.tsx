@@ -76,9 +76,9 @@ export default function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard organization={selectedOrg || undefined} account={selectedAccount || undefined} />;
       default:
-        return <Dashboard />;
+        return <Dashboard organization={selectedOrg || undefined} account={selectedAccount || undefined} />;
     }
   };
 
