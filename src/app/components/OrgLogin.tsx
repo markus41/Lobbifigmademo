@@ -290,7 +290,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             borderWidth: visuals.borderWidth,
             borderRadius: visuals.cardRadius,
             boxShadow: `0 30px 70px rgba(0,0,0,0.10), 0 0 0 1px rgba(${rgb}, 0.06), inset 0 2px 0 rgba(255,255,255,0.8)`,
-            padding: '3rem',
+            padding: 'clamp(1.5rem, 5vw, 3rem)',
           }}
         >
           {/* Org-specific pattern overlay */}
@@ -355,7 +355,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             </motion.p>
 
             <motion.h2
-              className="text-[28px] mb-1"
+              className="text-[22px] sm:text-[28px] mb-1"
               style={{
                 fontFamily: visuals.headerFont,
                 fontWeight: 500,

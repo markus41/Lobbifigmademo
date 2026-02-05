@@ -16,7 +16,7 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
       transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
     >
       {/* Art Deco Corner Ornaments - Softer for light mode */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.08]">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.08] hidden sm:block">
         {/* Top Left */}
         <svg className="absolute top-8 left-8 w-24 h-24" viewBox="0 0 100 100" style={{ color: '#8B7330' }}>
           <path d="M0,0 L40,0 L40,2 L2,2 L2,40 L0,40 Z" fill="currentColor" />
@@ -74,14 +74,12 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.3 }}
       >
-        <h1 
-          className="flex tracking-[0.45em]"
-          style={{ 
+        <h1
+          className="flex tracking-[0.25em] sm:tracking-[0.45em] text-[28px] sm:text-[48px]"
+          style={{
             fontFamily: 'Cormorant Garamond, Georgia, serif',
-            fontSize: '48px',
             fontWeight: 300,
             color: '#2C2A25',
-            letterSpacing: '0.45em',
           }}
         >
           {'THE LOBBI'.split('').map((char, i) => (
@@ -132,7 +130,7 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
 
       {/* Tagline */}
       <motion.p
-        className="text-[11px] uppercase mb-16"
+        className="text-[10px] sm:text-[11px] uppercase mb-10 sm:mb-16 px-4 text-center"
         style={{ 
           color: '#8B7330',
           letterSpacing: '0.4em',
@@ -148,7 +146,7 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
 
       {/* Refined Description */}
       <motion.p
-        className="text-[15px] text-center max-w-[520px] mb-14 leading-[1.8]"
+        className="text-[14px] sm:text-[15px] text-center max-w-[520px] mb-10 sm:mb-14 leading-[1.8] px-4"
         style={{ 
           color: '#5A5247',
           fontFamily: 'DM Sans, sans-serif',
@@ -219,7 +217,7 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
 
       {/* Subtle Footer */}
       <motion.div
-        className="absolute bottom-12 text-center"
+        className="absolute bottom-8 sm:bottom-12 text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 2.0 }}

@@ -64,7 +64,7 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
       >
         {/* Main Card */}
         <div
-          className="relative p-12 rounded-2xl border overflow-hidden"
+          className="relative p-6 sm:p-12 rounded-2xl border overflow-hidden"
           style={{
             background: isMorphing && previewOrg
               ? `linear-gradient(165deg, rgba(255,255,255,0.95), rgba(${previewOrg.theme.primaryRgb}, 0.08))`
@@ -144,7 +144,7 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             </motion.div>
 
             <motion.h2
-              className="text-[32px] mb-3"
+              className="text-[24px] sm:text-[32px] mb-3"
               style={{
                 fontFamily: 'Cormorant Garamond, Georgia, serif',
                 fontWeight: 400,

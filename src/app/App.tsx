@@ -21,7 +21,8 @@ export default function App() {
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isBellhopOpen, setIsBellhopOpen] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
 
@@ -150,27 +151,71 @@ export default function App() {
             transition={{ duration: 1 }}
             className="fixed inset-0 z-60 flex bg-gray-50"
           >
-            <Sidebar 
-              currentPage={currentPage}
-              onNavigate={setCurrentPage}
-              isCollapsed={isSidebarCollapsed}
-              onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              organization={selectedOrg}
-              account={selectedAccount}
-            />
-            
-            <div 
-              className={`flex-1 flex flex-col transition-all duration-300 ${
-                isSidebarCollapsed ? 'ml-[72px]' : 'ml-[240px]'
+            {/* Desktop sidebar */}
+            <div className="hidden md:block">
+              <Sidebar
+                currentPage={currentPage}
+                onNavigate={setCurrentPage}
+                isCollapsed={isSidebarCollapsed}
+                onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                organization={selectedOrg}
+                account={selectedAccount}
+              />
+            </div>
+
+            {/* Mobile sidebar overlay */}
+            <AnimatePresence>
+              {isMobileSidebarOpen && (
+                <>
+                  <motion.div
+                    className="fixed inset-0 bg-black/40 z-[70] md:hidden"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setIsMobileSidebarOpen(false)}
+                  />
+                  <motion.div
+                    className="fixed left-0 top-0 h-full z-[80] md:hidden"
+                    initial={{ x: -240 }}
+                    animate={{ x: 0 }}
+                    exit={{ x: -240 }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <Sidebar
+                      currentPage={currentPage}
+                      onNavigate={(page) => {
+                        setCurrentPage(page);
+                        setIsMobileSidebarOpen(false);
+                      }}
+                      isCollapsed={false}
+                      onToggleCollapse={() => setIsMobileSidebarOpen(false)}
+                      organization={selectedOrg}
+                      account={selectedAccount}
+                    />
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+
+            <div
+              className={`flex-1 flex flex-col transition-all duration-300 ml-0 ${
+                isSidebarCollapsed ? 'md:ml-[72px]' : 'md:ml-[240px]'
               }`}
             >
-              <TopNav 
-                onMenuClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              <TopNav
+                onMenuClick={() => {
+                  // On mobile, toggle the overlay sidebar
+                  if (window.innerWidth < 768) {
+                    setIsMobileSidebarOpen(!isMobileSidebarOpen);
+                  } else {
+                    setIsSidebarCollapsed(!isSidebarCollapsed);
+                  }
+                }}
                 onBellhopClick={() => setIsBellhopOpen(true)}
                 organization={selectedOrg}
                 account={selectedAccount}
               />
-              
+
               <main className="flex-1 overflow-y-auto bg-gray-50">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -186,7 +231,7 @@ export default function App() {
               </main>
             </div>
 
-            <AIBellhop 
+            <AIBellhop
               isOpen={isBellhopOpen}
               onClose={() => setIsBellhopOpen(false)}
             />

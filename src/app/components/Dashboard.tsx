@@ -66,7 +66,7 @@ export function Dashboard({ organization, account }: DashboardProps) {
 
   return (
     <motion.div
-      className="p-8"
+      className="p-4 sm:p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -87,7 +87,7 @@ export function Dashboard({ organization, account }: DashboardProps) {
                 {greeting}
               </p>
               <h1
-                className="text-3xl mb-2"
+                className="text-2xl sm:text-3xl mb-2"
                 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontWeight: 400, color: '#2C2A25' }}
               >
                 Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {firstName}

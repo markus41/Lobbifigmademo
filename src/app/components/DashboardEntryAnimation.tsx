@@ -54,7 +54,7 @@ export function DashboardEntryAnimation({
         </motion.p>
         
         <motion.h1
-          className="text-5xl mb-3"
+          className="text-3xl sm:text-5xl mb-3"
           style={{
             fontFamily: 'Cormorant Garamond, Georgia, serif',
             fontWeight: 400,
