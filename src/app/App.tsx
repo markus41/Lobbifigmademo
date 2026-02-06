@@ -208,7 +208,7 @@ export default function App() {
             )}
 
             {/* Main Layout */}
-            <div className="flex flex-1 overflow-hidden">
+            <div className="flex flex-1 min-h-0">
               <Sidebar
                 currentPage={currentPage}
                 onNavigate={setCurrentPage}
@@ -218,7 +218,7 @@ export default function App() {
                 account={selectedAccount}
               />
 
-              <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 flex flex-col min-w-0">
                 <TopNav
                   onMenuClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                   onBellhopClick={() => setIsBellhopOpen(true)}

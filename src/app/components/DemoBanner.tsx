@@ -283,7 +283,8 @@ function Dropdown({ trigger, children, isOpen, onToggle, onClose, align = 'left'
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.95 }}
             transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className={`absolute top-full ${alignClass} mt-2 ${width} bg-gray-900 border border-white/20 rounded-xl shadow-2xl z-[1000] overflow-hidden backdrop-blur-xl`}
+            className={`absolute top-full ${alignClass} mt-2 ${width} bg-gray-900 border border-white/20 rounded-xl shadow-2xl overflow-hidden backdrop-blur-xl`}
+            style={{ zIndex: 99999 }}
           >
             {children}
           </motion.div>
@@ -541,11 +542,12 @@ export function DemoBanner({
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-[100] flex-shrink-0"
+          className="relative flex-shrink-0"
+          style={{ zIndex: 99990 }}
         >
           {/* Main Banner Bar */}
           <div
-            className="text-white py-2.5 px-4 relative overflow-hidden"
+            className="text-white py-2.5 px-4 relative"
             style={{
               background: isDarkMode
                 ? 'linear-gradient(90deg, #1E293B 0%, #334155 50%, #1E293B 100%)'
