@@ -44,6 +44,7 @@ export function Sidebar({
       className="fixed left-0 top-0 h-full border-r flex flex-col"
       style={{
         width: isCollapsed ? '72px' : '240px',
+        paddingTop: 40,
         background: 'linear-gradient(180deg, #1A1610 0%, #151412 100%)',
         borderColor: `rgba(${organization.theme.primaryRgb}, 0.08)`,
       }}
