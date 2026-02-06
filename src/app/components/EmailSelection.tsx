@@ -26,20 +26,35 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
 
   // Auto-advance when user picks an account
   useEffect(() => {
+    let recognizeTimer: ReturnType<typeof setTimeout> | null = null;
+    let advanceTimer: ReturnType<typeof setTimeout> | null = null;
+
     if (selectedEmail && previewOrg) {
       setIsRecognizing(true);
       // Brief recognition pulse, then morph transition
-      const recognizeTimer = setTimeout(() => {
+      recognizeTimer = setTimeout(() => {
         setIsMorphing(true);
       }, 600);
-      const advanceTimer = setTimeout(() => {
+      advanceTimer = setTimeout(() => {
         onEmailSelected(selectedEmail);
       }, 1400);
-      return () => {
-        clearTimeout(recognizeTimer);
-        clearTimeout(advanceTimer);
-      };
+    } else {
+      // Reset states if selection is cleared or organization is unavailable
+      setIsRecognizing(false);
+      setIsMorphing(false);
     }
+
+    return () => {
+      if (recognizeTimer !== null) {
+        clearTimeout(recognizeTimer);
+      }
+      if (advanceTimer !== null) {
+        clearTimeout(advanceTimer);
+      }
+      // Ensure states are reset when effect is cleaned up
+      setIsRecognizing(false);
+      setIsMorphing(false);
+    };
   }, [selectedEmail, previewOrg, onEmailSelected]);
 
   const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
