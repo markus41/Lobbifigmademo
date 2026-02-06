@@ -209,7 +209,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
       </div>
 
       <motion.div
-        className="w-full max-w-[420px] relative"
+        className="w-full max-w-[420px] px-4 relative"
         initial={{ y: 40, scale: 0.95 }}
         animate={{ y: 0, scale: 1 }}
         exit={{ y: -30, scale: 0.95 }}
@@ -247,7 +247,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
         {/* Card with org-specific styling */}
         <div
-          className="relative px-8 py-8 rounded-2xl overflow-hidden"
+          className="relative px-6 sm:px-8 md:px-10 py-8 sm:py-10 rounded-2xl overflow-hidden"
           style={{
             background: orgStyle.cardBg,
             backdropFilter: 'blur(24px)',
@@ -469,12 +469,13 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       type="email"
                       value={account.email}
                       readOnly
-                      className="w-full pl-10 pr-4 py-3 border rounded-lg text-sm outline-none cursor-not-allowed transition-all"
+                      className="w-full pl-10 pr-4 py-3.5 border-2 rounded-xl text-sm outline-none cursor-not-allowed transition-all"
                       style={{
                         background: `rgba(${organization.theme.primaryRgb}, 0.03)`,
                         borderColor: `rgba(${organization.theme.primaryRgb}, 0.15)`,
                         color: '#2C2A25',
                         fontFamily: 'DM Sans, sans-serif',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
                       }}
                     />
                   </div>
@@ -506,19 +507,20 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       required
-                      className="w-full pl-10 pr-12 py-3 bg-white border rounded-lg text-sm transition-all outline-none placeholder:text-gray-300"
+                      className="w-full pl-10 pr-12 py-3.5 bg-white border-2 rounded-xl text-sm transition-all outline-none placeholder:text-gray-300 focus:scale-[1.01]"
                       style={{
                         borderColor: `rgba(${organization.theme.primaryRgb}, 0.2)`,
                         color: '#2C2A25',
                         fontFamily: 'DM Sans, sans-serif',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
                       }}
                       onFocus={(e) => {
-                        e.target.style.borderColor = `rgba(${organization.theme.primaryRgb}, 0.6)`;
-                        e.target.style.boxShadow = `0 0 0 3px rgba(${organization.theme.primaryRgb}, 0.08)`;
+                        e.target.style.borderColor = `rgba(${organization.theme.primaryRgb}, 0.5)`;
+                        e.target.style.boxShadow = `0 0 0 4px rgba(${organization.theme.primaryRgb}, 0.1), 0 4px 12px rgba(0,0,0,0.08)`;
                       }}
                       onBlur={(e) => {
                         e.target.style.borderColor = `rgba(${organization.theme.primaryRgb}, 0.2)`;
-                        e.target.style.boxShadow = 'none';
+                        e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.04)';
                       }}
                     />
                     <button
@@ -577,19 +579,20 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                 <motion.button
                   type="submit"
                   disabled={isLoggingIn || !password}
-                  className="relative w-full py-3 rounded-lg text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed group mt-4"
+                  className="relative w-full py-3.5 rounded-xl text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed group mt-6"
                   style={{
                     background: organization.theme.gradientBtn,
                     color: '#fff',
-                    boxShadow: `0 4px 12px rgba(${organization.theme.primaryRgb}, 0.2)`,
+                    boxShadow: `0 6px 20px rgba(${organization.theme.primaryRgb}, 0.25), 0 2px 4px rgba(0,0,0,0.06)`,
                   }}
                   whileHover={!isLoggingIn && password ? {
-                    y: -3,
-                    boxShadow: `0 8px 32px rgba(${organization.theme.primaryRgb}, 0.35)`,
-                    transition: { duration: 0.3 }
+                    y: -2,
+                    boxShadow: `0 12px 32px rgba(${organization.theme.primaryRgb}, 0.4), 0 4px 8px rgba(0,0,0,0.1)`,
+                    transition: { duration: 0.2 }
                   } : {}}
                   whileTap={!isLoggingIn && password ? {
-                    y: -1,
+                    y: 0,
+                    scale: 0.98,
                     transition: { duration: 0.1 }
                   } : {}}
                 >

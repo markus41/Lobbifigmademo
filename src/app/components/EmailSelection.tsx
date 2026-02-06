@@ -171,10 +171,12 @@ function AccountDropdown({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border overflow-hidden z-50"
+            className="fixed left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-2rem)] sm:max-w-[450px] mt-2 bg-white rounded-xl border overflow-hidden z-[100]"
             style={{
               borderColor: `rgba(${primaryRgb}, 0.15)`,
               boxShadow: '0 20px 50px -12px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.02)',
+              top: dropdownRef.current?.getBoundingClientRect().bottom || 0,
+              maxHeight: 'min(60vh, 500px)',
             }}
           >
             {/* Header */}
@@ -195,7 +197,7 @@ function AccountDropdown({
             </div>
 
             {/* List */}
-            <div ref={listRef} className="max-h-[320px] overflow-y-auto py-1">
+            <div ref={listRef} className="max-h-[min(50vh,400px)] overflow-y-auto py-1">
               {accounts.map((account, index) => {
                 const org = organizations[account.orgId];
                 const isSelected = account.email === value;
@@ -350,7 +352,7 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
       className="fixed inset-0 z-20 flex items-center justify-center p-4"
     >
       <motion.div
-        className="w-full max-w-[480px] relative"
+        className="w-full max-w-[480px] px-4 relative"
         initial={{ y: 30, scale: 0.95 }}
         animate={{ y: 0, scale: 1 }}
         exit={{ y: -20, scale: 0.95 }}
@@ -358,7 +360,7 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
       >
         {/* Main Card - Light mode frosted glass */}
         <div
-          className="relative p-10 md:p-12 rounded-2xl border overflow-hidden"
+          className="relative p-6 sm:p-8 md:p-10 lg:p-12 rounded-2xl border"
           style={{
             background: 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(24px)',
