@@ -1,0 +1,187 @@
+{
+  "$schema": "../types/org-theme.schema.json",
+  "orgId": "crown-estates",
+  "name": "Crown Estates",
+  "short": "Crown",
+  "motto": "A legacy of distinction",
+  "logoLetter": "CE",
+
+  "identity": {
+    "personality": "regal",
+    "era": "royal-classic",
+    "mood": "majestic-elegance"
+  },
+
+  "colors": {
+    "primary": {
+      "50": "#FAF5FF",
+      "100": "#F3E8FF",
+      "200": "#E9D5FF",
+      "300": "#D8B4FE",
+      "400": "#C084FC",
+      "500": "#A855F7",
+      "600": "#9333EA",
+      "700": "#7E22CE",
+      "800": "#6B21A8",
+      "900": "#581C87"
+    },
+    "primaryHex": "#9333EA",
+    "primaryLight": "#C084FC",
+    "primaryPale": "#F3E8FF",
+    "primaryDark": "#7E22CE",
+    "primaryRgb": "147,51,234",
+
+    "accent": {
+      "50": "#FFFBEB",
+      "100": "#FEF3C7",
+      "200": "#FDE68A",
+      "300": "#FCD34D",
+      "400": "#FBBF24",
+      "500": "#F59E0B",
+      "600": "#D97706",
+      "700": "#B45309",
+      "800": "#92400E",
+      "900": "#78350F"
+    },
+
+    "surface": {
+      "canvas": "#FBF8FD",
+      "card": "#FFFFFF",
+      "cardHover": "#FAF5FF",
+      "panel": "rgba(255,255,255,0.93)",
+      "overlay": "rgba(251,248,253,0.87)"
+    },
+
+    "sidebar": {
+      "bg": "linear-gradient(180deg, #3B0764 0%, #2E0554 100%)",
+      "text": "#D8B4FE",
+      "textHover": "#F3E8FF",
+      "activeText": "#E9D5FF",
+      "activeBg": "rgba(147,51,234,0.15)",
+      "border": "rgba(147,51,234,0.10)"
+    }
+  },
+
+  "gradients": {
+    "brand": "linear-gradient(135deg, #F3E8FF, #9333EA, #7E22CE)",
+    "button": "linear-gradient(135deg, #7E22CE, #9333EA)",
+    "avatar": "linear-gradient(135deg, #9333EA, #7E22CE)",
+    "hero": "linear-gradient(135deg, #9333EA 0%, #C084FC 50%, #7E22CE 100%)",
+    "glow": "radial-gradient(circle, rgba(147,51,234,0.15), transparent 70%)"
+  },
+
+  "patterns": {
+    "cardBg": "linear-gradient(165deg, rgba(255,255,255,0.96) 0%, rgba(251,248,253,0.93) 100%)",
+    "accentPattern": "repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(147,51,234,0.03) 10px, rgba(147,51,234,0.03) 20px)",
+    "borderStyle": "double",
+    "borderWidth": "3px",
+    "logoShape": "crown"
+  },
+
+  "org": {
+    "mode": "elastic",
+    "accentShift": {
+      "hueDelta": 0,
+      "satMul": 1.0,
+      "lumMul": 1.0
+    },
+    "motionPersonality": {
+      "cadenceMul": 1.0,
+      "amplitudeMul": 1.1,
+      "rotationMul": 1.0
+    },
+    "brandMark": {
+      "showL": true,
+      "monogramOpacity": 0.17
+    }
+  },
+
+  "components": {
+    "button": {
+      "primary": {
+        "bg": "linear-gradient(135deg, #7E22CE, #9333EA)",
+        "color": "#FFFFFF",
+        "hoverBg": "linear-gradient(135deg, #6B21A8, #A855F7)",
+        "shadow": "0 4px 16px rgba(147,51,234,0.25)",
+        "hoverShadow": "0 8px 32px rgba(147,51,234,0.35)"
+      },
+      "secondary": {
+        "bg": "transparent",
+        "color": "#9333EA",
+        "border": "1px solid rgba(147,51,234,0.4)",
+        "hoverBg": "rgba(147,51,234,0.08)"
+      },
+      "ghost": {
+        "bg": "transparent",
+        "color": "#9333EA",
+        "hoverBg": "rgba(147,51,234,0.06)"
+      }
+    },
+    "input": {
+      "bg": "rgba(147,51,234,0.03)",
+      "border": "rgba(147,51,234,0.15)",
+      "focusBorder": "rgba(147,51,234,0.6)",
+      "focusShadow": "0 0 0 4px rgba(147,51,234,0.08), 0 8px 24px rgba(147,51,234,0.12)"
+    },
+    "card": {
+      "topBar": "linear-gradient(90deg, #7E22CE, #9333EA, #7E22CE)",
+      "border": "#F3E8FF",
+      "shadow": "0 8px 32px rgba(0,0,0,0.06)"
+    },
+    "avatar": {
+      "bg": "linear-gradient(135deg, #9333EA, #7E22CE)",
+      "border": "2px solid rgba(147,51,234,0.3)"
+    },
+    "badge": {
+      "bg": "rgba(147,51,234,0.18)",
+      "color": "#F3E8FF"
+    },
+    "tooltip": {
+      "bg": "#3B0764",
+      "color": "#F3E8FF"
+    }
+  },
+
+  "semantic": {
+    "kpiUp": {
+      "color": "#047857",
+      "bg": "rgba(4,120,87,0.08)"
+    },
+    "kpiDown": {
+      "color": "#DC2626",
+      "bg": "rgba(220,38,38,0.08)"
+    },
+    "activityDot": "#9333EA",
+    "activityDotAlt": "#7E22CE"
+  },
+
+  "chakra": {
+    "colors": {
+      "brand": {
+        "50": "#FAF5FF",
+        "100": "#F3E8FF",
+        "200": "#E9D5FF",
+        "300": "#D8B4FE",
+        "400": "#C084FC",
+        "500": "#A855F7",
+        "600": "#9333EA",
+        "700": "#7E22CE",
+        "800": "#6B21A8",
+        "900": "#581C87"
+      }
+    },
+    "semanticTokens": {
+      "colors": {
+        "brand.primary": "#9333EA",
+        "brand.secondary": "#7E22CE",
+        "bg.canvas": "#FBF8FD",
+        "bg.surface": "#FFFFFF",
+        "text.primary": "#3B0764",
+        "text.secondary": "#581C87",
+        "text.muted": "#D8B4FE",
+        "border.default": "#F3E8FF",
+        "border.accent": "rgba(147,51,234,0.35)"
+      }
+    }
+  }
+}

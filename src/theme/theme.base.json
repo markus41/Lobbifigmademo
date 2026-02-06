@@ -1,0 +1,341 @@
+{
+  "$schema": "./types/theme.schema.json",
+  "version": "1.0.0",
+  "name": "lobbi-design-system",
+  "description": "The Lobbi Design System - Luxury Hotel-Themed UI Token Contract",
+
+  "lobbi": {
+    "soundness": {
+      "noPureWhite": true,
+      "noTrueBlack": true,
+      "accentUsage": "edges-highlights-dividers-only",
+      "noSpringPhysics": true,
+      "maxConcurrentAnimations": 6,
+      "minContrastRatio": 4.5,
+      "minTouchTarget": 44
+    },
+
+    "colors": {
+      "surface": {
+        "base": "#FDF7ED",
+        "raised": "#FFF9F0",
+        "overlay": "rgba(255, 250, 242, 0.86)",
+        "panel": "rgba(255, 255, 255, 0.92)",
+        "canvas": "#FAF6E9",
+        "card": "#FFFFFF",
+        "cardBorder": "#EDE8DD"
+      },
+      "ink": {
+        "primary": "#151515",
+        "secondary": "#4B4B4B",
+        "tertiary": "#7A7A7A",
+        "muted": "#9A9A9A",
+        "dark": "#2C2A25",
+        "light": "#B8B0A0"
+      },
+      "gold": {
+        "champagne": "#D4AF37",
+        "champagne2": "#F4D03F",
+        "antique": "#C5A028",
+        "pale": "#F5E6A3",
+        "dark": "#8B7330",
+        "glow": "rgba(212,175,55,0.22)"
+      },
+      "line": {
+        "subtle": "rgba(21,21,21,0.08)",
+        "gold": "rgba(212,175,55,0.35)",
+        "goldSubtle": "rgba(212,175,55,0.18)",
+        "hairline": "rgba(0,0,0,0.05)",
+        "hairlineGold": "rgba(212,175,55,0.20)"
+      },
+      "state": {
+        "success": "#047857",
+        "successLight": "#3D7B5F",
+        "warning": "#B45309",
+        "warningLight": "#B89E4A",
+        "danger": "#B91C1C",
+        "dangerLight": "#B85C4A",
+        "info": "#0284C7"
+      }
+    },
+
+    "type": {
+      "font": {
+        "display": "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
+        "body": "'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+        "ui": "'DM Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+        "mono": "'JetBrains Mono', 'Fira Code', 'Consolas', monospace"
+      },
+      "weight": {
+        "light": 300,
+        "regular": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "tracking": {
+        "brand": "0.35em",
+        "caps": "0.20em",
+        "tight": "-0.02em",
+        "wide": "0.05em",
+        "widest": "0.15em"
+      },
+      "size": {
+        "hero": "clamp(3rem, 8vw, 6.5rem)",
+        "h1": "clamp(2.75rem, 6vw, 4.5rem)",
+        "h2": "clamp(2rem, 4vw, 3rem)",
+        "h3": "clamp(1.5rem, 3vw, 2rem)",
+        "h4": "1.25rem",
+        "body": "1rem",
+        "small": "0.875rem",
+        "xs": "0.75rem",
+        "label": "0.6875rem",
+        "micro": "0.625rem"
+      },
+      "lineHeight": {
+        "none": 1,
+        "tight": 1.2,
+        "snug": 1.375,
+        "normal": 1.5,
+        "relaxed": 1.625,
+        "loose": 1.8
+      }
+    },
+
+    "radii": {
+      "none": "0",
+      "xs": "4px",
+      "sm": "8px",
+      "md": "12px",
+      "lg": "16px",
+      "xl": "20px",
+      "2xl": "24px",
+      "3xl": "32px",
+      "full": "9999px",
+      "panel": "24px",
+      "input": "12px",
+      "button": "10px",
+      "card": "16px"
+    },
+
+    "space": {
+      "0": "0",
+      "px": "1px",
+      "0.5": "2px",
+      "1": "4px",
+      "1.5": "6px",
+      "2": "8px",
+      "2.5": "10px",
+      "3": "12px",
+      "3.5": "14px",
+      "4": "16px",
+      "5": "20px",
+      "6": "24px",
+      "7": "28px",
+      "8": "32px",
+      "9": "36px",
+      "10": "40px",
+      "12": "48px",
+      "14": "56px",
+      "16": "64px",
+      "20": "80px",
+      "24": "96px",
+      "container": "max(1.5rem, 4vw)",
+      "sectionY": "8rem",
+      "cardPadding": "20px",
+      "inputPadding": "16px"
+    },
+
+    "shadows": {
+      "none": "none",
+      "xs": "0 1px 2px rgba(0,0,0,0.03)",
+      "sm": "0 2px 4px rgba(0,0,0,0.04)",
+      "md": "0 4px 12px rgba(0,0,0,0.06)",
+      "lg": "0 8px 24px rgba(0,0,0,0.08)",
+      "xl": "0 16px 40px rgba(0,0,0,0.10)",
+      "2xl": "0 24px 60px rgba(0,0,0,0.12)",
+      "panel": "0 8px 32px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.02)",
+      "float": "0 12px 40px rgba(0,0,0,0.08)",
+      "goldSoft": "0 12px 40px rgba(212,175,55,0.14)",
+      "goldGlow": "0 0 40px -10px rgba(212,175,55,0.3)",
+      "inner": "inset 0 2px 4px rgba(0,0,0,0.06)",
+      "focus": "0 0 0 3px rgba(212,175,55,0.25)"
+    },
+
+    "borders": {
+      "none": "none",
+      "hairline": "0.5px solid rgba(0,0,0,0.05)",
+      "hairlineGold": "0.5px solid rgba(212,175,55,0.20)",
+      "thin": "1px solid rgba(0,0,0,0.08)",
+      "default": "1px solid #EDE8DD",
+      "thick": "2px solid #EDE8DD",
+      "gold": "1px solid rgba(212,175,55,0.35)",
+      "goldThick": "2px solid #D4AF37",
+      "decorative": "3px double #D4AF37"
+    },
+
+    "materials": {
+      "glass": {
+        "bg": "rgba(255,255,255,0.92)",
+        "bgDark": "rgba(255,255,255,0.85)",
+        "blur": "40px",
+        "blurLight": "24px",
+        "saturate": "180%"
+      },
+      "grain": {
+        "opacity": 0.06,
+        "pattern": "subtle",
+        "size": "150px"
+      },
+      "scanline": {
+        "opacity": 0.18,
+        "spacingPx": 3
+      },
+      "vignette": {
+        "opacity": 0.3,
+        "spread": "70%"
+      }
+    },
+
+    "motion": {
+      "easing": {
+        "luxInOut": [0.22, 1, 0.36, 1],
+        "luxOut": [0.16, 1, 0.3, 1],
+        "fade": [0.4, 0, 0.2, 1],
+        "bounce": [0.68, -0.55, 0.265, 1.55],
+        "linear": [0, 0, 1, 1]
+      },
+      "easingCSS": {
+        "luxInOut": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "luxOut": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "fade": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "bounce": "cubic-bezier(0.68, -0.55, 0.265, 1.55)"
+      },
+      "durationMs": {
+        "instant": 0,
+        "fast": 150,
+        "normal": 300,
+        "slow": 500,
+        "heroIntro": 2000,
+        "gateToAuth": 900,
+        "focus": 350,
+        "hover": 450,
+        "pageTransition": 800,
+        "ambientCycle": 12000
+      },
+      "blurPx": {
+        "enter": 12,
+        "exit": 18,
+        "overlay": 8
+      },
+      "parallax": {
+        "bg": 0.10,
+        "frame": 0.18,
+        "particles": 0.30
+      }
+    },
+
+    "geometry": {
+      "frame": {
+        "shape": "octagon",
+        "strokeWidth": 2,
+        "stroke": "goldGradient",
+        "glow": "soft",
+        "vertices": 8
+      },
+      "diamonds": {
+        "layers": 3,
+        "rotationDegPerSec": [0.9, -0.7, 1.2],
+        "strokeWidths": [1.2, 0.9, 0.6]
+      },
+      "squares": {
+        "layers": 3,
+        "sizes": [120, 80, 40],
+        "rotationDuration": [25, 20, 15]
+      },
+      "particles": {
+        "count": 40,
+        "sizePx": [2, 5],
+        "opacity": 0.7,
+        "driftSpeed": 0.5
+      },
+      "corners": {
+        "ornamentSize": 24,
+        "ornamentOpacity": 0.08
+      }
+    },
+
+    "components": {
+      "button": {
+        "minHeight": "44px",
+        "paddingX": "24px",
+        "paddingY": "12px",
+        "fontSize": "0.6875rem",
+        "fontWeight": 500,
+        "letterSpacing": "0.1em",
+        "textTransform": "uppercase",
+        "borderRadius": "10px",
+        "hoverLift": "2px",
+        "transitionDuration": "300ms"
+      },
+      "input": {
+        "minHeight": "48px",
+        "paddingX": "16px",
+        "paddingY": "12px",
+        "fontSize": "0.9375rem",
+        "borderRadius": "12px",
+        "borderWidth": "2px",
+        "focusRingWidth": "4px"
+      },
+      "card": {
+        "padding": "20px",
+        "borderRadius": "16px",
+        "borderWidth": "1px",
+        "hoverLift": "2px",
+        "topBarHeight": "3px"
+      },
+      "sidebar": {
+        "width": "220px",
+        "collapsedWidth": "56px",
+        "itemPaddingY": "9px",
+        "itemPaddingX": "12px",
+        "itemRadius": "8px"
+      },
+      "topbar": {
+        "height": "52px",
+        "searchMaxWidth": "420px"
+      },
+      "avatar": {
+        "sm": "32px",
+        "md": "36px",
+        "lg": "64px",
+        "xl": "130px"
+      },
+      "modal": {
+        "maxWidth": "520px",
+        "padding": "48px",
+        "borderRadius": "24px"
+      }
+    },
+
+    "breakpoints": {
+      "sm": "640px",
+      "md": "768px",
+      "lg": "1024px",
+      "xl": "1280px",
+      "2xl": "1536px"
+    },
+
+    "zIndex": {
+      "base": 0,
+      "dropdown": 10,
+      "sticky": 20,
+      "fixed": 30,
+      "overlay": 40,
+      "modal": 50,
+      "popover": 60,
+      "tooltip": 70,
+      "toast": 80
+    }
+  }
+}

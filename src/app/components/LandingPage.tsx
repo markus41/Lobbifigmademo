@@ -74,13 +74,13 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.3 }}
       >
-        <h1 
+        <h1
           className="flex tracking-[0.45em]"
-          style={{ 
+          style={{
             fontFamily: 'Cormorant Garamond, Georgia, serif',
             fontSize: '48px',
-            fontWeight: 300,
-            color: '#2C2A25',
+            fontWeight: 400,
+            color: '#1A1815',
             letterSpacing: '0.45em',
           }}
         >
@@ -132,12 +132,12 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
 
       {/* Tagline */}
       <motion.p
-        className="text-[11px] uppercase mb-16"
-        style={{ 
-          color: '#8B7330',
-          letterSpacing: '0.4em',
+        className="text-[12px] uppercase mb-16"
+        style={{
+          color: '#6B5A28',
+          letterSpacing: '0.35em',
           fontFamily: 'DM Sans, sans-serif',
-          fontWeight: 500,
+          fontWeight: 600,
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -149,8 +149,8 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
       {/* Refined Description */}
       <motion.p
         className="text-[15px] text-center max-w-[520px] mb-14 leading-[1.8]"
-        style={{ 
-          color: '#5A5247',
+        style={{
+          color: '#3D3832',
           fontFamily: 'DM Sans, sans-serif',
           fontWeight: 400,
         }}
@@ -179,10 +179,10 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
         }}
       >
         {/* Border frame */}
-        <div 
+        <div
           className="absolute inset-0 border transition-colors"
-          style={{ 
-            borderColor: 'rgba(212,175,55,0.4)',
+          style={{
+            borderColor: 'rgba(180,145,45,0.6)',
           }}
         />
         
@@ -203,13 +203,13 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
         />
         
         {/* Text */}
-        <span 
-          className="relative z-10 flex items-center gap-3 text-[11px] uppercase transition-colors group-hover:text-[#F5E6A3]"
-          style={{ 
-            color: '#D4AF37',
+        <span
+          className="relative z-10 flex items-center gap-3 text-[12px] uppercase transition-colors group-hover:text-[#F5E6A3]"
+          style={{
+            color: '#B4912D',
             letterSpacing: '0.3em',
             fontFamily: 'DM Sans, sans-serif',
-            fontWeight: 500,
+            fontWeight: 600,
           }}
         >
           Enter Your Lobbi
@@ -231,12 +231,13 @@ export function LandingPage({ onLoginClick }: LandingPageProps) {
           <div className="w-1 h-1 bg-[#D4AF37] opacity-30" />
         </div>
         
-        <p 
+        <p
           className="text-[10px] uppercase"
-          style={{ 
-            color: '#B8B0A0',
+          style={{
+            color: '#8A8278',
             letterSpacing: '0.2em',
             fontFamily: 'DM Sans, sans-serif',
+            fontWeight: 500,
           }}
         >
           Trusted by Discerning Organizations

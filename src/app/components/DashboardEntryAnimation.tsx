@@ -15,20 +15,20 @@ export function DashboardEntryAnimation({
 }: DashboardEntryAnimationProps) {
   
   useEffect(() => {
-    // Elite: Longer dissolve transition
-    const timer = setTimeout(onCompleted, 2400);
+    // Elite: Longer dissolve transition for premium feel
+    const timer = setTimeout(onCompleted, 3200);
     return () => clearTimeout(timer);
   }, [onCompleted]);
 
   return (
-    <motion.div 
+    <motion.div
       className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-      initial={{ opacity: 1 }}
-      animate={{ opacity: 0 }}
-      transition={{ 
-        duration: 2.4, 
+      initial={{ opacity: 1, scale: 1 }}
+      animate={{ opacity: 0, scale: 1.05 }}
+      transition={{
+        duration: 3,
         ease: [0.22, 1, 0.36, 1],
-        delay: 0.3,
+        delay: 0.4,
       }}
       style={{
         background: '#FAF6E9',
@@ -40,7 +40,7 @@ export function DashboardEntryAnimation({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
       >
         <motion.p
           className="text-sm uppercase tracking-[0.3em] mb-4"
@@ -75,9 +75,9 @@ export function DashboardEntryAnimation({
       {/* Dissolving octagon geometry hint */}
       <motion.div
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        initial={{ opacity: 0.15 }}
-        animate={{ opacity: 0 }}
-        transition={{ duration: 2, delay: 0.4 }}
+        initial={{ opacity: 0.15, scale: 1 }}
+        animate={{ opacity: 0, scale: 1.1 }}
+        transition={{ duration: 2.5, delay: 0.5 }}
       >
         <svg width="400" height="400" viewBox="0 0 400 400">
           <motion.path
@@ -87,7 +87,7 @@ export function DashboardEntryAnimation({
             strokeWidth="0.5"
             initial={{ pathLength: 1, opacity: 0.2 }}
             animate={{ pathLength: 0, opacity: 0 }}
-            transition={{ duration: 1.8, delay: 0.5 }}
+            transition={{ duration: 2.2, delay: 0.6 }}
           />
         </svg>
       </motion.div>

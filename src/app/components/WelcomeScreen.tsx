@@ -11,12 +11,12 @@ interface WelcomeScreenProps {
 
 export function WelcomeScreen({ account, organization, onComplete }: WelcomeScreenProps) {
   
-  // Auto-advance after 3 seconds
+  // Auto-advance after 4 seconds for a smoother experience
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
-    }, 3000);
-    
+    }, 4000);
+
     return () => clearTimeout(timer);
   }, [onComplete]);
 
@@ -25,8 +25,8 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
       style={{ background: '#FAF6E9' }}
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      exit={{ opacity: 0, scale: 1.02 }}
+      transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
     >
       {/* Animated Octagon Background */}
       <div className="absolute inset-0">
@@ -82,12 +82,12 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 
+          <h2
             className="text-xl mb-2"
             style={{
               fontFamily: 'DM Sans, sans-serif',
-              fontWeight: 400,
-              color: '#8A8578',
+              fontWeight: 500,
+              color: '#5A5247',
               letterSpacing: '0.05em',
             }}
           >
@@ -143,12 +143,12 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
               {organization.logoLetter}
             </span>
           </div>
-          <span 
+          <span
             className="text-lg"
             style={{
               fontFamily: 'Cormorant Garamond, Georgia, serif',
-              fontWeight: 500,
-              color: '#2C2A25',
+              fontWeight: 600,
+              color: '#1A1815',
             }}
           >
             {organization.name}
@@ -161,11 +161,12 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p 
+          <p
             className="text-sm mb-3"
             style={{
-              color: '#8A8578',
+              color: '#5A5247',
               fontFamily: 'DM Sans, sans-serif',
+              fontWeight: 500,
             }}
           >
             {account.role}
@@ -178,12 +179,13 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p 
+          <p
             className="text-base italic mb-6"
             style={{
               fontFamily: 'Cormorant Garamond, Georgia, serif',
               color: organization.theme.primary,
-              opacity: 0.8,
+              opacity: 0.95,
+              fontWeight: 500,
             }}
           >
             "{organization.motto}"
@@ -196,12 +198,13 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p 
+          <p
             className="text-xs"
             style={{
-              color: '#B8B0A0',
+              color: '#8A8278',
               fontFamily: 'DM Sans, sans-serif',
               letterSpacing: '0.05em',
+              fontWeight: 500,
             }}
           >
             {new Date().toLocaleString('en-US', {

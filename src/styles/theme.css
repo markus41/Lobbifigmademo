@@ -280,3 +280,361 @@
     color: var(--gray-50);
   }
 }
+
+/* ============================================================================
+   DYSLEXIC-FRIENDLY MODE
+   Uses OpenDyslexic font with optimized spacing for improved readability
+   ============================================================================ */
+
+html.dyslexic {
+  /* Override fonts with OpenDyslexic */
+  --font-display: 'OpenDyslexic', 'Comic Sans MS', cursive, sans-serif;
+  --font-body: 'OpenDyslexic', 'Comic Sans MS', cursive, sans-serif;
+  --font-mono: 'OpenDyslexic Mono', 'Courier New', monospace;
+
+  /* Increase base font size for better readability */
+  --font-size: 18px;
+
+  /* Reduce font weight variability - dyslexic readers prefer consistent weights */
+  --font-weight-medium: 400;
+  --font-weight-normal: 400;
+}
+
+html.dyslexic body {
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+}
+
+html.dyslexic h1,
+html.dyslexic h2,
+html.dyslexic h3,
+html.dyslexic h4,
+html.dyslexic h5,
+html.dyslexic h6 {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  word-spacing: 0.1em;
+  line-height: 1.5;
+}
+
+html.dyslexic h1 {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+html.dyslexic h2 {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+html.dyslexic h3 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+html.dyslexic h4 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+html.dyslexic p,
+html.dyslexic span,
+html.dyslexic li,
+html.dyslexic td,
+html.dyslexic th {
+  font-family: var(--font-body);
+  line-height: 1.8;
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+}
+
+html.dyslexic label,
+html.dyslexic button,
+html.dyslexic input,
+html.dyslexic textarea,
+html.dyslexic select {
+  font-family: var(--font-body);
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+}
+
+/* Reduce visual noise */
+html.dyslexic * {
+  text-shadow: none !important;
+}
+
+/* Avoid italic text which is harder for dyslexic readers */
+html.dyslexic em,
+html.dyslexic i {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--theme-primary);
+}
+
+/* Underline links instead of color only */
+html.dyslexic a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ============================================================================
+   ENHANCED DARK MODE
+   Works with dynamic theme variables for per-organization dark themes
+   ============================================================================ */
+
+.dark {
+  /* Core backgrounds using theme-aware colors */
+  --background: #0C0C0E;
+  --foreground: #F5F5F5;
+
+  /* Cards and surfaces */
+  --card: #161618;
+  --card-foreground: #F0F0F0;
+  --popover: #1A1A1C;
+  --popover-foreground: #F0F0F0;
+
+  /* Primary uses theme color with adjusted luminance */
+  --primary: var(--theme-primary-light, #E5C76B);
+  --primary-foreground: #0C0C0E;
+
+  /* Secondary surfaces */
+  --secondary: #222226;
+  --secondary-foreground: #E5E5E5;
+
+  /* Muted elements */
+  --muted: #2A2A2E;
+  --muted-foreground: #A0A0A0;
+
+  /* Accent using theme pale */
+  --accent: rgba(var(--theme-primary-rgb, 212,175,55), 0.15);
+  --accent-foreground: var(--theme-primary-light, #E5C76B);
+
+  /* Destructive */
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  /* Borders */
+  --border: #2E2E32;
+  --border-light: #3A3A3E;
+
+  /* Inputs */
+  --input: #1E1E22;
+  --input-background: #161618;
+
+  /* Ring focus */
+  --ring: var(--theme-primary, #D4AF37);
+
+  /* Sidebar */
+  --sidebar: #0F0F11;
+  --sidebar-foreground: #F0F0F0;
+  --sidebar-primary: var(--theme-primary-light, #E5C76B);
+  --sidebar-primary-foreground: #0C0C0E;
+  --sidebar-accent: #1A1A1C;
+  --sidebar-accent-foreground: #E5E5E5;
+  --sidebar-border: #252528;
+  --sidebar-ring: var(--theme-primary, #D4AF37);
+
+  /* Shadow with theme color */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  --shadow-gold: 0 0 40px -10px rgba(var(--theme-primary-rgb, 212,175,55), 0.4);
+
+  /* Switch toggle */
+  --switch-background: #3A3A3E;
+}
+
+/* Dark mode typography overrides */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: #F5F5F5;
+}
+
+.dark p {
+  color: #D5D5D5;
+}
+
+.dark label {
+  color: #E5E5E5;
+}
+
+.dark a {
+  color: var(--theme-primary-light, #E5C76B);
+}
+
+.dark a:hover {
+  color: var(--theme-primary, #D4AF37);
+}
+
+/* Dark mode form elements */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--input-background);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px rgba(var(--theme-primary-rgb, 212,175,55), 0.2);
+}
+
+/* Dark mode buttons */
+.dark button {
+  color: var(--foreground);
+}
+
+.dark button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Dark mode cards and containers */
+.dark .card,
+.dark [class*="Card"] {
+  background-color: var(--card);
+  border-color: var(--border);
+}
+
+/* Dark mode dropdowns and popovers */
+.dark [role="listbox"],
+.dark [role="menu"],
+.dark .dropdown-menu,
+.dark .popover-content {
+  background-color: var(--popover);
+  border-color: var(--border);
+}
+
+/* Dark mode scrollbars (Webkit) */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* ============================================================================
+   DARK MODE + DYSLEXIC COMBINED
+   Special adjustments when both modes are active
+   ============================================================================ */
+
+html.dark.dyslexic {
+  /* Slightly lighter background for better contrast with OpenDyslexic */
+  --background: #121214;
+  --card: #1C1C1E;
+
+  /* Cream-tinted text is easier to read for dyslexic users in dark mode */
+  --foreground: #FFF8E7;
+  --card-foreground: #FFF8E7;
+}
+
+html.dark.dyslexic p,
+html.dark.dyslexic span,
+html.dark.dyslexic li {
+  color: #F5ECD7;
+}
+
+html.dark.dyslexic h1,
+html.dark.dyslexic h2,
+html.dark.dyslexic h3,
+html.dark.dyslexic h4,
+html.dark.dyslexic h5,
+html.dark.dyslexic h6 {
+  color: #FFFBF0;
+}
+
+/* ============================================================================
+   REDUCED MOTION PREFERENCE
+   Respect user's motion preferences for accessibility
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+   HIGH CONTRAST MODE SUPPORT
+   For users who need maximum contrast
+   ============================================================================ */
+
+@media (prefers-contrast: high) {
+  :root {
+    --border: #000000;
+    --ring: #000000;
+  }
+
+  .dark {
+    --border: #FFFFFF;
+    --ring: #FFFFFF;
+    --foreground: #FFFFFF;
+    --background: #000000;
+    --card: #0A0A0A;
+  }
+}
+
+/* ============================================================================
+   FOCUS VISIBLE STYLES
+   Improved keyboard navigation visibility
+   ============================================================================ */
+
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.dark *:focus-visible {
+  outline-color: var(--theme-primary-light, #E5C76B);
+}
+
+html.dyslexic *:focus-visible {
+  outline-width: 3px;
+  outline-offset: 3px;
+}
+
+/* ============================================================================
+   THEME TRANSITION EFFECTS
+   Smooth transitions when switching themes
+   ============================================================================ */
+
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.theme-transitioning,
+html.theme-transitioning * {
+  transition: background-color 0.5s ease,
+              color 0.5s ease,
+              border-color 0.5s ease,
+              box-shadow 0.5s ease !important;
+}

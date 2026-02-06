@@ -1,0 +1,187 @@
+{
+  "$schema": "../types/org-theme.schema.json",
+  "orgId": "summit-group",
+  "name": "Summit Group",
+  "short": "Summit",
+  "motto": "Reaching new heights together",
+  "logoLetter": "SG",
+
+  "identity": {
+    "personality": "ambitious",
+    "era": "mountain-lodge",
+    "mood": "warm-strength"
+  },
+
+  "colors": {
+    "primary": {
+      "50": "#FDF8F3",
+      "100": "#F5E6D3",
+      "200": "#E8D0B3",
+      "300": "#D4A574",
+      "400": "#C4956A",
+      "500": "#B87333",
+      "600": "#A66829",
+      "700": "#8B5A2B",
+      "800": "#704A23",
+      "900": "#5C3D1D"
+    },
+    "primaryHex": "#B87333",
+    "primaryLight": "#D4A574",
+    "primaryPale": "#F5E6D3",
+    "primaryDark": "#8B5A2B",
+    "primaryRgb": "184,115,51",
+
+    "accent": {
+      "50": "#FEF7ED",
+      "100": "#FDEDD3",
+      "200": "#FBD9A5",
+      "300": "#F8BC6D",
+      "400": "#F59E32",
+      "500": "#F28C28",
+      "600": "#E4760E",
+      "700": "#BC5D0E",
+      "800": "#964A13",
+      "900": "#793D13"
+    },
+
+    "surface": {
+      "canvas": "#FBF8F5",
+      "card": "#FFFFFF",
+      "cardHover": "#FDF8F3",
+      "panel": "rgba(255,255,255,0.93)",
+      "overlay": "rgba(251,248,245,0.87)"
+    },
+
+    "sidebar": {
+      "bg": "linear-gradient(180deg, #3D2914 0%, #2D1F10 100%)",
+      "text": "#D4A574",
+      "textHover": "#F5E6D3",
+      "activeText": "#E8D0B3",
+      "activeBg": "rgba(184,115,51,0.14)",
+      "border": "rgba(184,115,51,0.10)"
+    }
+  },
+
+  "gradients": {
+    "brand": "linear-gradient(135deg, #F5E6D3, #B87333, #8B5A2B)",
+    "button": "linear-gradient(135deg, #8B5A2B, #B87333)",
+    "avatar": "linear-gradient(135deg, #B87333, #8B5A2B)",
+    "hero": "linear-gradient(135deg, #B87333 0%, #D4A574 50%, #8B5A2B 100%)",
+    "glow": "radial-gradient(circle, rgba(184,115,51,0.14), transparent 70%)"
+  },
+
+  "patterns": {
+    "cardBg": "linear-gradient(165deg, rgba(255,255,255,0.96) 0%, rgba(251,248,245,0.93) 100%)",
+    "accentPattern": "repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(184,115,51,0.03) 10px, rgba(184,115,51,0.03) 20px)",
+    "borderStyle": "solid",
+    "borderWidth": "2px",
+    "logoShape": "mountain"
+  },
+
+  "org": {
+    "mode": "elastic",
+    "accentShift": {
+      "hueDelta": 0,
+      "satMul": 1.0,
+      "lumMul": 1.0
+    },
+    "motionPersonality": {
+      "cadenceMul": 1.1,
+      "amplitudeMul": 1.2,
+      "rotationMul": 0.9
+    },
+    "brandMark": {
+      "showL": true,
+      "monogramOpacity": 0.16
+    }
+  },
+
+  "components": {
+    "button": {
+      "primary": {
+        "bg": "linear-gradient(135deg, #8B5A2B, #B87333)",
+        "color": "#FFFFFF",
+        "hoverBg": "linear-gradient(135deg, #704A23, #A66829)",
+        "shadow": "0 4px 16px rgba(184,115,51,0.25)",
+        "hoverShadow": "0 8px 32px rgba(184,115,51,0.35)"
+      },
+      "secondary": {
+        "bg": "transparent",
+        "color": "#B87333",
+        "border": "1px solid rgba(184,115,51,0.4)",
+        "hoverBg": "rgba(184,115,51,0.08)"
+      },
+      "ghost": {
+        "bg": "transparent",
+        "color": "#B87333",
+        "hoverBg": "rgba(184,115,51,0.06)"
+      }
+    },
+    "input": {
+      "bg": "rgba(184,115,51,0.03)",
+      "border": "rgba(184,115,51,0.15)",
+      "focusBorder": "rgba(184,115,51,0.6)",
+      "focusShadow": "0 0 0 4px rgba(184,115,51,0.08), 0 8px 24px rgba(184,115,51,0.12)"
+    },
+    "card": {
+      "topBar": "linear-gradient(90deg, #8B5A2B, #B87333, #8B5A2B)",
+      "border": "#F5E6D3",
+      "shadow": "0 8px 32px rgba(0,0,0,0.06)"
+    },
+    "avatar": {
+      "bg": "linear-gradient(135deg, #B87333, #8B5A2B)",
+      "border": "2px solid rgba(184,115,51,0.3)"
+    },
+    "badge": {
+      "bg": "rgba(184,115,51,0.18)",
+      "color": "#F5E6D3"
+    },
+    "tooltip": {
+      "bg": "#3D2914",
+      "color": "#F5E6D3"
+    }
+  },
+
+  "semantic": {
+    "kpiUp": {
+      "color": "#047857",
+      "bg": "rgba(4,120,87,0.08)"
+    },
+    "kpiDown": {
+      "color": "#B85C4A",
+      "bg": "rgba(184,92,74,0.08)"
+    },
+    "activityDot": "#B87333",
+    "activityDotAlt": "#8B5A2B"
+  },
+
+  "chakra": {
+    "colors": {
+      "brand": {
+        "50": "#FDF8F3",
+        "100": "#F5E6D3",
+        "200": "#E8D0B3",
+        "300": "#D4A574",
+        "400": "#C4956A",
+        "500": "#B87333",
+        "600": "#A66829",
+        "700": "#8B5A2B",
+        "800": "#704A23",
+        "900": "#5C3D1D"
+      }
+    },
+    "semanticTokens": {
+      "colors": {
+        "brand.primary": "#B87333",
+        "brand.secondary": "#8B5A2B",
+        "bg.canvas": "#FBF8F5",
+        "bg.surface": "#FFFFFF",
+        "text.primary": "#3D2914",
+        "text.secondary": "#704A23",
+        "text.muted": "#D4A574",
+        "border.default": "#F5E6D3",
+        "border.accent": "rgba(184,115,51,0.35)"
+      }
+    }
+  }
+}

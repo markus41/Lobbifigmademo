@@ -1,0 +1,187 @@
+{
+  "$schema": "../types/org-theme.schema.json",
+  "orgId": "pacific-club",
+  "name": "Pacific Club",
+  "short": "Pacific",
+  "motto": "Coastal elegance, refined living",
+  "logoLetter": "PC",
+
+  "identity": {
+    "personality": "serene",
+    "era": "coastal-modern",
+    "mood": "calm-sophistication"
+  },
+
+  "colors": {
+    "primary": {
+      "50": "#F0F9FF",
+      "100": "#E0F2FE",
+      "200": "#BAE6FD",
+      "300": "#7DD3FC",
+      "400": "#38BDF8",
+      "500": "#0EA5E9",
+      "600": "#0284C7",
+      "700": "#0369A1",
+      "800": "#075985",
+      "900": "#0C4A6E"
+    },
+    "primaryHex": "#0EA5E9",
+    "primaryLight": "#38BDF8",
+    "primaryPale": "#BAE6FD",
+    "primaryDark": "#0369A1",
+    "primaryRgb": "14,165,233",
+
+    "accent": {
+      "50": "#F0FDFA",
+      "100": "#CCFBF1",
+      "200": "#99F6E4",
+      "300": "#5EEAD4",
+      "400": "#2DD4BF",
+      "500": "#14B8A6",
+      "600": "#0D9488",
+      "700": "#0F766E",
+      "800": "#115E59",
+      "900": "#134E4A"
+    },
+
+    "surface": {
+      "canvas": "#F8FCFD",
+      "card": "#FFFFFF",
+      "cardHover": "#F0F9FF",
+      "panel": "rgba(255,255,255,0.94)",
+      "overlay": "rgba(248,252,253,0.88)"
+    },
+
+    "sidebar": {
+      "bg": "linear-gradient(180deg, #0C4A6E 0%, #0A3D5C 100%)",
+      "text": "#A5D8E8",
+      "textHover": "#E0F2FE",
+      "activeText": "#BAE6FD",
+      "activeBg": "rgba(14,165,233,0.15)",
+      "border": "rgba(14,165,233,0.10)"
+    }
+  },
+
+  "gradients": {
+    "brand": "linear-gradient(135deg, #BAE6FD, #0EA5E9, #0369A1)",
+    "button": "linear-gradient(135deg, #0369A1, #0EA5E9)",
+    "avatar": "linear-gradient(135deg, #0EA5E9, #0369A1)",
+    "hero": "linear-gradient(135deg, #0EA5E9 0%, #38BDF8 50%, #0369A1 100%)",
+    "glow": "radial-gradient(circle, rgba(14,165,233,0.15), transparent 70%)"
+  },
+
+  "patterns": {
+    "cardBg": "linear-gradient(165deg, rgba(255,255,255,0.96) 0%, rgba(248,252,253,0.94) 100%)",
+    "accentPattern": "repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(14,165,233,0.03) 10px, rgba(14,165,233,0.03) 20px)",
+    "borderStyle": "solid",
+    "borderWidth": "1px",
+    "logoShape": "wave"
+  },
+
+  "org": {
+    "mode": "elastic",
+    "accentShift": {
+      "hueDelta": 0,
+      "satMul": 1.0,
+      "lumMul": 1.0
+    },
+    "motionPersonality": {
+      "cadenceMul": 0.9,
+      "amplitudeMul": 0.8,
+      "rotationMul": 0.7
+    },
+    "brandMark": {
+      "showL": true,
+      "monogramOpacity": 0.15
+    }
+  },
+
+  "components": {
+    "button": {
+      "primary": {
+        "bg": "linear-gradient(135deg, #0369A1, #0EA5E9)",
+        "color": "#FFFFFF",
+        "hoverBg": "linear-gradient(135deg, #075985, #0284C7)",
+        "shadow": "0 4px 16px rgba(14,165,233,0.25)",
+        "hoverShadow": "0 8px 32px rgba(14,165,233,0.35)"
+      },
+      "secondary": {
+        "bg": "transparent",
+        "color": "#0EA5E9",
+        "border": "1px solid rgba(14,165,233,0.4)",
+        "hoverBg": "rgba(14,165,233,0.08)"
+      },
+      "ghost": {
+        "bg": "transparent",
+        "color": "#0EA5E9",
+        "hoverBg": "rgba(14,165,233,0.06)"
+      }
+    },
+    "input": {
+      "bg": "rgba(14,165,233,0.03)",
+      "border": "rgba(14,165,233,0.15)",
+      "focusBorder": "rgba(14,165,233,0.6)",
+      "focusShadow": "0 0 0 4px rgba(14,165,233,0.08), 0 8px 24px rgba(14,165,233,0.12)"
+    },
+    "card": {
+      "topBar": "linear-gradient(90deg, #0369A1, #0EA5E9, #0369A1)",
+      "border": "#E0F2FE",
+      "shadow": "0 8px 32px rgba(0,0,0,0.05)"
+    },
+    "avatar": {
+      "bg": "linear-gradient(135deg, #0EA5E9, #0369A1)",
+      "border": "2px solid rgba(14,165,233,0.3)"
+    },
+    "badge": {
+      "bg": "rgba(14,165,233,0.18)",
+      "color": "#BAE6FD"
+    },
+    "tooltip": {
+      "bg": "#0C4A6E",
+      "color": "#BAE6FD"
+    }
+  },
+
+  "semantic": {
+    "kpiUp": {
+      "color": "#047857",
+      "bg": "rgba(4,120,87,0.08)"
+    },
+    "kpiDown": {
+      "color": "#DC2626",
+      "bg": "rgba(220,38,38,0.08)"
+    },
+    "activityDot": "#0EA5E9",
+    "activityDotAlt": "#0369A1"
+  },
+
+  "chakra": {
+    "colors": {
+      "brand": {
+        "50": "#F0F9FF",
+        "100": "#E0F2FE",
+        "200": "#BAE6FD",
+        "300": "#7DD3FC",
+        "400": "#38BDF8",
+        "500": "#0EA5E9",
+        "600": "#0284C7",
+        "700": "#0369A1",
+        "800": "#075985",
+        "900": "#0C4A6E"
+      }
+    },
+    "semanticTokens": {
+      "colors": {
+        "brand.primary": "#0EA5E9",
+        "brand.secondary": "#0369A1",
+        "bg.canvas": "#F8FCFD",
+        "bg.surface": "#FFFFFF",
+        "text.primary": "#0C4A6E",
+        "text.secondary": "#075985",
+        "text.muted": "#7DD3FC",
+        "border.default": "#E0F2FE",
+        "border.accent": "rgba(14,165,233,0.35)"
+      }
+    }
+  }
+}

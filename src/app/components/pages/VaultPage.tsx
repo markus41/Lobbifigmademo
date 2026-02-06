@@ -1,0 +1,365 @@
+/**
+ * Vault Page (Documents Vault)
+ *
+ * Secure document storage and management.
+ * Features:
+ * - Folder hierarchy
+ * - Document preview
+ * - Access control
+ * - Search and filtering
+ */
+
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import type { Organization, Account } from '../../data/themes';
+
+interface VaultPageProps {
+  organization: Organization;
+  account: Account;
+}
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+interface Document {
+  id: string;
+  name: string;
+  type: 'pdf' | 'doc' | 'xls' | 'ppt' | 'img' | 'folder';
+  size?: string;
+  modified: string;
+  owner: string;
+  shared: boolean;
+  folderId?: string;
+}
+
+// ============================================================================
+// MOCK DATA
+// ============================================================================
+
+const MOCK_DOCUMENTS: Document[] = [
+  { id: 'f1', name: 'Board Documents', type: 'folder', modified: '2024-02-01', owner: 'Admin', shared: false },
+  { id: 'f2', name: 'Member Resources', type: 'folder', modified: '2024-01-28', owner: 'Admin', shared: true },
+  { id: 'f3', name: 'Financial Reports', type: 'folder', modified: '2024-02-05', owner: 'Treasurer', shared: false },
+  { id: 'f4', name: 'Event Materials', type: 'folder', modified: '2024-02-03', owner: 'Events Team', shared: true },
+  { id: 'd1', name: 'Annual Report 2023.pdf', type: 'pdf', size: '2.4 MB', modified: '2024-01-15', owner: 'Sarah Johnson', shared: true },
+  { id: 'd2', name: 'Budget Proposal Q1.xlsx', type: 'xls', size: '856 KB', modified: '2024-02-01', owner: 'Michael Chen', shared: false },
+  { id: 'd3', name: 'Meeting Minutes Jan 2024.docx', type: 'doc', size: '124 KB', modified: '2024-01-30', owner: 'Emily Rodriguez', shared: true },
+  { id: 'd4', name: 'Strategic Plan Presentation.pptx', type: 'ppt', size: '5.2 MB', modified: '2024-01-22', owner: 'James Wilson', shared: true },
+  { id: 'd5', name: 'Member Handbook.pdf', type: 'pdf', size: '1.8 MB', modified: '2024-01-10', owner: 'Admin', shared: true },
+  { id: 'd6', name: 'Conference Photos.zip', type: 'img', size: '48.5 MB', modified: '2024-02-04', owner: 'Media Team', shared: true },
+];
+
+// ============================================================================
+// ICONS
+// ============================================================================
+
+const FolderIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z" />
+  </svg>
+);
+
+const FileTextIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+  </svg>
+);
+
+const FileSpreadsheetIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="8" y1="13" x2="16" y2="13" />
+    <line x1="8" y1="17" x2="16" y2="17" />
+    <line x1="10" y1="9" x2="10" y2="21" />
+  </svg>
+);
+
+const FilePresentationIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <rect x="8" y="12" width="8" height="6" rx="1" />
+  </svg>
+);
+
+const FileImageIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <circle cx="10" cy="13" r="2" />
+    <path d="M20 17l-3-3-7 7" />
+  </svg>
+);
+
+const SearchIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="8" />
+    <path d="M21 21l-4.35-4.35" />
+  </svg>
+);
+
+const UploadIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+    <polyline points="17 8 12 3 7 8" />
+    <line x1="12" y1="3" x2="12" y2="15" />
+  </svg>
+);
+
+const MoreVerticalIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="1" />
+    <circle cx="12" cy="5" r="1" />
+    <circle cx="12" cy="19" r="1" />
+  </svg>
+);
+
+const ShareIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="18" cy="5" r="3" />
+    <circle cx="6" cy="12" r="3" />
+    <circle cx="18" cy="19" r="3" />
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+  </svg>
+);
+
+// ============================================================================
+// FILE ICON COMPONENT
+// ============================================================================
+
+function getFileIcon(type: Document['type'], className?: string, color?: string) {
+  const icons = {
+    folder: <FolderIcon className={className} style={{ color: color || '#F59E0B' }} />,
+    pdf: <FileTextIcon className={className} style={{ color: '#DC2626' }} />,
+    doc: <FileTextIcon className={className} style={{ color: '#2563EB' }} />,
+    xls: <FileSpreadsheetIcon className={className} style={{ color: '#16A34A' }} />,
+    ppt: <FilePresentationIcon className={className} style={{ color: '#EA580C' }} />,
+    img: <FileImageIcon className={className} style={{ color: '#7C3AED' }} />,
+  };
+  return icons[type];
+}
+
+// ============================================================================
+// DOCUMENT ROW
+// ============================================================================
+
+interface DocumentRowProps {
+  document: Document;
+  organization: Organization;
+  onSelect: () => void;
+  isSelected: boolean;
+}
+
+function DocumentRow({ document, organization, onSelect, isSelected }: DocumentRowProps) {
+  return (
+    <motion.div
+      className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-colors ${
+        isSelected ? 'ring-2' : ''
+      }`}
+      style={{
+        backgroundColor: isSelected ? `rgba(${organization.theme.primaryRgb}, 0.05)` : 'transparent',
+        ringColor: isSelected ? organization.theme.primary : undefined,
+      }}
+      onClick={onSelect}
+      whileHover={{ backgroundColor: `rgba(${organization.theme.primaryRgb}, 0.03)` }}
+    >
+      {/* Icon */}
+      <div className="flex-shrink-0">
+        {getFileIcon(document.type, 'w-8 h-8', organization.theme.primary)}
+      </div>
+
+      {/* Name & Info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="font-medium text-gray-900 truncate">{document.name}</span>
+          {document.shared && (
+            <ShareIcon className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+          )}
+        </div>
+        <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+          <span>{document.owner}</span>
+          <span>•</span>
+          <span>{new Date(document.modified).toLocaleDateString()}</span>
+          {document.size && (
+            <>
+              <span>•</span>
+              <span>{document.size}</span>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Actions */}
+      <button
+        className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+        onClick={(e) => {
+          e.stopPropagation();
+          // Handle menu
+        }}
+      >
+        <MoreVerticalIcon className="w-4 h-4 text-gray-400" />
+      </button>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
+export function VaultPage({ organization, account }: VaultPageProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
+  const [currentFolder, setCurrentFolder] = useState<string | null>(null);
+
+  const folders = MOCK_DOCUMENTS.filter((d) => d.type === 'folder');
+  const files = MOCK_DOCUMENTS.filter((d) => d.type !== 'folder');
+
+  const filteredDocs = [...folders, ...files].filter((d) =>
+    d.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1
+            className="text-3xl font-light mb-2"
+            style={{
+              fontFamily: 'Cormorant Garamond, Georgia, serif',
+              color: '#2C2A25',
+            }}
+          >
+            The Vault
+          </h1>
+          <p className="text-gray-500">
+            Secure document storage and management
+          </p>
+        </div>
+
+        <button
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-white font-medium text-sm"
+          style={{ background: organization.theme.gradientBtn }}
+        >
+          <UploadIcon className="w-4 h-4" />
+          Upload File
+        </button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {[
+          { label: 'Total Files', value: files.length.toString() },
+          { label: 'Folders', value: folders.length.toString() },
+          { label: 'Shared', value: MOCK_DOCUMENTS.filter(d => d.shared).length.toString() },
+          { label: 'Storage Used', value: '124.5 MB' },
+        ].map((stat, i) => (
+          <motion.div
+            key={i}
+            className="bg-white rounded-xl border p-4"
+            style={{ borderColor: '#EDE8DD' }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <p className="text-sm text-gray-500">{stat.label}</p>
+            <p className="text-2xl font-bold mt-1" style={{ color: organization.theme.primary }}>
+              {stat.value}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Search */}
+      <div className="mb-6">
+        <div className="relative max-w-md">
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search files and folders..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-sm focus:outline-none transition-all"
+            style={{ borderColor: '#EDE8DD' }}
+            onFocus={(e) => {
+              e.target.style.borderColor = organization.theme.primary;
+              e.target.style.boxShadow = `0 0 0 3px rgba(${organization.theme.primaryRgb}, 0.1)`;
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = '#EDE8DD';
+              e.target.style.boxShadow = 'none';
+            }}
+          />
+        </div>
+      </div>
+
+      {/* File List */}
+      <div className="bg-white rounded-xl border" style={{ borderColor: '#EDE8DD' }}>
+        {/* Header */}
+        <div className="flex items-center gap-4 px-4 py-3 border-b text-xs font-semibold text-gray-500 uppercase tracking-wider" style={{ borderColor: '#EDE8DD' }}>
+          <div className="flex-1">Name</div>
+          <div className="w-32 text-center">Owner</div>
+          <div className="w-28 text-center">Modified</div>
+          <div className="w-20 text-center">Size</div>
+          <div className="w-12"></div>
+        </div>
+
+        {/* Folders */}
+        {folders.length > 0 && !searchQuery && (
+          <div className="border-b" style={{ borderColor: '#EDE8DD' }}>
+            <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50">
+              Folders
+            </div>
+            <div className="divide-y" style={{ borderColor: '#EDE8DD' }}>
+              {folders.map((folder) => (
+                <DocumentRow
+                  key={folder.id}
+                  document={folder}
+                  organization={organization}
+                  onSelect={() => setSelectedDoc(folder.id)}
+                  isSelected={selectedDoc === folder.id}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Files */}
+        <div>
+          {!searchQuery && (
+            <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50">
+              Files
+            </div>
+          )}
+          <div className="divide-y" style={{ borderColor: '#EDE8DD' }}>
+            {(searchQuery ? filteredDocs : files).map((doc) => (
+              <DocumentRow
+                key={doc.id}
+                document={doc}
+                organization={organization}
+                onSelect={() => setSelectedDoc(doc.id)}
+                isSelected={selectedDoc === doc.id}
+              />
+            ))}
+          </div>
+        </div>
+
+        {filteredDocs.length === 0 && (
+          <div className="text-center py-12">
+            <FileTextIcon className="w-12 h-12 mx-auto text-gray-300 mb-4" />
+            <p className="text-gray-500">No files found matching your search.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default VaultPage;

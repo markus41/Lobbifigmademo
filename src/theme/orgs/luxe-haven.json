@@ -1,0 +1,187 @@
+{
+  "$schema": "../types/org-theme.schema.json",
+  "orgId": "luxe-haven",
+  "name": "Luxe Haven Resort",
+  "short": "Luxe Haven",
+  "motto": "Where every detail speaks of excellence",
+  "logoLetter": "LH",
+
+  "identity": {
+    "personality": "opulent",
+    "era": "art-deco",
+    "mood": "warm-luxury"
+  },
+
+  "colors": {
+    "primary": {
+      "50": "#FDF9EF",
+      "100": "#F5E6A3",
+      "200": "#F4D03F",
+      "300": "#E5C76B",
+      "400": "#D4AF37",
+      "500": "#D4AF37",
+      "600": "#C5A028",
+      "700": "#8B7330",
+      "800": "#6B5A28",
+      "900": "#4A3E1C"
+    },
+    "primaryHex": "#D4AF37",
+    "primaryLight": "#F4D03F",
+    "primaryPale": "#F5E6A3",
+    "primaryDark": "#8B7330",
+    "primaryRgb": "212,175,55",
+
+    "accent": {
+      "50": "#FFF9F0",
+      "100": "#FFF3E0",
+      "200": "#FFE4B8",
+      "300": "#FFD48A",
+      "400": "#FFC45C",
+      "500": "#FFB42E",
+      "600": "#E69A00",
+      "700": "#B37800",
+      "800": "#805500",
+      "900": "#4D3300"
+    },
+
+    "surface": {
+      "canvas": "#FAF6E9",
+      "card": "#FFFFFF",
+      "cardHover": "#FFFBF5",
+      "panel": "rgba(255,255,255,0.92)",
+      "overlay": "rgba(255,250,242,0.86)"
+    },
+
+    "sidebar": {
+      "bg": "linear-gradient(180deg, #151412 0%, #111110 100%)",
+      "text": "#C4BCAB",
+      "textHover": "#F0ECE2",
+      "activeText": "#F5E6A3",
+      "activeBg": "rgba(212,175,55,0.12)",
+      "border": "rgba(212,175,55,0.08)"
+    }
+  },
+
+  "gradients": {
+    "brand": "linear-gradient(135deg, #F5E6A3, #D4AF37, #8B7330)",
+    "button": "linear-gradient(135deg, #8B7330, #D4AF37)",
+    "avatar": "linear-gradient(135deg, #D4AF37, #8B7330)",
+    "hero": "linear-gradient(135deg, #D4AF37 0%, #F4D03F 50%, #8B7330 100%)",
+    "glow": "radial-gradient(circle, rgba(212,175,55,0.12), transparent 70%)"
+  },
+
+  "patterns": {
+    "cardBg": "linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(250,246,233,0.92) 100%)",
+    "accentPattern": "repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(212,175,55,0.03) 10px, rgba(212,175,55,0.03) 20px)",
+    "borderStyle": "double",
+    "borderWidth": "3px",
+    "logoShape": "diamond"
+  },
+
+  "org": {
+    "mode": "elastic",
+    "accentShift": {
+      "hueDelta": 0,
+      "satMul": 1.0,
+      "lumMul": 1.0
+    },
+    "motionPersonality": {
+      "cadenceMul": 1.0,
+      "amplitudeMul": 1.0,
+      "rotationMul": 1.0
+    },
+    "brandMark": {
+      "showL": true,
+      "monogramOpacity": 0.18
+    }
+  },
+
+  "components": {
+    "button": {
+      "primary": {
+        "bg": "linear-gradient(135deg, #8B7330, #D4AF37)",
+        "color": "#FFFFFF",
+        "hoverBg": "linear-gradient(135deg, #6B5A28, #C5A028)",
+        "shadow": "0 4px 16px rgba(212,175,55,0.25)",
+        "hoverShadow": "0 8px 32px rgba(212,175,55,0.35)"
+      },
+      "secondary": {
+        "bg": "transparent",
+        "color": "#D4AF37",
+        "border": "1px solid rgba(212,175,55,0.4)",
+        "hoverBg": "rgba(212,175,55,0.08)"
+      },
+      "ghost": {
+        "bg": "transparent",
+        "color": "#D4AF37",
+        "hoverBg": "rgba(212,175,55,0.06)"
+      }
+    },
+    "input": {
+      "bg": "rgba(212,175,55,0.03)",
+      "border": "rgba(212,175,55,0.15)",
+      "focusBorder": "rgba(212,175,55,0.6)",
+      "focusShadow": "0 0 0 4px rgba(212,175,55,0.08), 0 8px 24px rgba(212,175,55,0.12)"
+    },
+    "card": {
+      "topBar": "linear-gradient(90deg, #8B7330, #D4AF37, #8B7330)",
+      "border": "#EDE8DD",
+      "shadow": "0 8px 32px rgba(0,0,0,0.06)"
+    },
+    "avatar": {
+      "bg": "linear-gradient(135deg, #D4AF37, #8B7330)",
+      "border": "2px solid rgba(212,175,55,0.3)"
+    },
+    "badge": {
+      "bg": "rgba(212,175,55,0.18)",
+      "color": "#F5E6A3"
+    },
+    "tooltip": {
+      "bg": "#2C2A25",
+      "color": "#F5E6A3"
+    }
+  },
+
+  "semantic": {
+    "kpiUp": {
+      "color": "#047857",
+      "bg": "rgba(4,120,87,0.08)"
+    },
+    "kpiDown": {
+      "color": "#B85C4A",
+      "bg": "rgba(184,92,74,0.08)"
+    },
+    "activityDot": "#D4AF37",
+    "activityDotAlt": "#8B7330"
+  },
+
+  "chakra": {
+    "colors": {
+      "brand": {
+        "50": "#FDF9EF",
+        "100": "#F5E6A3",
+        "200": "#F4D03F",
+        "300": "#E5C76B",
+        "400": "#D4AF37",
+        "500": "#D4AF37",
+        "600": "#C5A028",
+        "700": "#8B7330",
+        "800": "#6B5A28",
+        "900": "#4A3E1C"
+      }
+    },
+    "semanticTokens": {
+      "colors": {
+        "brand.primary": "#D4AF37",
+        "brand.secondary": "#8B7330",
+        "bg.canvas": "#FAF6E9",
+        "bg.surface": "#FFFFFF",
+        "text.primary": "#2C2A25",
+        "text.secondary": "#8A8578",
+        "text.muted": "#B8B0A0",
+        "border.default": "#EDE8DD",
+        "border.accent": "rgba(212,175,55,0.35)"
+      }
+    }
+  }
+}

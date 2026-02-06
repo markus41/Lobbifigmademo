@@ -1,0 +1,187 @@
+{
+  "$schema": "../types/org-theme.schema.json",
+  "orgId": "verde-collective",
+  "name": "Verde Collective",
+  "short": "Verde",
+  "motto": "Sustainable luxury, natural elegance",
+  "logoLetter": "VC",
+
+  "identity": {
+    "personality": "organic",
+    "era": "botanical-modern",
+    "mood": "tranquil-growth"
+  },
+
+  "colors": {
+    "primary": {
+      "50": "#F0FDF4",
+      "100": "#DCFCE7",
+      "200": "#BBF7D0",
+      "300": "#86EFAC",
+      "400": "#4ADE80",
+      "500": "#22C55E",
+      "600": "#16A34A",
+      "700": "#15803D",
+      "800": "#166534",
+      "900": "#14532D"
+    },
+    "primaryHex": "#22C55E",
+    "primaryLight": "#4ADE80",
+    "primaryPale": "#DCFCE7",
+    "primaryDark": "#15803D",
+    "primaryRgb": "34,197,94",
+
+    "accent": {
+      "50": "#ECFDF5",
+      "100": "#D1FAE5",
+      "200": "#A7F3D0",
+      "300": "#6EE7B7",
+      "400": "#34D399",
+      "500": "#10B981",
+      "600": "#059669",
+      "700": "#047857",
+      "800": "#065F46",
+      "900": "#064E3B"
+    },
+
+    "surface": {
+      "canvas": "#F7FCF9",
+      "card": "#FFFFFF",
+      "cardHover": "#F0FDF4",
+      "panel": "rgba(255,255,255,0.93)",
+      "overlay": "rgba(247,252,249,0.87)"
+    },
+
+    "sidebar": {
+      "bg": "linear-gradient(180deg, #14532D 0%, #0F3D22 100%)",
+      "text": "#86EFAC",
+      "textHover": "#DCFCE7",
+      "activeText": "#BBF7D0",
+      "activeBg": "rgba(34,197,94,0.14)",
+      "border": "rgba(34,197,94,0.10)"
+    }
+  },
+
+  "gradients": {
+    "brand": "linear-gradient(135deg, #DCFCE7, #22C55E, #15803D)",
+    "button": "linear-gradient(135deg, #15803D, #22C55E)",
+    "avatar": "linear-gradient(135deg, #22C55E, #15803D)",
+    "hero": "linear-gradient(135deg, #22C55E 0%, #4ADE80 50%, #15803D 100%)",
+    "glow": "radial-gradient(circle, rgba(34,197,94,0.14), transparent 70%)"
+  },
+
+  "patterns": {
+    "cardBg": "linear-gradient(165deg, rgba(255,255,255,0.96) 0%, rgba(247,252,249,0.93) 100%)",
+    "accentPattern": "repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(34,197,94,0.03) 10px, rgba(34,197,94,0.03) 20px)",
+    "borderStyle": "solid",
+    "borderWidth": "1px",
+    "logoShape": "leaf"
+  },
+
+  "org": {
+    "mode": "elastic",
+    "accentShift": {
+      "hueDelta": 0,
+      "satMul": 1.0,
+      "lumMul": 1.0
+    },
+    "motionPersonality": {
+      "cadenceMul": 0.85,
+      "amplitudeMul": 0.75,
+      "rotationMul": 0.8
+    },
+    "brandMark": {
+      "showL": true,
+      "monogramOpacity": 0.14
+    }
+  },
+
+  "components": {
+    "button": {
+      "primary": {
+        "bg": "linear-gradient(135deg, #15803D, #22C55E)",
+        "color": "#FFFFFF",
+        "hoverBg": "linear-gradient(135deg, #166534, #16A34A)",
+        "shadow": "0 4px 16px rgba(34,197,94,0.25)",
+        "hoverShadow": "0 8px 32px rgba(34,197,94,0.35)"
+      },
+      "secondary": {
+        "bg": "transparent",
+        "color": "#22C55E",
+        "border": "1px solid rgba(34,197,94,0.4)",
+        "hoverBg": "rgba(34,197,94,0.08)"
+      },
+      "ghost": {
+        "bg": "transparent",
+        "color": "#22C55E",
+        "hoverBg": "rgba(34,197,94,0.06)"
+      }
+    },
+    "input": {
+      "bg": "rgba(34,197,94,0.03)",
+      "border": "rgba(34,197,94,0.15)",
+      "focusBorder": "rgba(34,197,94,0.6)",
+      "focusShadow": "0 0 0 4px rgba(34,197,94,0.08), 0 8px 24px rgba(34,197,94,0.12)"
+    },
+    "card": {
+      "topBar": "linear-gradient(90deg, #15803D, #22C55E, #15803D)",
+      "border": "#DCFCE7",
+      "shadow": "0 8px 32px rgba(0,0,0,0.05)"
+    },
+    "avatar": {
+      "bg": "linear-gradient(135deg, #22C55E, #15803D)",
+      "border": "2px solid rgba(34,197,94,0.3)"
+    },
+    "badge": {
+      "bg": "rgba(34,197,94,0.18)",
+      "color": "#DCFCE7"
+    },
+    "tooltip": {
+      "bg": "#14532D",
+      "color": "#DCFCE7"
+    }
+  },
+
+  "semantic": {
+    "kpiUp": {
+      "color": "#047857",
+      "bg": "rgba(4,120,87,0.08)"
+    },
+    "kpiDown": {
+      "color": "#DC2626",
+      "bg": "rgba(220,38,38,0.08)"
+    },
+    "activityDot": "#22C55E",
+    "activityDotAlt": "#15803D"
+  },
+
+  "chakra": {
+    "colors": {
+      "brand": {
+        "50": "#F0FDF4",
+        "100": "#DCFCE7",
+        "200": "#BBF7D0",
+        "300": "#86EFAC",
+        "400": "#4ADE80",
+        "500": "#22C55E",
+        "600": "#16A34A",
+        "700": "#15803D",
+        "800": "#166534",
+        "900": "#14532D"
+      }
+    },
+    "semanticTokens": {
+      "colors": {
+        "brand.primary": "#22C55E",
+        "brand.secondary": "#15803D",
+        "bg.canvas": "#F7FCF9",
+        "bg.surface": "#FFFFFF",
+        "text.primary": "#14532D",
+        "text.secondary": "#166534",
+        "text.muted": "#86EFAC",
+        "border.default": "#DCFCE7",
+        "border.accent": "rgba(34,197,94,0.35)"
+      }
+    }
+  }
+}

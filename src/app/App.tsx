@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { LandingPage } from './components/LandingPage';
 import { EmailSelection } from './components/EmailSelection';
@@ -11,9 +11,22 @@ import { TopNav } from './components/TopNav';
 import { AIBellhop } from './components/AIBellhop';
 import { CinematicBackground } from './components/CinematicBackground';
 import { GeometricOctagon } from './components/GeometricOctagon';
-import { ACCOUNTS, ORGANIZATIONS, type Account, type Organization } from './data/themes';
+import { ACCOUNTS, ORGANIZATIONS, applyTheme, type Account, type Organization } from './data/themes';
 
-type Stage = 'logo' | 'landing' | 'email' | 'orgLogin' | 'welcome' | 'dashboardEntry' | 'dashboard';
+// Page components
+import { RegistryPage } from './components/pages/RegistryPage';
+import { BusinessCenterPage } from './components/pages/BusinessCenterPage';
+import { EventsPavilionPage } from './components/pages/EventsPavilionPage';
+import { VaultPage } from './components/pages/VaultPage';
+import { SettingsPage } from './components/pages/SettingsPage';
+
+// Demo banner
+import { DemoBanner, DemoBannerMinimized } from './components/DemoBanner';
+
+// Member Portal
+import { MemberPortal } from './components/MemberPortal';
+
+type Stage = 'logo' | 'landing' | 'email' | 'orgLogin' | 'welcome' | 'dashboardEntry' | 'dashboard' | 'memberPortal';
 
 export default function App() {
   const [stage, setStage] = useState<Stage>('landing');
@@ -24,6 +37,9 @@ export default function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isBellhopOpen, setIsBellhopOpen] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+
+  // Demo banner state
+  const [showDemoBanner, setShowDemoBanner] = useState(true);
 
   // Auto-progress from logo to landing
   useEffect(() => {
@@ -36,14 +52,21 @@ export default function App() {
   // Apply theme when organization is selected
   useEffect(() => {
     if (selectedOrg) {
-      const root = document.documentElement;
-      root.style.setProperty('--theme-primary', selectedOrg.theme.primary);
-      root.style.setProperty('--theme-primary-light', selectedOrg.theme.primaryLight);
-      root.style.setProperty('--theme-primary-pale', selectedOrg.theme.primaryPale);
-      root.style.setProperty('--theme-primary-dark', selectedOrg.theme.primaryDark);
-      root.style.setProperty('--theme-primary-rgb', selectedOrg.theme.primaryRgb);
+      applyTheme(selectedOrg);
     }
   }, [selectedOrg]);
+
+  // Handle organization change from demo banner
+  const handleOrganizationChange = useCallback((org: Organization) => {
+    // Find an account that belongs to this org, or keep the current account
+    const accountForOrg = ACCOUNTS.find(a => a.orgId === org.id);
+    if (accountForOrg) {
+      setSelectedAccount(accountForOrg);
+      setSelectedEmail(accountForOrg.email);
+    }
+    setSelectedOrg(org);
+    applyTheme(org);
+  }, []);
 
   const handleLoginClick = () => {
     setStage('email');
@@ -73,12 +96,32 @@ export default function App() {
     setStage('dashboard');
   };
 
+  const handleMemberPortalClick = () => {
+    setStage('memberPortal');
+  };
+
+  const handleSwitchToAdmin = () => {
+    setStage('dashboard');
+  };
+
   const renderPage = () => {
+    if (!selectedOrg || !selectedAccount) return null;
+
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard organization={selectedOrg} account={selectedAccount} />;
+      case 'registry':
+        return <RegistryPage organization={selectedOrg} account={selectedAccount} />;
+      case 'business':
+        return <BusinessCenterPage organization={selectedOrg} account={selectedAccount} />;
+      case 'events':
+        return <EventsPavilionPage organization={selectedOrg} account={selectedAccount} />;
+      case 'vault':
+        return <VaultPage organization={selectedOrg} account={selectedAccount} />;
+      case 'settings':
+        return <SettingsPage organization={selectedOrg} account={selectedAccount} />;
       default:
-        return <Dashboard />;
+        return <Dashboard organization={selectedOrg} account={selectedAccount} />;
     }
   };
 
@@ -111,7 +154,7 @@ export default function App() {
       {/* STAGE 4: ORG-SPECIFIC LOGIN */}
       <AnimatePresence>
         {stage === 'orgLogin' && selectedAccount && selectedOrg && (
-          <OrgLogin 
+          <OrgLogin
             account={selectedAccount}
             organization={selectedOrg}
             onLogin={handleOrgLogin}
@@ -122,7 +165,7 @@ export default function App() {
       {/* STAGE 5: WELCOME SCREEN */}
       <AnimatePresence>
         {stage === 'welcome' && selectedAccount && selectedOrg && (
-          <WelcomeScreen 
+          <WelcomeScreen
             onComplete={handleWelcomeComplete}
             organization={selectedOrg}
             account={selectedAccount}
@@ -133,7 +176,7 @@ export default function App() {
       {/* STAGE 6: DASHBOARD ENTRY ANIMATION */}
       <AnimatePresence>
         {stage === 'dashboardEntry' && selectedAccount && selectedOrg && (
-          <DashboardEntryAnimation 
+          <DashboardEntryAnimation
             onCompleted={handleDashboardEntryComplete}
             organization={selectedOrg}
             account={selectedAccount}
@@ -148,47 +191,79 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
-            className="fixed inset-0 z-60 flex bg-gray-50"
+            className="fixed inset-0 z-60 flex flex-col bg-gray-50"
           >
-            <Sidebar 
-              currentPage={currentPage}
-              onNavigate={setCurrentPage}
-              isCollapsed={isSidebarCollapsed}
-              onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              organization={selectedOrg}
-              account={selectedAccount}
+            {/* Demo Banner - Sits above everything */}
+            <DemoBanner
+              isVisible={showDemoBanner}
+              onVisibilityChange={setShowDemoBanner}
+              onMemberPortalClick={handleMemberPortalClick}
+              onOrganizationChange={handleOrganizationChange}
+              currentOrganization={selectedOrg}
             />
-            
-            <div 
-              className={`flex-1 flex flex-col transition-all duration-300 ${
-                isSidebarCollapsed ? 'ml-[72px]' : 'ml-[240px]'
-              }`}
-            >
-              <TopNav 
-                onMenuClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                onBellhopClick={() => setIsBellhopOpen(true)}
+
+            {/* Minimized demo button when banner is hidden */}
+            {!showDemoBanner && (
+              <DemoBannerMinimized onRestore={() => setShowDemoBanner(true)} />
+            )}
+
+            {/* Main Layout */}
+            <div className="flex flex-1 overflow-hidden">
+              <Sidebar
+                currentPage={currentPage}
+                onNavigate={setCurrentPage}
+                isCollapsed={isSidebarCollapsed}
+                onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                 organization={selectedOrg}
                 account={selectedAccount}
               />
-              
-              <main className="flex-1 overflow-y-auto bg-gray-50">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentPage}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {renderPage()}
-                  </motion.div>
-                </AnimatePresence>
-              </main>
-            </div>
 
-            <AIBellhop 
-              isOpen={isBellhopOpen}
-              onClose={() => setIsBellhopOpen(false)}
+              <div className="flex-1 flex flex-col overflow-hidden">
+                <TopNav
+                  onMenuClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                  onBellhopClick={() => setIsBellhopOpen(true)}
+                  organization={selectedOrg}
+                  account={selectedAccount}
+                />
+
+                <main className="flex-1 overflow-y-auto bg-gray-50">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentPage}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      {renderPage()}
+                    </motion.div>
+                  </AnimatePresence>
+                </main>
+              </div>
+
+              <AIBellhop
+                isOpen={isBellhopOpen}
+                onClose={() => setIsBellhopOpen(false)}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* STAGE 8: MEMBER PORTAL (Mobile-First View) */}
+      <AnimatePresence>
+        {stage === 'memberPortal' && selectedAccount && selectedOrg && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="fixed inset-0 z-70"
+          >
+            <MemberPortal
+              organization={selectedOrg}
+              account={selectedAccount}
+              onSwitchToAdmin={handleSwitchToAdmin}
             />
           </motion.div>
         )}
