@@ -638,3 +638,254 @@ html.theme-transitioning * {
               border-color 0.5s ease,
               box-shadow 0.5s ease !important;
 }
+
+/* ============================================================================
+   THEME-AWARE UTILITY CLASSES
+   Dynamic styling that responds to organization themes
+   ============================================================================ */
+
+/* Card styles that respond to theme */
+.card-themed {
+  background: var(--theme-bg-card, #FFFFFF);
+  border-radius: var(--theme-radius, 0.5rem);
+  border: 1px var(--theme-border-style, solid) var(--theme-border, #E5E5E5);
+  box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  transition: all var(--theme-transition-duration, 250ms) ease;
+}
+
+.card-themed:hover {
+  box-shadow: var(--theme-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+}
+
+/* Card style variations */
+.card-flat {
+  background: var(--theme-bg-card, #FFFFFF);
+  border-radius: var(--theme-radius, 0.5rem);
+  border: 1px var(--theme-border-style, solid) var(--theme-border, #E5E5E5);
+  box-shadow: none;
+}
+
+.card-raised {
+  background: var(--theme-bg-card, #FFFFFF);
+  border-radius: var(--theme-radius, 0.5rem);
+  border: none;
+  box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+.card-outlined {
+  background: var(--theme-bg-card, #FFFFFF);
+  border-radius: var(--theme-radius, 0.5rem);
+  border: 2px var(--theme-border-style, solid) var(--theme-border, #E5E5E5);
+  box-shadow: none;
+}
+
+.card-glass {
+  background: rgba(255, 255, 255, var(--theme-glass-opacity, 0.8));
+  backdrop-filter: blur(var(--theme-glass-blur, 12px));
+  -webkit-backdrop-filter: blur(var(--theme-glass-blur, 12px));
+  border-radius: var(--theme-radius, 0.5rem);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+/* Typography that uses theme fonts */
+.text-display {
+  font-family: var(--theme-font-display, 'Playfair Display', Georgia, serif);
+  font-weight: var(--theme-font-weight-heading, 600);
+  letter-spacing: var(--theme-letter-spacing, 0);
+}
+
+.text-body {
+  font-family: var(--theme-font-body, 'Inter', system-ui, sans-serif);
+  font-weight: var(--theme-font-weight-body, 400);
+  letter-spacing: var(--theme-letter-spacing, 0);
+}
+
+.text-mono {
+  font-family: var(--theme-font-mono, 'JetBrains Mono', monospace);
+}
+
+/* Theme colors */
+.text-primary {
+  color: var(--theme-text-primary, #1A1A2E);
+}
+
+.text-secondary {
+  color: var(--theme-text-secondary, #4A4A5A);
+}
+
+.text-muted {
+  color: var(--theme-text-muted, #7A7A8A);
+}
+
+.text-accent {
+  color: var(--theme-primary, #D4AF37);
+}
+
+/* Backgrounds */
+.bg-themed {
+  background: var(--theme-bg-primary, #FAFAFA);
+}
+
+.bg-card-themed {
+  background: var(--theme-bg-card, #FFFFFF);
+}
+
+.bg-surface-themed {
+  background: var(--theme-bg-surface, #FFFFFF);
+}
+
+/* Borders */
+.border-themed {
+  border-color: var(--theme-border, #E5E5E5);
+}
+
+/* Buttons that use theme styling */
+.btn-themed {
+  background: var(--theme-gradient-btn, var(--theme-primary));
+  color: var(--theme-text-inverse, #FFFFFF);
+  border-radius: var(--theme-button-radius, 0.375rem);
+  box-shadow: var(--theme-button-shadow, none);
+  font-family: var(--theme-font-body, 'Inter', system-ui, sans-serif);
+  transition: all var(--theme-transition-duration, 250ms) ease;
+}
+
+.btn-themed:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--theme-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+.btn-outlined-themed {
+  background: transparent;
+  color: var(--theme-primary, #D4AF37);
+  border: 2px solid var(--theme-primary, #D4AF37);
+  border-radius: var(--theme-button-radius, 0.375rem);
+  font-family: var(--theme-font-body, 'Inter', system-ui, sans-serif);
+  transition: all var(--theme-transition-duration, 250ms) ease;
+}
+
+.btn-outlined-themed:hover {
+  background: var(--theme-primary, #D4AF37);
+  color: var(--theme-text-inverse, #FFFFFF);
+}
+
+/* Glow effect (only when enabled) */
+.glow-effect {
+  box-shadow: 0 0 20px rgba(var(--theme-primary-rgb, 212,175,55), 0.4);
+}
+
+/* Gradient text (only when enabled) */
+.gradient-text-themed {
+  background: var(--theme-gradient, linear-gradient(135deg, #D4AF37, #8B7330));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animated border effect */
+@keyframes border-pulse {
+  0%, 100% { border-color: var(--theme-primary, #D4AF37); }
+  50% { border-color: var(--theme-primary-light, #F4D03F); }
+}
+
+.animated-border {
+  animation: border-pulse 2s ease-in-out infinite;
+}
+
+/* Scanline effect for synthwave themes */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanline-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(var(--theme-primary-rgb, 255,0,255), 0.1);
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+}
+
+/* Pixel-perfect borders for retro themes */
+.pixel-border {
+  border-radius: 0;
+  border-width: 4px;
+  image-rendering: pixelated;
+}
+
+/* Zen/minimal transitions */
+.zen-transition {
+  transition: all 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Brutalist sharp edges */
+.brutalist-border {
+  border-radius: 0;
+  border: 3px solid var(--theme-primary, #000000);
+}
+
+/* Art Deco double border */
+.deco-border {
+  border: 3px double var(--theme-primary, #D4AF37);
+  border-radius: var(--theme-radius, 0.375rem);
+}
+
+/* Shadow variations based on intensity */
+.shadow-themed-sm {
+  box-shadow: var(--theme-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+}
+
+.shadow-themed-md {
+  box-shadow: var(--theme-shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+.shadow-themed-lg {
+  box-shadow: var(--theme-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+}
+
+.shadow-themed-xl {
+  box-shadow: var(--theme-shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
+}
+
+/* Hover effects based on theme */
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--theme-shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 30px rgba(var(--theme-primary-rgb, 212,175,55), 0.3);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-border:hover {
+  border-color: var(--theme-primary, #D4AF37);
+}
+
+/* Animation speed classes */
+.animate-fast {
+  animation-duration: 150ms;
+  transition-duration: 150ms;
+}
+
+.animate-normal {
+  animation-duration: 250ms;
+  transition-duration: 250ms;
+}
+
+.animate-slow {
+  animation-duration: 400ms;
+  transition-duration: 400ms;
+}
+
+.animate-slower {
+  animation-duration: 600ms;
+  transition-duration: 600ms;
+}

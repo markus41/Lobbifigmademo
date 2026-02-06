@@ -377,16 +377,28 @@ interface KpiCardComponentProps {
   card: KpiCard;
   primaryColor: string;
   primaryRgb: string;
+  borderColor?: string;
+  bgCard?: string;
+  textPrimary?: string;
+  textSecondary?: string;
 }
 
-function KpiCardComponent({ card, primaryColor, primaryRgb }: KpiCardComponentProps) {
+function KpiCardComponent({
+  card,
+  primaryColor,
+  primaryRgb,
+  borderColor = '#EDE8DD',
+  bgCard = '#FFFFFF',
+  textPrimary = '#1A1A2E',
+  textSecondary = '#4A4A5A',
+}: KpiCardComponentProps) {
   const [showHistory, setShowHistory] = useState(false);
   const trendColor = card.trend === 'up' ? '#16A34A' : card.trend === 'down' ? '#DC2626' : '#6B7280';
 
   return (
     <motion.div
-      className="bg-white rounded-xl border p-5 cursor-pointer relative overflow-hidden"
-      style={{ borderColor: '#EDE8DD' }}
+      className="rounded-xl border p-5 cursor-pointer relative overflow-hidden"
+      style={{ borderColor, background: bgCard }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2, boxShadow: `0 8px 24px rgba(${primaryRgb}, 0.12)` }}
@@ -415,12 +427,12 @@ function KpiCardComponent({ card, primaryColor, primaryRgb }: KpiCardComponentPr
 
       {/* Value */}
       <div className="mb-2">
-        <p className="text-sm text-gray-500 mb-1">{card.label}</p>
-        <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+        <p className="text-sm mb-1" style={{ color: textSecondary }}>{card.label}</p>
+        <p className="text-2xl font-bold" style={{ color: textPrimary }}>{card.value}</p>
       </div>
 
       {/* Change Label */}
-      <p className="text-xs text-gray-400">{card.changeLabel}</p>
+      <p className="text-xs" style={{ opacity: 0.6, color: textSecondary }}>{card.changeLabel}</p>
 
       {/* Sparkline */}
       <div className="mt-4">
@@ -431,13 +443,14 @@ function KpiCardComponent({ card, primaryColor, primaryRgb }: KpiCardComponentPr
       <AnimatePresence>
         {showHistory && (
           <motion.div
-            className="absolute inset-0 bg-white p-5 z-10"
+            className="absolute inset-0 p-5 z-10"
+            style={{ background: bgCard }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <div className="flex items-center justify-between mb-4">
-              <p className="font-semibold text-gray-900">{card.label} History</p>
+              <p className="font-semibold" style={{ color: textPrimary }}>{card.label} History</p>
               <button
                 className="text-gray-400 hover:text-gray-600"
                 onClick={(e) => {
@@ -451,7 +464,7 @@ function KpiCardComponent({ card, primaryColor, primaryRgb }: KpiCardComponentPr
             <div className="space-y-2">
               {card.history.map((h, i) => (
                 <div key={i} className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">
+                  <span style={{ color: textSecondary }}>
                     {new Date(h.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                   </span>
                   <span className="font-medium" style={{ color: primaryColor }}>
@@ -514,6 +527,18 @@ export function Dashboard({ organization, account }: DashboardProps) {
   const gradientBtn = organization?.theme.gradientBtn || 'linear-gradient(135deg, #8B7330, #D4AF37)';
   const userName = account?.first || 'Guest';
 
+  // Theme-aware values
+  const fontDisplay = organization?.theme.fontDisplay || 'Playfair Display, Georgia, serif';
+  const borderColor = organization?.theme.borderColor || '#EDE8DD';
+  const bgCard = organization?.theme.bgCard || '#FFFFFF';
+  const textPrimary = organization?.theme.textPrimary || '#2C2A25';
+  const textSecondary = organization?.theme.textSecondary || '#4A4A5A';
+  const textMuted = organization?.theme.textMuted || '#7A7A8A';
+  const bgPrimary = organization?.theme.bgPrimary || '#FAF6E9';
+  const borderRadius = organization?.theme.borderRadius || 'md';
+  const cardStyle = organization?.theme.cardStyle || 'raised';
+  const transitionDuration = organization?.theme.transitionDuration || 'normal';
+
   return (
     <div className="p-6">
       {/* Welcome Header */}
@@ -521,8 +546,8 @@ export function Dashboard({ organization, account }: DashboardProps) {
         <motion.h1
           className="text-3xl font-light mb-2"
           style={{
-            fontFamily: 'Cormorant Garamond, Georgia, serif',
-            color: '#2C2A25',
+            fontFamily: fontDisplay,
+            color: textPrimary,
           }}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -530,7 +555,7 @@ export function Dashboard({ organization, account }: DashboardProps) {
           Welcome back, {userName}
         </motion.h1>
         <motion.p
-          className="text-gray-500"
+          style={{ color: textSecondary }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
@@ -552,6 +577,10 @@ export function Dashboard({ organization, account }: DashboardProps) {
               card={card}
               primaryColor={primaryColor}
               primaryRgb={primaryRgb}
+              borderColor={borderColor}
+              bgCard={bgCard}
+              textPrimary={textPrimary}
+              textSecondary={textSecondary}
             />
           </motion.div>
         ))}
@@ -561,19 +590,19 @@ export function Dashboard({ organization, account }: DashboardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Quick Actions */}
         <motion.div
-          className="bg-white rounded-xl border p-6"
-          style={{ borderColor: '#EDE8DD' }}
+          className="rounded-xl border p-6"
+          style={{ borderColor, background: bgCard }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <h2 className="text-lg font-semibold mb-4" style={{ color: textPrimary }}>Quick Actions</h2>
           <div className="grid grid-cols-2 gap-3">
             {QUICK_ACTIONS.map((action) => (
               <motion.button
                 key={action.id}
                 className="p-4 rounded-lg border text-left transition-colors"
-                style={{ borderColor: '#EDE8DD' }}
+                style={{ borderColor, background: bgCard }}
                 whileHover={{
                   backgroundColor: `rgba(${primaryRgb}, 0.05)`,
                   borderColor: primaryColor,
@@ -585,8 +614,8 @@ export function Dashboard({ organization, account }: DashboardProps) {
                 >
                   {action.icon}
                 </div>
-                <p className="font-medium text-gray-900 text-sm">{action.label}</p>
-                <p className="text-xs text-gray-500">{action.description}</p>
+                <p className="font-medium text-sm" style={{ color: textPrimary }}>{action.label}</p>
+                <p className="text-xs" style={{ color: textSecondary }}>{action.description}</p>
               </motion.button>
             ))}
           </div>
@@ -594,13 +623,13 @@ export function Dashboard({ organization, account }: DashboardProps) {
 
         {/* Member Breakdown */}
         <motion.div
-          className="bg-white rounded-xl border p-6"
-          style={{ borderColor: '#EDE8DD' }}
+          className="rounded-xl border p-6"
+          style={{ borderColor, background: bgCard }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
         >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Membership Tiers</h2>
+          <h2 className="text-lg font-semibold mb-4" style={{ color: textPrimary }}>Membership Tiers</h2>
 
           {/* Donut Chart Placeholder */}
           <div className="relative w-32 h-32 mx-auto mb-4">
@@ -629,8 +658,8 @@ export function Dashboard({ organization, account }: DashboardProps) {
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <p className="text-xl font-bold text-gray-900">1,284</p>
-                <p className="text-[10px] text-gray-500">Total</p>
+                <p className="text-xl font-bold" style={{ color: textPrimary }}>1,284</p>
+                <p className="text-[10px]" style={{ color: textSecondary }}>Total</p>
               </div>
             </div>
           </div>
@@ -644,9 +673,9 @@ export function Dashboard({ organization, account }: DashboardProps) {
                     className="w-3 h-3 rounded-full"
                     style={{ background: stat.color }}
                   />
-                  <span className="text-xs text-gray-600">{stat.label}</span>
+                  <span className="text-xs" style={{ color: textSecondary }}>{stat.label}</span>
                 </div>
-                <span className="text-xs font-medium text-gray-900">{stat.value}</span>
+                <span className="text-xs font-medium" style={{ color: textPrimary }}>{stat.value}</span>
               </div>
             ))}
           </div>
@@ -654,14 +683,14 @@ export function Dashboard({ organization, account }: DashboardProps) {
 
         {/* Recent Activity */}
         <motion.div
-          className="lg:col-span-2 bg-white rounded-xl border p-6"
-          style={{ borderColor: '#EDE8DD' }}
+          className="lg:col-span-2 rounded-xl border p-6"
+          style={{ borderColor, background: bgCard }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+            <h2 className="text-lg font-semibold" style={{ color: textPrimary }}>Recent Activity</h2>
             <button
               className="text-sm font-medium transition-colors"
               style={{ color: primaryColor }}
@@ -673,10 +702,14 @@ export function Dashboard({ organization, account }: DashboardProps) {
             {RECENT_ACTIVITIES.map((activity, i) => (
               <motion.div
                 key={activity.id}
-                className="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-start gap-4 p-3 rounded-lg transition-colors"
+                style={{
+                  ['--hover-bg' as string]: `rgba(${primaryRgb}, 0.05)`,
+                }}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + i * 0.05 }}
+                whileHover={{ backgroundColor: `rgba(${primaryRgb}, 0.05)` }}
               >
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
@@ -685,10 +718,10 @@ export function Dashboard({ organization, account }: DashboardProps) {
                   {getActivityIcon(activity.type)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 text-sm">{activity.title}</p>
-                  <p className="text-sm text-gray-500 truncate">{activity.description}</p>
+                  <p className="font-medium text-sm" style={{ color: textPrimary }}>{activity.title}</p>
+                  <p className="text-sm truncate" style={{ color: textSecondary }}>{activity.description}</p>
                 </div>
-                <span className="text-xs text-gray-400 flex-shrink-0">{activity.time}</span>
+                <span className="text-xs flex-shrink-0" style={{ color: textMuted }}>{activity.time}</span>
               </motion.div>
             ))}
           </div>
@@ -697,14 +730,14 @@ export function Dashboard({ organization, account }: DashboardProps) {
 
       {/* Upcoming Events */}
       <motion.div
-        className="mt-6 bg-white rounded-xl border p-6"
-        style={{ borderColor: '#EDE8DD' }}
+        className="mt-6 rounded-xl border p-6"
+        style={{ borderColor, background: bgCard }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.55 }}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Upcoming Events</h2>
+          <h2 className="text-lg font-semibold" style={{ color: textPrimary }}>Upcoming Events</h2>
           <button
             className="text-sm font-medium transition-colors"
             style={{ color: primaryColor }}
@@ -718,12 +751,12 @@ export function Dashboard({ organization, account }: DashboardProps) {
             return (
               <motion.div
                 key={event.id}
-                className="p-4 rounded-lg border hover:shadow-md transition-all cursor-pointer"
-                style={{ borderColor: '#EDE8DD' }}
+                className="p-4 rounded-lg border transition-all cursor-pointer"
+                style={{ borderColor, background: bgCard }}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.55 + i * 0.05 }}
-                whileHover={{ y: -2 }}
+                whileHover={{ y: -2, boxShadow: `0 8px 24px rgba(${primaryRgb}, 0.12)` }}
               >
                 <div className="flex items-center justify-between mb-3">
                   <span
@@ -732,12 +765,12 @@ export function Dashboard({ organization, account }: DashboardProps) {
                   >
                     {typeStyles.label}
                   </span>
-                  <span className="text-xs text-gray-400">{event.attendees} attending</span>
+                  <span className="text-xs" style={{ color: textMuted }}>{event.attendees} attending</span>
                 </div>
-                <h3 className="font-medium text-gray-900 text-sm mb-2 line-clamp-2">
+                <h3 className="font-medium text-sm mb-2 line-clamp-2" style={{ color: textPrimary }}>
                   {event.title}
                 </h3>
-                <div className="flex items-center gap-2 text-xs text-gray-500">
+                <div className="flex items-center gap-2 text-xs" style={{ color: textSecondary }}>
                   <CalendarIcon className="w-3 h-3" />
                   <span>{event.date}</span>
                   <span>•</span>
@@ -751,13 +784,13 @@ export function Dashboard({ organization, account }: DashboardProps) {
 
       {/* Position History Summary */}
       <motion.div
-        className="mt-6 bg-white rounded-xl border p-6"
-        style={{ borderColor: '#EDE8DD' }}
+        className="mt-6 rounded-xl border p-6"
+        style={{ borderColor, background: bgCard }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
       >
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Your Position History</h2>
+        <h2 className="text-lg font-semibold mb-4" style={{ color: textPrimary }}>Your Position History</h2>
         <div className="flex items-center gap-6 overflow-x-auto pb-2">
           {[
             { role: 'Board Member', org: 'National', period: '2024 - Present', active: true },
@@ -771,16 +804,16 @@ export function Dashboard({ organization, account }: DashboardProps) {
                 pos.active ? '' : 'opacity-60'
               }`}
               style={{
-                borderColor: pos.active ? primaryColor : '#EDE8DD',
+                borderColor: pos.active ? primaryColor : borderColor,
                 background: pos.active ? `rgba(${primaryRgb}, 0.05)` : 'transparent',
               }}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: pos.active ? 1 : 0.6, scale: 1 }}
               transition={{ delay: 0.6 + i * 0.1 }}
             >
-              <p className="font-semibold text-gray-900 text-sm">{pos.role}</p>
-              <p className="text-xs text-gray-500">{pos.org}</p>
-              <p className="text-xs mt-2" style={{ color: pos.active ? primaryColor : '#9CA3AF' }}>
+              <p className="font-semibold text-sm" style={{ color: textPrimary }}>{pos.role}</p>
+              <p className="text-xs" style={{ color: textSecondary }}>{pos.org}</p>
+              <p className="text-xs mt-2" style={{ color: pos.active ? primaryColor : textMuted }}>
                 {pos.period}
               </p>
             </motion.div>

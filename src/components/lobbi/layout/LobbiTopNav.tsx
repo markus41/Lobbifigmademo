@@ -2,15 +2,17 @@
  * LobbiTopNav - Top navigation bar for The Lobbi
  *
  * Features:
+ * - Organization branding with dynamic name/logo
  * - Search bar with themed focus
  * - Concierge (AI) button with pulse animation
  * - Notifications with count badge
  * - User profile dropdown
  * - Breadcrumb support
+ * - Org switcher for demos
  */
 
-import { useState } from 'react';
-import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Search,
   Bell,
@@ -20,9 +22,11 @@ import {
   Settings,
   LogOut,
   User,
+  Building2,
+  Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { LobbiAvatar } from '../core';
+import { LobbiAvatar, LobbiOrgAvatar } from '../core';
 
 // =============================================================================
 // TYPES
@@ -31,6 +35,15 @@ import { LobbiAvatar } from '../core';
 export interface Breadcrumb {
   label: string;
   href?: string;
+}
+
+export interface Organization {
+  id: string;
+  name: string;
+  shortName: string;
+  logoLetter: string;
+  logoUrl?: string;
+  primaryColor?: string;
 }
 
 export interface LobbiTopNavProps {
@@ -46,6 +59,11 @@ export interface LobbiTopNavProps {
   showSearch?: boolean;
   searchPlaceholder?: string;
   onSearch?: (query: string) => void;
+  // Organization props
+  organization?: Organization;
+  availableOrgs?: Organization[];
+  onOrgChange?: (orgId: string) => void;
+  showOrgSwitcher?: boolean;
 }
 
 // =============================================================================
@@ -65,13 +83,30 @@ export function LobbiTopNav({
   showSearch = true,
   searchPlaceholder = 'Search members, events...',
   onSearch,
+  organization,
+  availableOrgs = [],
+  onOrgChange,
+  showOrgSwitcher = false,
 }: LobbiTopNavProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isOrgSwitcherOpen, setIsOrgSwitcherOpen] = useState(false);
+
+  // Update document title when organization changes
+  useEffect(() => {
+    if (organization) {
+      document.title = `${organization.name} | The Lobbi`;
+    }
+  }, [organization]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch?.(searchQuery);
+  };
+
+  const handleOrgSelect = (orgId: string) => {
+    onOrgChange?.(orgId);
+    setIsOrgSwitcherOpen(false);
   };
 
   return (
@@ -100,6 +135,106 @@ export function LobbiTopNav({
           >
             <Menu className="w-5 h-5" />
           </button>
+        )}
+
+        {/* Organization Branding / Switcher */}
+        {organization && (
+          <div className="relative">
+            <button
+              onClick={() => showOrgSwitcher && setIsOrgSwitcherOpen(!isOrgSwitcherOpen)}
+              className={cn(
+                'flex items-center gap-3 py-2 px-3 rounded-lg',
+                showOrgSwitcher && 'hover:bg-gray-50 cursor-pointer',
+                !showOrgSwitcher && 'cursor-default'
+              )}
+            >
+              <LobbiOrgAvatar
+                letter={organization.logoLetter}
+                name={organization.name}
+                src={organization.logoUrl}
+                size="sm"
+              />
+              <div className="hidden sm:flex flex-col items-start">
+                <span className="text-sm font-semibold text-gray-900">
+                  {organization.shortName}
+                </span>
+                {showOrgSwitcher && (
+                  <span className="text-[10px] text-gray-500 flex items-center gap-1">
+                    <Building2 className="w-3 h-3" />
+                    Switch org
+                  </span>
+                )}
+              </div>
+              {showOrgSwitcher && (
+                <ChevronDown
+                  className={cn(
+                    'hidden sm:block w-4 h-4 text-gray-400 transition-transform',
+                    isOrgSwitcherOpen && 'rotate-180'
+                  )}
+                />
+              )}
+            </button>
+
+            {/* Org Switcher Dropdown */}
+            <AnimatePresence>
+              {isOrgSwitcherOpen && showOrgSwitcher && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsOrgSwitcherOpen(false)}
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className={cn(
+                      'absolute left-0 top-full mt-2 z-50',
+                      'w-72 py-2 bg-white rounded-xl',
+                      'border border-gray-200 shadow-lg'
+                    )}
+                  >
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Switch Organization
+                      </p>
+                    </div>
+                    <div className="py-1 max-h-64 overflow-y-auto">
+                      {availableOrgs.map((org) => (
+                        <button
+                          key={org.id}
+                          onClick={() => handleOrgSelect(org.id)}
+                          className={cn(
+                            'w-full flex items-center gap-3 px-4 py-3',
+                            'hover:bg-gray-50 transition-colors',
+                            org.id === organization.id && 'bg-gold-50/50'
+                          )}
+                        >
+                          <LobbiOrgAvatar
+                            letter={org.logoLetter}
+                            name={org.name}
+                            src={org.logoUrl}
+                            size="sm"
+                          />
+                          <div className="flex-1 text-left">
+                            <p className="text-sm font-medium text-gray-900">
+                              {org.shortName}
+                            </p>
+                            <p className="text-xs text-gray-500 truncate">
+                              {org.name}
+                            </p>
+                          </div>
+                          {org.id === organization.id && (
+                            <Check className="w-4 h-4 text-gold-500" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         )}
 
         {/* Breadcrumbs */}

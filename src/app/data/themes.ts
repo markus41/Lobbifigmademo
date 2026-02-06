@@ -1504,6 +1504,455 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       prefersDark: false,
     },
   },
+
+  // ============================================================================
+  // NEW DRAMATIC THEMES (5 Visually Transformative Themes)
+  // ============================================================================
+
+  // 16. NEON DISTRICT - Synthwave/Cyberpunk
+  'neon-district': {
+    id: 'neon-district',
+    name: 'Neon District',
+    short: 'Neon',
+    motto: 'Welcome to the future',
+    logoLetter: 'ND',
+    industry: 'technology',
+    aesthetic: 'modern',
+    theme: {
+      primary: '#FF00FF',
+      primaryLight: '#FF66FF',
+      primaryPale: '#FFD6FF',
+      primaryDark: '#CC00CC',
+      primaryRgb: '255,0,255',
+
+      secondary: '#00FFFF',
+      secondaryLight: '#66FFFF',
+      secondaryDark: '#00CCCC',
+      secondaryRgb: '0,255,255',
+
+      accent: '#FF6B00',
+      accentLight: '#FF9B4D',
+      accentDark: '#CC5500',
+      accentRgb: '255,107,0',
+
+      primaryScale: generateColorScale(300, 100, 50),
+      secondaryScale: generateColorScale(180, 100, 50),
+      accentScale: generateColorScale(25, 100, 50),
+
+      bgPrimary: '#0A0A1A',
+      bgSecondary: '#12122A',
+      bgTertiary: '#1A1A3A',
+      bgCard: '#161630',
+      bgSurface: '#0D0D20',
+      bgOverlay: 'rgba(10, 10, 26, 0.95)',
+      bgMuted: '#1E1E40',
+
+      textPrimary: '#F0F0FF',
+      textSecondary: '#C0C0E0',
+      textMuted: '#8080A0',
+      textInverse: '#0A0A1A',
+      textAccent: '#FF00FF',
+
+      borderColor: '#3D3D6B',
+      borderLight: '#4D4D7B',
+      borderFocus: '#FF00FF',
+      borderRadius: 'sm',
+      borderStyle: 'solid',
+
+      shadowColor: 'rgba(255, 0, 255, 0.3)',
+      shadowColorRgb: '255,0,255',
+      shadowIntensity: 'dramatic',
+
+      gradient: 'linear-gradient(135deg, #FF00FF, #00FFFF, #FF6B00)',
+      gradientBtn: 'linear-gradient(135deg, #FF00FF, #CC00CC)',
+      gradientCard: 'linear-gradient(180deg, #161630 0%, #0D0D20 100%)',
+      gradientHero: 'linear-gradient(135deg, #0A0A1A 0%, #FF00FF 50%, #00FFFF 100%)',
+      gradientDirection: 'to-br',
+      avatarBg: 'linear-gradient(135deg, #FF00FF, #00FFFF)',
+
+      fontDisplay: '"Orbitron", sans-serif',
+      fontBody: '"Exo 2", sans-serif',
+      fontMono: '"JetBrains Mono", monospace',
+      fontWeightHeading: '700',
+      fontWeightBody: '400',
+      letterSpacing: 'wide',
+
+      animationStyle: 'energetic',
+      transitionDuration: 'fast',
+
+      glassEnabled: true,
+      glassOpacity: 0.15,
+      glassBlur: '2xl',
+
+      buttonStyle: 'sharp',
+      buttonShadow: true,
+
+      cardStyle: 'glass',
+      cardHoverEffect: 'glow',
+
+      hasGradientText: true,
+      hasAnimatedBorders: true,
+      hasGlowEffects: true,
+
+      prefersDark: true,
+    },
+  },
+
+  // 17. ZEN GARDEN - Wabi-Sabi
+  'zen-garden': {
+    id: 'zen-garden',
+    name: 'Zen Garden',
+    short: 'Zen',
+    motto: 'Beauty in imperfection',
+    logoLetter: 'ZG',
+    industry: 'healthcare',
+    aesthetic: 'minimalist',
+    theme: {
+      primary: '#5C6B52',
+      primaryLight: '#7A8B6E',
+      primaryPale: '#D4DBC8',
+      primaryDark: '#3D4A35',
+      primaryRgb: '92,107,82',
+
+      secondary: '#D4C5B0',
+      secondaryLight: '#E8DFD0',
+      secondaryDark: '#B8A890',
+      secondaryRgb: '212,197,176',
+
+      accent: '#8B7355',
+      accentLight: '#A89070',
+      accentDark: '#6B5540',
+      accentRgb: '139,115,85',
+
+      primaryScale: generateColorScale(105, 25, 38),
+      secondaryScale: generateColorScale(35, 30, 80),
+      accentScale: generateColorScale(28, 35, 50),
+
+      bgPrimary: '#F5F3EF',
+      bgSecondary: '#EDE9E3',
+      bgTertiary: '#E3DED6',
+      bgCard: '#FDFCFA',
+      bgSurface: '#F8F6F2',
+      bgOverlay: 'rgba(61, 74, 53, 0.85)',
+      bgMuted: '#E8E4DC',
+
+      textPrimary: '#2C3328',
+      textSecondary: '#4A5245',
+      textMuted: '#7A8275',
+      textInverse: '#F5F3EF',
+      textAccent: '#5C6B52',
+
+      borderColor: '#D4CEC4',
+      borderLight: '#E5E0D8',
+      borderFocus: '#5C6B52',
+      borderRadius: 'none',
+      borderStyle: 'solid',
+
+      shadowColor: 'rgba(92, 107, 82, 0.08)',
+      shadowColorRgb: '92,107,82',
+      shadowIntensity: 'subtle',
+
+      gradient: 'linear-gradient(180deg, #F5F3EF 0%, #EDE9E3 100%)',
+      gradientBtn: 'linear-gradient(135deg, #5C6B52, #3D4A35)',
+      gradientCard: 'linear-gradient(180deg, #FDFCFA 0%, #F5F3EF 100%)',
+      gradientHero: 'linear-gradient(180deg, #5C6B52 0%, #D4C5B0 100%)',
+      gradientDirection: 'to-b',
+      avatarBg: 'linear-gradient(135deg, #5C6B52, #3D4A35)',
+
+      fontDisplay: '"Noto Serif JP", Georgia, serif',
+      fontBody: '"Work Sans", system-ui, sans-serif',
+      fontMono: '"IBM Plex Mono", monospace',
+      fontWeightHeading: '500',
+      fontWeightBody: '400',
+      letterSpacing: 'wider',
+
+      animationStyle: 'subtle',
+      transitionDuration: 'slower',
+
+      glassEnabled: false,
+      glassOpacity: 0.9,
+      glassBlur: 'md',
+
+      buttonStyle: 'sharp',
+      buttonShadow: false,
+
+      cardStyle: 'flat',
+      cardHoverEffect: 'none',
+
+      hasGradientText: false,
+      hasAnimatedBorders: false,
+      hasGlowEffects: false,
+
+      prefersDark: false,
+    },
+  },
+
+  // 18. THE FORGE - Brutalist/Industrial
+  'the-forge': {
+    id: 'the-forge',
+    name: 'The Forge',
+    short: 'Forge',
+    motto: 'Raw. Honest. Uncompromising.',
+    logoLetter: 'TF',
+    industry: 'technology',
+    aesthetic: 'artistic',
+    theme: {
+      primary: '#000000',
+      primaryLight: '#333333',
+      primaryPale: '#E5E5E5',
+      primaryDark: '#000000',
+      primaryRgb: '0,0,0',
+
+      secondary: '#EF4444',
+      secondaryLight: '#F87171',
+      secondaryDark: '#B91C1C',
+      secondaryRgb: '239,68,68',
+
+      accent: '#FBBF24',
+      accentLight: '#FCD34D',
+      accentDark: '#D97706',
+      accentRgb: '251,191,36',
+
+      primaryScale: generateColorScale(0, 0, 10),
+      secondaryScale: generateColorScale(0, 85, 60),
+      accentScale: generateColorScale(45, 95, 55),
+
+      bgPrimary: '#F5F5F5',
+      bgSecondary: '#EBEBEB',
+      bgTertiary: '#E0E0E0',
+      bgCard: '#FFFFFF',
+      bgSurface: '#F8F8F8',
+      bgOverlay: 'rgba(0, 0, 0, 0.9)',
+      bgMuted: '#EEEEEE',
+
+      textPrimary: '#000000',
+      textSecondary: '#333333',
+      textMuted: '#666666',
+      textInverse: '#FFFFFF',
+      textAccent: '#EF4444',
+
+      borderColor: '#000000',
+      borderLight: '#333333',
+      borderFocus: '#EF4444',
+      borderRadius: 'none',
+      borderStyle: 'solid',
+
+      shadowColor: 'rgba(0, 0, 0, 0.25)',
+      shadowColorRgb: '0,0,0',
+      shadowIntensity: 'strong',
+
+      gradient: 'linear-gradient(135deg, #000000, #333333)',
+      gradientBtn: 'linear-gradient(90deg, #000000, #000000)',
+      gradientCard: 'linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%)',
+      gradientHero: 'linear-gradient(135deg, #000000 0%, #EF4444 100%)',
+      gradientDirection: 'to-br',
+      avatarBg: '#000000',
+
+      fontDisplay: '"Space Grotesk", system-ui, sans-serif',
+      fontBody: '"JetBrains Mono", monospace',
+      fontMono: '"JetBrains Mono", monospace',
+      fontWeightHeading: '700',
+      fontWeightBody: '400',
+      letterSpacing: 'tight',
+
+      animationStyle: 'subtle',
+      transitionDuration: 'fast',
+
+      glassEnabled: false,
+      glassOpacity: 0.9,
+      glassBlur: 'sm',
+
+      buttonStyle: 'sharp',
+      buttonShadow: true,
+
+      cardStyle: 'outlined',
+      cardHoverEffect: 'border',
+
+      hasGradientText: false,
+      hasAnimatedBorders: false,
+      hasGlowEffects: false,
+
+      prefersDark: false,
+    },
+  },
+
+  // 19. GOLDEN ERA - Art Deco Revival
+  'golden-era': {
+    id: 'golden-era',
+    name: 'Golden Era Club',
+    short: 'Golden Era',
+    motto: 'Glamour never goes out of style',
+    logoLetter: 'GE',
+    industry: 'luxury',
+    aesthetic: 'luxurious',
+    theme: {
+      primary: '#D4AF37',
+      primaryLight: '#E8C86B',
+      primaryPale: '#F5E6B8',
+      primaryDark: '#A08530',
+      primaryRgb: '212,175,55',
+
+      secondary: '#0A0A0A',
+      secondaryLight: '#1A1A1A',
+      secondaryDark: '#000000',
+      secondaryRgb: '10,10,10',
+
+      accent: '#50C878',
+      accentLight: '#70E098',
+      accentDark: '#38A858',
+      accentRgb: '80,200,120',
+
+      primaryScale: generateColorScale(45, 75, 55),
+      secondaryScale: generateColorScale(0, 0, 5),
+      accentScale: generateColorScale(145, 60, 55),
+
+      bgPrimary: '#F5F5DC',
+      bgSecondary: '#EBE8CC',
+      bgTertiary: '#E0DDB8',
+      bgCard: '#FFFEF5',
+      bgSurface: '#FAF8E8',
+      bgOverlay: 'rgba(10, 10, 10, 0.92)',
+      bgMuted: '#F0EDD5',
+
+      textPrimary: '#0A0A0A',
+      textSecondary: '#2A2A2A',
+      textMuted: '#5A5A5A',
+      textInverse: '#F5F5DC',
+      textAccent: '#D4AF37',
+
+      borderColor: '#D4AF37',
+      borderLight: '#E8C86B',
+      borderFocus: '#D4AF37',
+      borderRadius: 'md',
+      borderStyle: 'double',
+
+      shadowColor: 'rgba(212, 175, 55, 0.25)',
+      shadowColorRgb: '212,175,55',
+      shadowIntensity: 'medium',
+
+      gradient: 'linear-gradient(135deg, #D4AF37, #A08530, #D4AF37)',
+      gradientBtn: 'linear-gradient(135deg, #D4AF37, #A08530)',
+      gradientCard: 'linear-gradient(180deg, #FFFEF5 0%, #F5F5DC 100%)',
+      gradientHero: 'linear-gradient(135deg, #0A0A0A 0%, #D4AF37 50%, #50C878 100%)',
+      gradientDirection: 'to-br',
+      avatarBg: 'linear-gradient(135deg, #D4AF37, #A08530)',
+
+      fontDisplay: '"Poiret One", cursive',
+      fontBody: '"Raleway", sans-serif',
+      fontMono: '"Source Code Pro", monospace',
+      fontWeightHeading: '400',
+      fontWeightBody: '400',
+      letterSpacing: 'widest',
+
+      animationStyle: 'elegant',
+      transitionDuration: 'slow',
+
+      glassEnabled: true,
+      glassOpacity: 0.85,
+      glassBlur: 'xl',
+
+      buttonStyle: 'rounded',
+      buttonShadow: true,
+
+      cardStyle: 'raised',
+      cardHoverEffect: 'glow',
+
+      hasGradientText: true,
+      hasAnimatedBorders: true,
+      hasGlowEffects: true,
+
+      prefersDark: false,
+    },
+  },
+
+  // 20. PIXEL PIONEERS - Retro Gaming
+  'pixel-pioneers': {
+    id: 'pixel-pioneers',
+    name: 'Pixel Pioneers',
+    short: 'Pixels',
+    motto: 'Press start to begin',
+    logoLetter: 'PP',
+    industry: 'technology',
+    aesthetic: 'playful',
+    theme: {
+      primary: '#E74C3C',
+      primaryLight: '#EC7063',
+      primaryPale: '#FADBD8',
+      primaryDark: '#C0392B',
+      primaryRgb: '231,76,60',
+
+      secondary: '#3498DB',
+      secondaryLight: '#5DADE2',
+      secondaryDark: '#2980B9',
+      secondaryRgb: '52,152,219',
+
+      accent: '#F39C12',
+      accentLight: '#F5B041',
+      accentDark: '#D68910',
+      accentRgb: '243,156,18',
+
+      primaryScale: generateColorScale(4, 80, 55),
+      secondaryScale: generateColorScale(207, 70, 55),
+      accentScale: generateColorScale(38, 92, 52),
+
+      bgPrimary: '#0E0E0E',
+      bgSecondary: '#161616',
+      bgTertiary: '#1E1E1E',
+      bgCard: '#121212',
+      bgSurface: '#0A0A0A',
+      bgOverlay: 'rgba(0, 0, 0, 0.95)',
+      bgMuted: '#1A1A1A',
+
+      textPrimary: '#FFFFFF',
+      textSecondary: '#E0E0E0',
+      textMuted: '#A0A0A0',
+      textInverse: '#0E0E0E',
+      textAccent: '#E74C3C',
+
+      borderColor: '#3498DB',
+      borderLight: '#5DADE2',
+      borderFocus: '#E74C3C',
+      borderRadius: 'none',
+      borderStyle: 'solid',
+
+      shadowColor: 'rgba(231, 76, 60, 0.4)',
+      shadowColorRgb: '231,76,60',
+      shadowIntensity: 'dramatic',
+
+      gradient: 'linear-gradient(90deg, #E74C3C, #3498DB, #F39C12)',
+      gradientBtn: 'linear-gradient(90deg, #E74C3C, #C0392B)',
+      gradientCard: 'linear-gradient(180deg, #121212 0%, #0A0A0A 100%)',
+      gradientHero: 'linear-gradient(90deg, #E74C3C 0%, #3498DB 50%, #F39C12 100%)',
+      gradientDirection: 'to-r',
+      avatarBg: 'linear-gradient(135deg, #E74C3C, #F39C12)',
+
+      fontDisplay: '"Press Start 2P", monospace',
+      fontBody: '"VT323", monospace',
+      fontMono: '"VT323", monospace',
+      fontWeightHeading: '400',
+      fontWeightBody: '400',
+      letterSpacing: 'normal',
+
+      animationStyle: 'energetic',
+      transitionDuration: 'fast',
+
+      glassEnabled: false,
+      glassOpacity: 0.2,
+      glassBlur: 'sm',
+
+      buttonStyle: 'sharp',
+      buttonShadow: true,
+
+      cardStyle: 'outlined',
+      cardHoverEffect: 'glow',
+
+      hasGradientText: true,
+      hasAnimatedBorders: true,
+      hasGlowEffects: true,
+
+      prefersDark: true,
+    },
+  },
 };
 
 // ============================================================================
@@ -1646,6 +2095,52 @@ export const ACCOUNTS: Account[] = [
     role: 'Product Manager',
     orgId: 'slate-modern',
   },
+  // New dramatic theme accounts
+  {
+    email: 'nyx@neondistrict.io',
+    name: 'Nyx Blackwood',
+    first: 'Nyx',
+    last: 'Blackwood',
+    initials: 'NB',
+    role: 'Chief Innovation Officer',
+    orgId: 'neon-district',
+  },
+  {
+    email: 'hana@zengarden.com',
+    name: 'Hana Tanaka',
+    first: 'Hana',
+    last: 'Tanaka',
+    initials: 'HT',
+    role: 'Wellness Director',
+    orgId: 'zen-garden',
+  },
+  {
+    email: 'viktor@theforge.io',
+    name: 'Viktor Steele',
+    first: 'Viktor',
+    last: 'Steele',
+    initials: 'VS',
+    role: 'Lead Engineer',
+    orgId: 'the-forge',
+  },
+  {
+    email: 'vivienne@goldenera.club',
+    name: 'Vivienne DuPont',
+    first: 'Vivienne',
+    last: 'DuPont',
+    initials: 'VD',
+    role: 'Events Director',
+    orgId: 'golden-era',
+  },
+  {
+    email: 'max@pixelpioneers.gg',
+    name: 'Max Power',
+    first: 'Max',
+    last: 'Power',
+    initials: 'MP',
+    role: 'Game Master',
+    orgId: 'pixel-pioneers',
+  },
 ];
 
 // ============================================================================
@@ -1688,6 +2183,21 @@ export function applyTheme(org: Organization): void {
   root.style.setProperty('--theme-accent-dark', theme.accentDark);
   root.style.setProperty('--theme-accent-rgb', theme.accentRgb);
 
+  // Primary color scale (50-950 for charts)
+  Object.entries(theme.primaryScale).forEach(([key, value]) => {
+    root.style.setProperty(`--theme-primary-${key}`, value);
+  });
+
+  // Secondary color scale
+  Object.entries(theme.secondaryScale).forEach(([key, value]) => {
+    root.style.setProperty(`--theme-secondary-${key}`, value);
+  });
+
+  // Accent color scale
+  Object.entries(theme.accentScale).forEach(([key, value]) => {
+    root.style.setProperty(`--theme-accent-${key}`, value);
+  });
+
   // Backgrounds
   root.style.setProperty('--theme-bg-primary', theme.bgPrimary);
   root.style.setProperty('--theme-bg-secondary', theme.bgSecondary);
@@ -1704,13 +2214,61 @@ export function applyTheme(org: Organization): void {
   root.style.setProperty('--theme-text-inverse', theme.textInverse);
   root.style.setProperty('--theme-text-accent', theme.textAccent);
 
+  // Border radius mapping
+  const radiusMap: Record<OrgTheme['borderRadius'], string> = {
+    'none': '0px',
+    'sm': '0.125rem',
+    'md': '0.375rem',
+    'lg': '0.5rem',
+    'xl': '0.75rem',
+    '2xl': '1rem',
+    'full': '9999px',
+  };
+  root.style.setProperty('--theme-radius', radiusMap[theme.borderRadius]);
+  root.style.setProperty('--theme-radius-sm', theme.borderRadius === 'none' ? '0px' : '0.125rem');
+  root.style.setProperty('--theme-radius-md', theme.borderRadius === 'none' ? '0px' : '0.375rem');
+  root.style.setProperty('--theme-radius-lg', theme.borderRadius === 'none' ? '0px' : '0.5rem');
+  root.style.setProperty('--theme-radius-xl', theme.borderRadius === 'none' ? '0px' : '0.75rem');
+  root.style.setProperty('--theme-radius-2xl', theme.borderRadius === 'none' ? '0px' : '1rem');
+
   // Borders
   root.style.setProperty('--theme-border', theme.borderColor);
   root.style.setProperty('--theme-border-light', theme.borderLight);
   root.style.setProperty('--theme-border-focus', theme.borderFocus);
+  root.style.setProperty('--theme-border-style', theme.borderStyle);
 
-  // Shadows
+  // Shadow intensity mapping
+  const shadowIntensityMap: Record<OrgTheme['shadowIntensity'], { sm: string; md: string; lg: string; xl: string }> = {
+    'subtle': {
+      sm: `0 1px 2px ${theme.shadowColor}`,
+      md: `0 4px 6px -1px ${theme.shadowColor}`,
+      lg: `0 10px 15px -3px ${theme.shadowColor}`,
+      xl: `0 20px 25px -5px ${theme.shadowColor}`,
+    },
+    'medium': {
+      sm: `0 2px 4px ${theme.shadowColor}`,
+      md: `0 6px 12px -2px ${theme.shadowColor}`,
+      lg: `0 15px 25px -5px ${theme.shadowColor}`,
+      xl: `0 25px 35px -8px ${theme.shadowColor}`,
+    },
+    'strong': {
+      sm: `0 3px 6px ${theme.shadowColor}`,
+      md: `0 8px 16px -2px ${theme.shadowColor}`,
+      lg: `0 20px 35px -5px ${theme.shadowColor}`,
+      xl: `0 30px 50px -10px ${theme.shadowColor}`,
+    },
+    'dramatic': {
+      sm: `0 4px 8px ${theme.shadowColor}`,
+      md: `0 12px 24px -4px ${theme.shadowColor}`,
+      lg: `0 25px 50px -8px ${theme.shadowColor}`,
+      xl: `0 40px 70px -15px ${theme.shadowColor}`,
+    },
+  };
   root.style.setProperty('--theme-shadow-color', theme.shadowColor);
+  root.style.setProperty('--theme-shadow-sm', shadowIntensityMap[theme.shadowIntensity].sm);
+  root.style.setProperty('--theme-shadow-md', shadowIntensityMap[theme.shadowIntensity].md);
+  root.style.setProperty('--theme-shadow-lg', shadowIntensityMap[theme.shadowIntensity].lg);
+  root.style.setProperty('--theme-shadow-xl', shadowIntensityMap[theme.shadowIntensity].xl);
 
   // Gradients
   root.style.setProperty('--theme-gradient', theme.gradient);
@@ -1723,21 +2281,32 @@ export function applyTheme(org: Organization): void {
   root.style.setProperty('--theme-font-display', theme.fontDisplay);
   root.style.setProperty('--theme-font-body', theme.fontBody);
   root.style.setProperty('--theme-font-mono', theme.fontMono);
+  root.style.setProperty('--theme-font-weight-heading', theme.fontWeightHeading);
+  root.style.setProperty('--theme-font-weight-body', theme.fontWeightBody);
 
-  // Border radius mapping
-  const radiusMap = {
-    'none': '0px',
-    'sm': '0.125rem',
-    'md': '0.375rem',
-    'lg': '0.5rem',
-    'xl': '0.75rem',
-    '2xl': '1rem',
-    'full': '9999px',
+  // Letter spacing mapping
+  const letterSpacingMap: Record<OrgTheme['letterSpacing'], string> = {
+    'tighter': '-0.05em',
+    'tight': '-0.025em',
+    'normal': '0',
+    'wide': '0.025em',
+    'wider': '0.05em',
+    'widest': '0.1em',
   };
-  root.style.setProperty('--theme-radius', radiusMap[theme.borderRadius]);
+  root.style.setProperty('--theme-letter-spacing', letterSpacingMap[theme.letterSpacing]);
+
+  // Animation/transition duration mapping
+  const transitionDurationMap: Record<OrgTheme['transitionDuration'], string> = {
+    'fast': '150ms',
+    'normal': '250ms',
+    'slow': '400ms',
+    'slower': '600ms',
+  };
+  root.style.setProperty('--theme-transition-duration', transitionDurationMap[theme.transitionDuration]);
+  root.style.setProperty('--theme-animation-style', theme.animationStyle);
 
   // Glass blur mapping
-  const blurMap = {
+  const blurMap: Record<OrgTheme['glassBlur'], string> = {
     'sm': '4px',
     'md': '8px',
     'lg': '12px',
@@ -1747,4 +2316,34 @@ export function applyTheme(org: Organization): void {
   };
   root.style.setProperty('--theme-glass-blur', blurMap[theme.glassBlur]);
   root.style.setProperty('--theme-glass-opacity', String(theme.glassOpacity));
+  root.style.setProperty('--theme-glass-enabled', theme.glassEnabled ? '1' : '0');
+
+  // Button style mapping
+  const buttonRadiusMap: Record<OrgTheme['buttonStyle'], string> = {
+    'rounded': '0.375rem',
+    'pill': '9999px',
+    'sharp': '0px',
+    'soft': '0.75rem',
+  };
+  root.style.setProperty('--theme-button-radius', buttonRadiusMap[theme.buttonStyle]);
+  root.style.setProperty('--theme-button-shadow', theme.buttonShadow ? `0 4px 12px ${theme.shadowColor}` : 'none');
+
+  // Card style
+  root.style.setProperty('--theme-card-style', theme.cardStyle);
+  root.style.setProperty('--theme-card-hover', theme.cardHoverEffect);
+
+  // Special effects flags
+  root.style.setProperty('--theme-gradient-text', theme.hasGradientText ? '1' : '0');
+  root.style.setProperty('--theme-animated-borders', theme.hasAnimatedBorders ? '1' : '0');
+  root.style.setProperty('--theme-glow-effects', theme.hasGlowEffects ? '1' : '0');
+
+  // Dark mode preference
+  root.style.setProperty('--theme-prefers-dark', theme.prefersDark ? '1' : '0');
+
+  // Apply dark class if theme prefers dark
+  if (theme.prefersDark) {
+    root.classList.add('dark');
+  } else {
+    root.classList.remove('dark');
+  }
 }

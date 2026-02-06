@@ -31,7 +31,17 @@ const CollapseIcon = ({ className, isCollapsed }: { className?: string; isCollap
 );
 
 // Tooltip component for collapsed mode
-function NavTooltip({ label, isVisible }: { label: string; isVisible: boolean }) {
+function NavTooltip({
+  label,
+  isVisible,
+  bgColor = '#1A1815',
+  textColor = '#F0ECE2',
+}: {
+  label: string;
+  isVisible: boolean;
+  bgColor?: string;
+  textColor?: string;
+}) {
   return (
     <AnimatePresence>
       {isVisible && (
@@ -42,8 +52,8 @@ function NavTooltip({ label, isVisible }: { label: string; isVisible: boolean })
           transition={{ duration: 0.15 }}
           className="absolute left-full ml-2 px-2 py-1 rounded-md whitespace-nowrap z-50"
           style={{
-            background: '#1A1815',
-            color: '#F0ECE2',
+            background: bgColor,
+            color: textColor,
             fontSize: '12px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
           }}
@@ -86,42 +96,57 @@ export function Sidebar({
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
+  // Theme-aware sidebar background
+  const sidebarBg = organization.theme.prefersDark
+    ? 'linear-gradient(180deg, #0C0C0E 0%, #080808 100%)'
+    : `linear-gradient(180deg, ${organization.theme.bgCard} 0%, ${organization.theme.bgSecondary} 100%)`;
+
+  // For dark themes, use darker sidebar
+  const isDarkTheme = organization.theme.prefersDark;
+  const sidebarTextColor = isDarkTheme ? '#E5E5E5' : organization.theme.textSecondary;
+  const sidebarTextMuted = isDarkTheme ? '#8A8578' : organization.theme.textMuted;
+  const sidebarActiveTextColor = isDarkTheme ? organization.theme.primaryLight : organization.theme.primary;
+
   return (
     <motion.aside
       className="h-full border-r flex flex-col flex-shrink-0"
       style={{
         width: isCollapsed ? '72px' : '240px',
-        background: 'linear-gradient(180deg, #1A1610 0%, #151412 100%)',
+        background: isDarkTheme
+          ? 'linear-gradient(180deg, #1A1610 0%, #151412 100%)'
+          : `linear-gradient(180deg, ${organization.theme.secondary} 0%, ${organization.theme.secondaryDark || organization.theme.bgSecondary} 100%)`,
         borderColor: `rgba(${organization.theme.primaryRgb}, 0.08)`,
       }}
       initial={{ x: -240 }}
       animate={{ x: 0 }}
-      transition={{ 
-        duration: 0.8, 
+      transition={{
+        duration: 0.8,
         delay: 0.2,
         ease: [0.22, 1, 0.36, 1],
       }}
     >
       {/* Logo */}
       <div className="p-6 border-b" style={{ borderColor: `rgba(${organization.theme.primaryRgb}, 0.08)` }}>
-        <div 
-          className="w-12 h-12 rounded-xl flex items-center justify-center"
+        <div
+          className="w-12 h-12 flex items-center justify-center"
           style={{
             background: organization.theme.gradientBtn,
+            borderRadius: `var(--theme-radius, 0.75rem)`,
           }}
         >
-          <span 
-            className="text-xl italic"
+          <span
+            className="text-xl"
             style={{
-              fontFamily: 'Cormorant Garamond, Georgia, serif',
-              color: '#fff',
+              fontFamily: organization.theme.fontDisplay,
+              color: organization.theme.textInverse,
+              fontStyle: organization.theme.fontDisplay.includes('Cormorant') ? 'italic' : 'normal',
             }}
           >
             {organization.logoLetter}
           </span>
         </div>
         {!isCollapsed && (
-          <p className="mt-3 text-xs" style={{ color: '#8A8578' }}>
+          <p className="mt-3 text-xs" style={{ color: sidebarTextMuted }}>
             {organization.name}
           </p>
         )}
@@ -131,7 +156,7 @@ export function Sidebar({
       <nav className="flex-1 p-4 space-y-1">
         <p
           className="px-3 py-2 text-[10px] uppercase tracking-wider"
-          style={{ color: '#5A5247' }}
+          style={{ color: sidebarTextMuted, letterSpacing: `var(--theme-letter-spacing, 0.05em)` }}
         >
           {!isCollapsed ? 'Main Menu' : ''}
         </p>
@@ -151,9 +176,14 @@ export function Sidebar({
                   background: isActive
                     ? `rgba(${organization.theme.primaryRgb}, 0.12)`
                     : isHovered
-                      ? 'rgba(255,255,255,0.03)'
+                      ? `rgba(${organization.theme.primaryRgb}, 0.05)`
                       : 'transparent',
-                  color: isActive ? organization.theme.primary : isHovered ? '#E5DFD1' : '#C4BCAB',
+                  color: isActive
+                    ? sidebarActiveTextColor
+                    : isHovered
+                      ? (isDarkTheme ? '#E5DFD1' : organization.theme.textPrimary)
+                      : sidebarTextColor,
+                  fontFamily: organization.theme.fontBody,
                 }}
                 whileHover={{ x: isCollapsed ? 0 : 3 }}
                 transition={{ duration: 0.15 }}
@@ -172,7 +202,12 @@ export function Sidebar({
                 )}
               </motion.button>
               {isCollapsed && (
-                <NavTooltip label={item.label} isVisible={isHovered} />
+                <NavTooltip
+                  label={item.label}
+                  isVisible={isHovered}
+                  bgColor={isDarkTheme ? '#1A1815' : organization.theme.bgCard}
+                  textColor={isDarkTheme ? '#F0ECE2' : organization.theme.textPrimary}
+                />
               )}
             </div>
           );
@@ -198,9 +233,14 @@ export function Sidebar({
                   background: isActive
                     ? `rgba(${organization.theme.primaryRgb}, 0.12)`
                     : isHovered
-                      ? 'rgba(255,255,255,0.03)'
+                      ? `rgba(${organization.theme.primaryRgb}, 0.05)`
                       : 'transparent',
-                  color: isActive ? organization.theme.primary : isHovered ? '#E5DFD1' : '#C4BCAB',
+                  color: isActive
+                    ? sidebarActiveTextColor
+                    : isHovered
+                      ? (isDarkTheme ? '#E5DFD1' : organization.theme.textPrimary)
+                      : sidebarTextColor,
+                  fontFamily: organization.theme.fontBody,
                 }}
                 whileHover={{ x: isCollapsed ? 0 : 3 }}
                 transition={{ duration: 0.15 }}
@@ -219,7 +259,12 @@ export function Sidebar({
                 )}
               </motion.button>
               {isCollapsed && (
-                <NavTooltip label={item.label} isVisible={isHovered} />
+                <NavTooltip
+                  label={item.label}
+                  isVisible={isHovered}
+                  bgColor={isDarkTheme ? '#1A1815' : organization.theme.bgCard}
+                  textColor={isDarkTheme ? '#F0ECE2' : organization.theme.textPrimary}
+                />
               )}
             </div>
           );
@@ -230,8 +275,12 @@ export function Sidebar({
       <div className="px-4 pb-2">
         <button
           onClick={onToggleCollapse}
-          className="w-full flex items-center justify-center p-2 rounded-lg transition-colors hover:bg-white/5"
-          style={{ color: '#8A8578' }}
+          className="w-full flex items-center justify-center p-2 rounded-lg transition-colors"
+          style={{
+            color: sidebarTextMuted,
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.background = `rgba(${organization.theme.primaryRgb}, 0.1)`}
+          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
         >
           <CollapseIcon className="w-5 h-5" isCollapsed={isCollapsed} />
         </button>
@@ -240,20 +289,27 @@ export function Sidebar({
       {/* User Profile */}
       <div className="p-4 border-t" style={{ borderColor: `rgba(${organization.theme.primaryRgb}, 0.08)` }}>
         <div className="flex items-center gap-3">
-          <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium"
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium"
             style={{
               background: organization.theme.gradientBtn,
+              color: organization.theme.textInverse,
             }}
           >
             {account?.first?.[0] || 'U'}{account?.last?.[0] || 'U'}
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate" style={{ color: '#F0ECE2' }}>
+              <p
+                className="text-sm font-medium truncate"
+                style={{
+                  color: isDarkTheme ? '#F0ECE2' : organization.theme.textPrimary,
+                  fontFamily: organization.theme.fontBody,
+                }}
+              >
                 {account?.first || 'User'} {account?.last || 'Name'}
               </p>
-              <p className="text-xs truncate" style={{ color: '#8A8578' }}>
+              <p className="text-xs truncate" style={{ color: sidebarTextMuted }}>
                 {account?.role || 'Member'}
               </p>
             </div>

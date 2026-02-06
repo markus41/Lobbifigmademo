@@ -1,0 +1,28 @@
+{
+  "name": "The Lobbi - Member Management",
+  "short_name": "The Lobbi",
+  "description": "Premium white-label membership management platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1918",
+  "theme_color": "#D4AF37",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "en-US",
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

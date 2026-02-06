@@ -1,0 +1,11 @@
+# Robots.txt for The Lobbi Demo
+# https://thelobbi.io
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://markus41.github.io/Lobbifigmademo/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
