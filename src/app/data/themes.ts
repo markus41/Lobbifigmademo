@@ -17,20 +17,12 @@ export interface Organization {
   motto: string;
   logoLetter: string;
   theme: OrgTheme;
-  identity: {
-    industry: string;
-    memberLabel: string;
-    dashboardGreeting: string;
-    loginHeadline: string;
-    loginSubtext: string;
-  };
 }
 
 export interface Account {
   email: string;
   name: string;
   first: string;
-  last: string;
   initials: string;
   role: string;
   orgId: string;
@@ -53,13 +45,6 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       gradientBtn: 'linear-gradient(135deg, #8B7330, #D4AF37)',
       avatarBg: 'linear-gradient(135deg, #D4AF37, #8B7330)',
     },
-    identity: {
-      industry: 'Luxury Hospitality',
-      memberLabel: 'Guests',
-      dashboardGreeting: 'Welcome to the Resort',
-      loginHeadline: 'Return to Elegance',
-      loginSubtext: 'Your exclusive gateway to resort management',
-    },
   },
   'pacific-club': {
     id: 'pacific-club',
@@ -76,13 +61,6 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       gradient: 'linear-gradient(135deg, #A8D4E8, #2E6B8A, #1A4459)',
       gradientBtn: 'linear-gradient(135deg, #1A4459, #2E6B8A)',
       avatarBg: 'linear-gradient(135deg, #2E6B8A, #1A4459)',
-    },
-    identity: {
-      industry: 'Private Membership Club',
-      memberLabel: 'Members',
-      dashboardGreeting: 'Club Overview',
-      loginHeadline: 'Members Only',
-      loginSubtext: 'Access your private club management portal',
     },
   },
   'summit-group': {
@@ -101,13 +79,6 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       gradientBtn: 'linear-gradient(135deg, #6B4E2E, #8B6B3E)',
       avatarBg: 'linear-gradient(135deg, #8B6B3E, #6B4E2E)',
     },
-    identity: {
-      industry: 'Hospitality Management',
-      memberLabel: 'Properties',
-      dashboardGreeting: 'Operations Center',
-      loginHeadline: 'Summit Access',
-      loginSubtext: 'Your hospitality operations command center',
-    },
   },
   'verde-collective': {
     id: 'verde-collective',
@@ -124,13 +95,6 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       gradient: 'linear-gradient(135deg, #A8DCC4, #3D7B5F, #2A5742)',
       gradientBtn: 'linear-gradient(135deg, #2A5742, #3D7B5F)',
       avatarBg: 'linear-gradient(135deg, #3D7B5F, #2A5742)',
-    },
-    identity: {
-      industry: 'Sustainable Community',
-      memberLabel: 'Partners',
-      dashboardGreeting: 'Community Hub',
-      loginHeadline: 'Welcome Home',
-      loginSubtext: 'Connect with your sustainable community',
     },
   },
   'crown-estates': {
@@ -149,13 +113,6 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       gradientBtn: 'linear-gradient(135deg, #4A2854, #6E3D7B)',
       avatarBg: 'linear-gradient(135deg, #6E3D7B, #4A2854)',
     },
-    identity: {
-      industry: 'Real Estate',
-      memberLabel: 'Estates',
-      dashboardGreeting: 'Estate Overview',
-      loginHeadline: 'The Crown Awaits',
-      loginSubtext: 'Your distinguished real estate portfolio',
-    },
   },
 };
 
@@ -164,7 +121,6 @@ export const ACCOUNTS: Account[] = [
     email: 'kwatts@luxehaven.com',
     name: 'Kathy Watts',
     first: 'Kathy',
-    last: 'Watts',
     initials: 'KW',
     role: 'Director of Payroll & HR',
     orgId: 'luxe-haven',
@@ -173,7 +129,6 @@ export const ACCOUNTS: Account[] = [
     email: 'schen@pacificclub.org',
     name: 'Sarah Chen',
     first: 'Sarah',
-    last: 'Chen',
     initials: 'SC',
     role: 'General Manager',
     orgId: 'pacific-club',
@@ -182,7 +137,6 @@ export const ACCOUNTS: Account[] = [
     email: 'dmartinez@summitgroup.io',
     name: 'David Martinez',
     first: 'David',
-    last: 'Martinez',
     initials: 'DM',
     role: 'VP of Operations',
     orgId: 'summit-group',
@@ -191,7 +145,6 @@ export const ACCOUNTS: Account[] = [
     email: 'erodriguez@verdecollective.com',
     name: 'Emily Rodriguez',
     first: 'Emily',
-    last: 'Rodriguez',
     initials: 'ER',
     role: 'Community Director',
     orgId: 'verde-collective',
@@ -200,7 +153,6 @@ export const ACCOUNTS: Account[] = [
     email: 'mjohnson@crownestates.co',
     name: 'Michael Johnson',
     first: 'Michael',
-    last: 'Johnson',
     initials: 'MJ',
     role: 'Chief Executive Officer',
     orgId: 'crown-estates',
