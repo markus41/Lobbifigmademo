@@ -18,7 +18,7 @@ export function TopNav({
   
   return (
     <motion.header
-      className="h-16 border-b bg-white flex items-center justify-between px-6"
+      className="h-14 sm:h-16 border-b bg-white flex items-center justify-between px-3 sm:px-6"
       style={{
         borderColor: '#EDE8DD',
       }}
@@ -39,9 +39,9 @@ export function TopNav({
           <MenuIcon className="w-5 h-5" style={{ color: '#8A8578' }} />
         </button>
 
-        <div className="relative max-w-md flex-1">
-          <SearchIcon 
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" 
+        <div className="relative max-w-md flex-1 hidden sm:block">
+          <SearchIcon
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
             style={{ color: '#B8B0A0' }}
           />
           <input
@@ -76,7 +76,7 @@ export function TopNav({
           }}
         >
           <ConciergeIcon className="w-4 h-4" />
-          <span>Concierge</span>
+          <span className="hidden sm:inline">Concierge</span>
         </button>
 
         {/* Notifications */}
@@ -95,7 +95,7 @@ export function TopNav({
             background: organization.theme.gradientBtn,
           }}
         >
-          {account.first[0]}{account.last[0]}
+          {account.initials}
         </div>
       </div>
     </motion.header>

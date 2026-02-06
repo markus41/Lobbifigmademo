@@ -41,7 +41,7 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
         transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
       >
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] rounded-full blur-[100px] sm:blur-[150px]"
           style={{
             background: `radial-gradient(circle, rgba(${organization.theme.primaryRgb}, 0.12), transparent 70%)`,
           }}
@@ -101,8 +101,8 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h1 
-            className="text-6xl mb-6"
+          <h1
+            className="text-4xl sm:text-6xl mb-6"
             style={{
               fontFamily: 'Cormorant Garamond, Georgia, serif',
               fontWeight: 400,
@@ -143,8 +143,8 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
               {organization.logoLetter}
             </span>
           </div>
-          <span 
-            className="text-lg"
+          <span
+            className="text-sm sm:text-lg"
             style={{
               fontFamily: 'Cormorant Garamond, Georgia, serif',
               fontWeight: 500,
