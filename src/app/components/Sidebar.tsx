@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { DashboardIcon, RegistryIcon, EventsIcon, SettingsIcon, LobbiOctagon } from './icons/LobbiIcons';
+import { Box, Flex, Text } from '@chakra-ui/react';
+import { LayoutDashboard, Users, CalendarDays, Settings } from 'lucide-react';
 import type { Account, Organization } from '../data/themes';
 
 interface SidebarProps {
@@ -11,110 +12,108 @@ interface SidebarProps {
   account: Account;
 }
 
-export function Sidebar({ 
-  currentPage, 
-  onNavigate, 
-  isCollapsed, 
-  organization,
-  account,
-}: SidebarProps) {
-  
-  const menuItems = [
-    { id: 'dashboard', label: 'The Front Desk', icon: DashboardIcon },
-    { id: 'registry', label: 'The Registry', icon: RegistryIcon },
-    { id: 'events', label: 'Events Pavilion', icon: EventsIcon },
-    { id: 'settings', label: 'Guest Services', icon: SettingsIcon },
-  ];
+const menuItems = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'members', label: 'Members', icon: Users },
+  { id: 'events', label: 'Events', icon: CalendarDays },
+  { id: 'settings', label: 'Settings', icon: Settings },
+];
 
+export function Sidebar({ currentPage, onNavigate, isCollapsed, organization, account }: SidebarProps) {
   return (
-    <motion.aside
-      className="fixed left-0 top-0 h-full border-r flex flex-col"
+    <motion.div
       style={{
-        width: isCollapsed ? '72px' : '240px',
-        background: 'linear-gradient(180deg, #1A1610 0%, #151412 100%)',
-        borderColor: `rgba(${organization.theme.primaryRgb}, 0.08)`,
+        position: 'fixed', left: 0, top: 0, height: '100%',
+        width: isCollapsed ? '80px' : '280px',
+        display: 'flex', flexDirection: 'column',
+        transition: 'width 0.3s',
+        zIndex: 70,
       }}
-      initial={{ x: -240 }}
+      initial={{ x: -280 }}
       animate={{ x: 0 }}
-      transition={{ 
-        duration: 0.8, 
-        delay: 0.2,
-        ease: [0.22, 1, 0.36, 1],
-      }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* Logo */}
-      <div className="p-6 border-b" style={{ borderColor: `rgba(${organization.theme.primaryRgb}, 0.08)` }}>
-        <div 
-          className="w-12 h-12 rounded-xl flex items-center justify-center"
-          style={{
-            background: organization.theme.gradientBtn,
-          }}
-        >
-          <span 
-            className="text-xl italic"
-            style={{
-              fontFamily: 'Cormorant Garamond, Georgia, serif',
-              color: '#fff',
-            }}
+      <Box h="100%" bg="navy.800" borderRight="1px solid" borderColor="whiteAlpha.100">
+        {/* Logo */}
+        <Flex p={6} align="center" gap={3} borderBottom="1px solid" borderColor="whiteAlpha.100">
+          <Flex
+            w="42px" h="42px" borderRadius="14px" align="center" justify="center" flexShrink={0}
+            bgGradient="linear(to-br, brand.400, #C850C0)"
           >
-            {organization.logoLetter}
-          </span>
-        </div>
-        {!isCollapsed && (
-          <p className="mt-3 text-xs" style={{ color: '#8A8578' }}>
-            {organization.name}
-          </p>
-        )}
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentPage === item.id;
-          
-          return (
-            <button
-              key={item.id}
-              onClick={() => onNavigate(item.id)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all"
-              style={{
-                background: isActive ? `rgba(${organization.theme.primaryRgb}, 0.12)` : 'transparent',
-                color: isActive ? organization.theme.primary : '#C4BCAB',
-              }}
-            >
-              <Icon className="w-5 h-5" />
-              {!isCollapsed && (
-                <span className="text-sm">{item.label}</span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* User Profile */}
-      <div className="p-4 border-t" style={{ borderColor: `rgba(${organization.theme.primaryRgb}, 0.08)` }}>
-        <div className="flex items-center gap-3">
-          <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium"
-            style={{
-              background: organization.theme.gradientBtn,
-            }}
-          >
-            {account?.first?.[0] || 'U'}{account?.last?.[0] || 'U'}
-          </div>
+            <Text fontSize="md" fontWeight="bold" color="white">AI</Text>
+          </Flex>
           {!isCollapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate" style={{ color: '#F0ECE2' }}>
-                {account?.first || 'User'} {account?.last || 'Name'}
-              </p>
-              <p className="text-xs truncate" style={{ color: '#8A8578' }}>
-                {account?.role || 'Member'}
-              </p>
-            </div>
+            <Box>
+              <Text fontSize="md" fontWeight="700" color="white" lineHeight="1.2">The Lobbi</Text>
+              <Text fontSize="xs" color="#707EAE">{organization.short}</Text>
+            </Box>
           )}
-        </div>
-      </div>
-    </motion.aside>
+        </Flex>
+
+        {/* Navigation */}
+        <Box flex={1} p={4}>
+          <Flex direction="column" gap={1}>
+            {menuItems.map((item) => {
+              const IconComp = item.icon;
+              const isActive = currentPage === item.id;
+              return (
+                <Flex
+                  key={item.id}
+                  as="button"
+                  onClick={() => onNavigate(item.id)}
+                  align="center"
+                  gap={3}
+                  px={4}
+                  py={3}
+                  borderRadius="14px"
+                  cursor="pointer"
+                  transition="all 0.2s"
+                  bg={isActive ? 'whiteAlpha.100' : 'transparent'}
+                  _hover={{ bg: isActive ? 'whiteAlpha.100' : 'whiteAlpha.50' }}
+                  w="100%"
+                >
+                  <Flex
+                    w="36px" h="36px" borderRadius="12px" align="center" justify="center"
+                    bg={isActive ? 'brand.400' : 'whiteAlpha.50'}
+                    transition="all 0.2s"
+                  >
+                    <IconComp size={18} color={isActive ? 'white' : '#A3AED0'} />
+                  </Flex>
+                  {!isCollapsed && (
+                    <Text fontSize="sm" fontWeight={isActive ? '600' : '400'} color={isActive ? 'white' : '#A3AED0'}>
+                      {item.label}
+                    </Text>
+                  )}
+                </Flex>
+              );
+            })}
+          </Flex>
+        </Box>
+
+        {/* User Profile */}
+        <Box p={4} borderTop="1px solid" borderColor="whiteAlpha.100">
+          <Flex align="center" gap={3}>
+            <Flex
+              w="40px" h="40px" borderRadius="full" align="center" justify="center" flexShrink={0}
+              bgGradient="linear(to-br, brand.400, #C850C0)"
+            >
+              <Text fontSize="xs" fontWeight="bold" color="white">
+                {account?.initials || 'U'}
+              </Text>
+            </Flex>
+            {!isCollapsed && (
+              <Box flex={1} minW={0}>
+                <Text fontSize="sm" fontWeight="600" color="white" noOfLines={1}>
+                  {account?.name || 'User'}
+                </Text>
+                <Text fontSize="xs" color="#707EAE" noOfLines={1}>
+                  {account?.role || 'Member'}
+                </Text>
+              </Box>
+            )}
+          </Flex>
+        </Box>
+      </Box>
+    </motion.div>
   );
 }

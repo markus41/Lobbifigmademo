@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { MenuIcon, BellIcon, SearchIcon, ConciergeIcon } from './icons/LobbiIcons';
+import { Box, Flex, Text, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
+import { Menu, Bell, Search, Bot } from 'lucide-react';
 import type { Account, Organization } from '../data/themes';
 
 interface TopNavProps {
@@ -9,95 +10,82 @@ interface TopNavProps {
   account: Account;
 }
 
-export function TopNav({ 
-  onMenuClick, 
-  onBellhopClick, 
-  organization,
-  account,
-}: TopNavProps) {
-  
+export function TopNav({ onMenuClick, onBellhopClick, organization, account }: TopNavProps) {
   return (
-    <motion.header
-      className="h-16 border-b bg-white flex items-center justify-between px-6"
-      style={{
-        borderColor: '#EDE8DD',
-      }}
+    <motion.div
       initial={{ y: -64 }}
       animate={{ y: 0 }}
-      transition={{ 
-        duration: 0.8, 
-        delay: 0.4,
-        ease: [0.22, 1, 0.36, 1],
-      }}
+      transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* Left: Menu + Search */}
-      <div className="flex items-center gap-4 flex-1">
-        <button
-          onClick={onMenuClick}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        >
-          <MenuIcon className="w-5 h-5" style={{ color: '#8A8578' }} />
-        </button>
+      <Flex
+        h="72px" align="center" justify="space-between" px={6}
+        bg="navy.800" borderBottom="1px solid" borderColor="whiteAlpha.100"
+      >
+        {/* Left */}
+        <Flex align="center" gap={4} flex={1}>
+          <Flex
+            as="button" onClick={onMenuClick}
+            w="40px" h="40px" align="center" justify="center" borderRadius="12px"
+            _hover={{ bg: 'whiteAlpha.100' }} transition="all 0.2s" cursor="pointer"
+          >
+            <Menu size={20} color="#A3AED0" />
+          </Flex>
 
-        <div className="relative max-w-md flex-1">
-          <SearchIcon 
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" 
-            style={{ color: '#B8B0A0' }}
-          />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full pl-10 pr-4 py-2 bg-[#F7F4EE] border border-transparent rounded-lg text-sm outline-none transition-all"
-            style={{
-              color: '#2C2A25',
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = `rgba(${organization.theme.primaryRgb}, 0.2)`;
-              e.target.style.background = '#fff';
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = 'transparent';
-              e.target.style.background = '#F7F4EE';
-            }}
-          />
-        </div>
-      </div>
+          <InputGroup maxW="400px">
+            <InputLeftElement h="44px" pointerEvents="none">
+              <Search size={16} color="#707EAE" />
+            </InputLeftElement>
+            <Input
+              placeholder="Search..."
+              bg="navy.700" border="1px solid" borderColor="whiteAlpha.100"
+              borderRadius="14px" h="44px" fontSize="sm" color="white"
+              _hover={{ borderColor: 'whiteAlpha.200' }}
+              _focus={{ borderColor: 'brand.400', boxShadow: 'none' }}
+              _placeholder={{ color: '#707EAE' }}
+            />
+          </InputGroup>
+        </Flex>
 
-      {/* Right: Concierge + Notifications + Avatar */}
-      <div className="flex items-center gap-3">
-        {/* AI Bellhop Button */}
-        <button
-          onClick={onBellhopClick}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all hover:-translate-y-0.5"
-          style={{
-            background: organization.theme.gradientBtn,
-            fontFamily: 'DM Sans, sans-serif',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          }}
-        >
-          <ConciergeIcon className="w-4 h-4" />
-          <span>Concierge</span>
-        </button>
+        {/* Right */}
+        <Flex align="center" gap={3}>
+          {/* AI Concierge Button */}
+          <Flex
+            as="button" onClick={onBellhopClick}
+            align="center" gap={2} px={4} py={2} borderRadius="12px"
+            bgGradient="linear(to-r, brand.400, #C850C0)"
+            color="white" fontSize="sm" fontWeight="600"
+            cursor="pointer" transition="all 0.3s"
+            _hover={{ transform: 'translateY(-1px)', boxShadow: '0 4px 16px rgba(67, 24, 255, 0.3)' }}
+          >
+            <Bot size={16} />
+            <Text display={{ base: 'none', md: 'block' }}>AI Concierge</Text>
+          </Flex>
 
-        {/* Notifications */}
-        <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
-          <BellIcon className="w-5 h-5" style={{ color: '#8A8578' }} />
-          <span 
-            className="absolute top-1 right-1 w-2 h-2 rounded-full"
-            style={{ background: organization.theme.primary }}
-          />
-        </button>
+          {/* Notifications */}
+          <Flex
+            as="button" position="relative"
+            w="40px" h="40px" align="center" justify="center" borderRadius="12px"
+            _hover={{ bg: 'whiteAlpha.100' }} transition="all 0.2s" cursor="pointer"
+          >
+            <Bell size={20} color="#A3AED0" />
+            <Box
+              position="absolute" top="8px" right="8px"
+              w="8px" h="8px" borderRadius="full"
+              bgGradient="linear(to-r, brand.400, #C850C0)"
+            />
+          </Flex>
 
-        {/* Avatar */}
-        <div 
-          className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-medium"
-          style={{
-            background: organization.theme.gradientBtn,
-          }}
-        >
-          {account?.first?.[0] || 'U'}{account?.last?.[0] || 'U'}
-        </div>
-      </div>
-    </motion.header>
+          {/* Avatar */}
+          <Flex
+            w="40px" h="40px" borderRadius="full" align="center" justify="center"
+            bgGradient="linear(to-br, brand.400, #C850C0)" cursor="pointer"
+          >
+            <Text fontSize="xs" fontWeight="bold" color="white">
+              {account?.initials || 'U'}
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
+    </motion.div>
   );
 }

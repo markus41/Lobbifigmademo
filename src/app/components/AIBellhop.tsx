@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { XIcon, SendIcon } from './icons/XIcon';
+import { Box, Flex, Heading, Text, Input, IconButton } from '@chakra-ui/react';
+import { X, Send, Bot } from 'lucide-react';
 import { useState } from 'react';
 
 interface AIBellhopProps {
@@ -16,7 +17,7 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/40 z-[100]"
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 100 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -25,83 +26,93 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
 
           {/* Panel */}
           <motion.div
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-[101] flex flex-col"
+            style={{
+              position: 'fixed', right: 0, top: 0, height: '100%',
+              width: '100%', maxWidth: '420px', zIndex: 101,
+              display: 'flex', flexDirection: 'column',
+            }}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ 
-              duration: 0.5, 
-              ease: [0.22, 1, 0.36, 1],
-            }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Header */}
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 
-                    className="text-2xl"
-                    style={{
-                      fontFamily: 'Cormorant Garamond, Georgia, serif',
-                      fontWeight: 500,
-                      color: '#2C2A25',
-                    }}
+            <Box h="100%" bg="navy.800" display="flex" flexDirection="column" boxShadow="dark-lg">
+              {/* Header */}
+              <Flex p={6} borderBottom="1px solid" borderColor="whiteAlpha.100" align="center" justify="space-between">
+                <Flex align="center" gap={3}>
+                  <Flex
+                    w="40px" h="40px" borderRadius="12px" align="center" justify="center"
+                    bgGradient="linear(to-br, brand.400, #C850C0)"
                   >
-                    AI Concierge
-                  </h2>
-                  <p className="text-sm mt-1" style={{ color: '#8A8578' }}>
-                    How may I assist you today?
-                  </p>
-                </div>
-                <button
+                    <Bot size={20} color="white" />
+                  </Flex>
+                  <Box>
+                    <Heading fontSize="lg" fontWeight="700" color="white">AI Concierge</Heading>
+                    <Text fontSize="xs" color="#707EAE">Powered by AI</Text>
+                  </Box>
+                </Flex>
+                <IconButton
+                  aria-label="Close"
+                  icon={<X size={20} />}
+                  variant="ghost" color="#A3AED0" size="sm"
+                  borderRadius="12px"
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <XIcon className="w-5 h-5" style={{ color: '#8A8578' }} />
-                </button>
-              </div>
-            </div>
-
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="space-y-4">
-                <div className="bg-[#F7F4EE] rounded-2xl rounded-tl-sm p-4">
-                  <p className="text-sm" style={{ color: '#2C2A25' }}>
-                    Good day! I'm your AI Concierge. I'm here to help you navigate 
-                    The Lobbi and assist with any questions you may have.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Input Area */}
-            <div className="p-4 border-t border-gray-200">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Ask me anything..."
-                  className="flex-1 px-4 py-3 bg-[#F7F4EE] border border-transparent rounded-xl text-sm outline-none"
-                  style={{ color: '#2C2A25' }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'rgba(212,175,55,0.2)';
-                    e.target.style.background = '#fff';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'transparent';
-                    e.target.style.background = '#F7F4EE';
-                  }}
+                  _hover={{ bg: 'whiteAlpha.100', color: 'white' }}
                 />
-                <button
-                  className="px-4 py-3 rounded-xl text-white"
-                  style={{
-                    background: 'linear-gradient(135deg, #F5E6A3, #D4AF37, #8B7330)',
-                  }}
-                >
-                  <SendIcon className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
+              </Flex>
+
+              {/* Messages */}
+              <Box flex={1} overflowY="auto" p={6}>
+                <Flex direction="column" gap={4}>
+                  <Box bg="navy.700" borderRadius="16px" borderTopLeftRadius="4px" p={5}>
+                    <Text fontSize="sm" color="#A3AED0" lineHeight="1.7">
+                      Hello! I'm your AI Concierge. I can help you with member management,
+                      event planning, data analysis, and more. How can I assist you today?
+                    </Text>
+                  </Box>
+
+                  <Flex gap={2} flexWrap="wrap">
+                    {['Show member stats', 'Upcoming events', 'Generate report'].map((suggestion) => (
+                      <Box
+                        key={suggestion}
+                        px={4} py={2} borderRadius="full" fontSize="xs" fontWeight="500"
+                        bg="whiteAlpha.50" color="#A3AED0" cursor="pointer"
+                        border="1px solid" borderColor="whiteAlpha.100"
+                        _hover={{ bg: 'whiteAlpha.100', color: 'white', borderColor: 'brand.400' }}
+                        transition="all 0.2s"
+                      >
+                        {suggestion}
+                      </Box>
+                    ))}
+                  </Flex>
+                </Flex>
+              </Box>
+
+              {/* Input */}
+              <Box p={4} borderTop="1px solid" borderColor="whiteAlpha.100">
+                <Flex gap={2}>
+                  <Input
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Ask me anything..."
+                    bg="navy.700" border="1px solid" borderColor="whiteAlpha.200"
+                    borderRadius="14px" h="48px" fontSize="sm" color="white"
+                    _hover={{ borderColor: 'whiteAlpha.300' }}
+                    _focus={{ borderColor: 'brand.400', boxShadow: 'none' }}
+                    _placeholder={{ color: '#707EAE' }}
+                  />
+                  <IconButton
+                    aria-label="Send"
+                    icon={<Send size={18} />}
+                    h="48px" w="48px" minW="48px"
+                    borderRadius="14px"
+                    bgGradient="linear(to-r, brand.400, #C850C0)"
+                    color="white"
+                    _hover={{ bgGradient: 'linear(to-r, brand.300, #D060D0)' }}
+                  />
+                </Flex>
+              </Box>
+            </Box>
           </motion.div>
         </>
       )}
