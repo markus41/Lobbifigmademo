@@ -205,7 +205,7 @@ export function Dashboard({ organization, account }: DashboardProps) {
 
             <div className="grid grid-cols-2 gap-3">
               {[
-                { icon: Users, label: `Add ${memberLabel.replace(/s$/, '')}` },
+                { icon: Users, label: `Add ${memberLabel.replace(/ies$/, 'y').replace(/s$/, '')}` },
                 { icon: Calendar, label: 'Create Event' },
                 { icon: DollarSign, label: 'Send Invoice' },
                 { icon: AlertCircle, label: 'View Reports' },
