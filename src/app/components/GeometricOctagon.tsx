@@ -45,6 +45,35 @@ export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonP
           d={createOctagonPath(600, 400, 280, Math.PI / 16)}
           fill="none"
           stroke={primaryColor}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={{ 
+            pathLength: 0, 
+            opacity: 1,
+          }}
+          animate={{ 
+            pathLength: 1, 
+            opacity: [1, 1, 1, 0.3],
+          }}
+          transition={{
+            pathLength: {
+              duration: 2.2,
+              ease: [0.16, 1, 0.3, 1],
+            },
+            opacity: {
+              duration: 4,
+              times: [0, 0.5, 0.8, 1],
+              ease: [0.16, 1, 0.3, 1],
+            }
+          }}
+        />
+
+        {/* SECONDARY OCTAGON - Smaller, traced */}
+        <motion.path
+          d={createOctagonPath(600, 400, 220, 0)}
+          fill="none"
+          stroke={primaryColor}
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -54,24 +83,26 @@ export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonP
           }}
           animate={{ 
             pathLength: 1, 
-            opacity: [1, 1, 0.25],
+            opacity: [1, 1, 1, 0.25],
           }}
           transition={{
             pathLength: {
-              duration: 2.5,
-              ease: [0.22, 1, 0.36, 1],
+              duration: 2.2,
+              delay: 0.2,
+              ease: [0.16, 1, 0.3, 1],
             },
             opacity: {
-              duration: 3.5,
-              times: [0, 0.7, 1],
-              ease: [0.22, 1, 0.36, 1],
+              duration: 4,
+              delay: 0.2,
+              times: [0, 0.5, 0.8, 1],
+              ease: [0.16, 1, 0.3, 1],
             }
           }}
         />
 
-        {/* SECONDARY OCTAGON - Smaller, traced */}
+        {/* TERTIARY OCTAGON - Even smaller, traced */}
         <motion.path
-          d={createOctagonPath(600, 400, 220, 0)}
+          d={createOctagonPath(600, 400, 340, -Math.PI / 16)}
           fill="none"
           stroke={primaryColor}
           strokeWidth="1.5"
@@ -83,50 +114,19 @@ export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonP
           }}
           animate={{ 
             pathLength: 1, 
-            opacity: [1, 1, 0.2],
+            opacity: [1, 1, 1, 0.2],
           }}
           transition={{
             pathLength: {
-              duration: 2.5,
-              delay: 0.3,
-              ease: [0.22, 1, 0.36, 1],
+              duration: 2.2,
+              delay: 0.4,
+              ease: [0.16, 1, 0.3, 1],
             },
             opacity: {
-              duration: 3.5,
-              delay: 0.3,
-              times: [0, 0.7, 1],
-              ease: [0.22, 1, 0.36, 1],
-            }
-          }}
-        />
-
-        {/* TERTIARY OCTAGON - Even smaller, traced */}
-        <motion.path
-          d={createOctagonPath(600, 400, 340, -Math.PI / 16)}
-          fill="none"
-          stroke={primaryColor}
-          strokeWidth="1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={{ 
-            pathLength: 0, 
-            opacity: 1,
-          }}
-          animate={{ 
-            pathLength: 1, 
-            opacity: [1, 1, 0.15],
-          }}
-          transition={{
-            pathLength: {
-              duration: 2.5,
-              delay: 0.6,
-              ease: [0.22, 1, 0.36, 1],
-            },
-            opacity: {
-              duration: 3.5,
-              delay: 0.6,
-              times: [0, 0.7, 1],
-              ease: [0.22, 1, 0.36, 1],
+              duration: 4,
+              delay: 0.4,
+              times: [0, 0.5, 0.8, 1],
+              ease: [0.16, 1, 0.3, 1],
             }
           }}
         />
@@ -138,12 +138,12 @@ export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonP
           d={createSquarePath(600, 400, 120)}
           fill="none"
           stroke={primaryColor}
-          strokeWidth="1.5"
-          opacity="0.3"
+          strokeWidth="2"
+          opacity="0.35"
           initial={{ rotate: 0 }}
           animate={{ rotate: -360 }}
           transition={{
-            duration: 25,
+            duration: 30,
             repeat: Infinity,
             ease: 'linear',
           }}
@@ -155,12 +155,12 @@ export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonP
           d={createSquarePath(600, 400, 80)}
           fill="none"
           stroke={primaryColor}
-          strokeWidth="1.5"
-          opacity="0.4"
+          strokeWidth="2"
+          opacity="0.45"
           initial={{ rotate: 45 }}
           animate={{ rotate: 405 }}
           transition={{
-            duration: 20,
+            duration: 24,
             repeat: Infinity,
             ease: 'linear',
           }}
@@ -172,12 +172,12 @@ export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonP
           d={createSquarePath(600, 400, 40)}
           fill="none"
           stroke={primaryColor}
-          strokeWidth="1.5"
-          opacity="0.5"
+          strokeWidth="2"
+          opacity="0.55"
           initial={{ rotate: 0 }}
           animate={{ rotate: -360 }}
           transition={{
-            duration: 15,
+            duration: 18,
             repeat: Infinity,
             ease: 'linear',
           }}
@@ -188,27 +188,27 @@ export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonP
         <motion.line
           x1="520" y1="320" x2="680" y2="480"
           stroke={primaryColor}
-          strokeWidth="0.5"
-          strokeDasharray="4 4"
+          strokeWidth="1"
+          strokeDasharray="6 6"
           initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.2 }}
+          animate={{ pathLength: 1, opacity: 0.25 }}
           transition={{
-            duration: 2,
-            delay: 2,
-            ease: [0.22, 1, 0.36, 1],
+            duration: 1.8,
+            delay: 1.8,
+            ease: [0.16, 1, 0.3, 1],
           }}
         />
         <motion.line
           x1="680" y1="320" x2="520" y2="480"
           stroke={primaryColor}
-          strokeWidth="0.5"
-          strokeDasharray="4 4"
+          strokeWidth="1"
+          strokeDasharray="6 6"
           initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.2 }}
+          animate={{ pathLength: 1, opacity: 0.25 }}
           transition={{
-            duration: 2,
-            delay: 2.2,
-            ease: [0.22, 1, 0.36, 1],
+            duration: 1.8,
+            delay: 2,
+            ease: [0.16, 1, 0.3, 1],
           }}
         />
 
@@ -216,27 +216,27 @@ export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonP
         <motion.line
           x1="600" y1="280" x2="600" y2="520"
           stroke={primaryColor}
-          strokeWidth="0.5"
-          strokeDasharray="4 4"
+          strokeWidth="1"
+          strokeDasharray="6 6"
           initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.2 }}
+          animate={{ pathLength: 1, opacity: 0.25 }}
           transition={{
-            duration: 2,
-            delay: 2.4,
-            ease: [0.22, 1, 0.36, 1],
+            duration: 1.8,
+            delay: 2.2,
+            ease: [0.16, 1, 0.3, 1],
           }}
         />
         <motion.line
           x1="480" y1="400" x2="720" y2="400"
           stroke={primaryColor}
-          strokeWidth="0.5"
-          strokeDasharray="4 4"
+          strokeWidth="1"
+          strokeDasharray="6 6"
           initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.2 }}
+          animate={{ pathLength: 1, opacity: 0.25 }}
           transition={{
-            duration: 2,
-            delay: 2.6,
-            ease: [0.22, 1, 0.36, 1],
+            duration: 1.8,
+            delay: 2.4,
+            ease: [0.16, 1, 0.3, 1],
           }}
         />
 
