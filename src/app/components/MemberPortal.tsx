@@ -474,7 +474,15 @@ function MembershipCard({ organization, account }: MembershipCardProps) {
     y.set(0);
   };
 
-  const memberId = useMemo(() => `MBR-2024-${Math.floor(Math.random() * 9000) + 1000}`, []);
+  // Generate a consistent member ID based on account email (deterministic hash)
+  const memberId = useMemo(() => {
+    // Create a simple hash from the email to generate a consistent 4-digit number
+    const hash = account.email.split('').reduce((acc, char) => {
+      return ((acc << 5) - acc) + char.charCodeAt(0);
+    }, 0);
+    const fourDigit = Math.abs(hash % 9000) + 1000;
+    return `MBR-2024-${fourDigit}`;
+  }, [account.email]);
 
   return (
     <motion.div
@@ -754,6 +762,10 @@ function EventCard({ event, organization, index }: EventCardProps) {
               }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                alert(`🎟️ Registration confirmed!\n\nYou're registered for:\n"${event.title}"\n\n📅 ${event.date} at ${event.time}\n📍 ${event.location}\n\nA confirmation email will be sent shortly.`);
+              }}
             >
               Register
             </motion.button>
@@ -772,9 +784,10 @@ interface HomeTabProps {
   organization: Organization;
   account: Account;
   onQuickLinkClick: (id: string) => void;
+  onViewAllEvents: () => void;
 }
 
-function HomeTab({ organization, account, onQuickLinkClick }: HomeTabProps) {
+function HomeTab({ organization, account, onQuickLinkClick, onViewAllEvents }: HomeTabProps) {
   const quickLinks = useMemo(() => createQuickLinks(organization.theme.primaryRgb), [organization.theme.primaryRgb]);
   const primaryColor = organization.theme.primary;
   const primaryRgb = organization.theme.primaryRgb;
@@ -852,6 +865,7 @@ function HomeTab({ organization, account, onQuickLinkClick }: HomeTabProps) {
             className="text-sm font-semibold flex items-center gap-1"
             style={{ color: primaryColor }}
             whileHover={{ x: 3 }}
+            onClick={onViewAllEvents}
           >
             View All
             <ChevronRightIcon className="w-4 h-4" />
@@ -990,10 +1004,10 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
   const primaryRgb = organization.theme.primaryRgb;
 
   const menuItems = [
-    { id: 'personal', label: 'Personal Information', icon: UserIcon, description: 'Name, email, phone' },
-    { id: 'membership', label: 'Membership Details', icon: CreditCardIcon, description: 'Plan, billing, renewal' },
-    { id: 'documents', label: 'My Documents', icon: FileTextIcon, description: 'Certificates, receipts' },
-    { id: 'preferences', label: 'Preferences', icon: BellIcon, description: 'Notifications, privacy' },
+    { id: 'personal', label: 'Personal Information', icon: UserIcon, description: 'Name, email, phone', action: () => alert('👤 Personal Information\n\nEdit your profile details, contact information, and preferences.') },
+    { id: 'membership', label: 'Membership Details', icon: CreditCardIcon, description: 'Plan, billing, renewal', action: () => alert('💳 Membership Details\n\nStatus: Premium Member\nRenewal Date: January 2026\nPayment Method: •••• 4242') },
+    { id: 'documents', label: 'My Documents', icon: FileTextIcon, description: 'Certificates, receipts', action: () => alert('📄 My Documents\n\n• Membership Certificate\n• Tax Receipt 2024\n• Event Confirmations\n• Meeting Minutes') },
+    { id: 'preferences', label: 'Preferences', icon: BellIcon, description: 'Notifications, privacy', action: () => alert('⚙️ Preferences\n\nManage your notification settings, privacy options, and communication preferences.') },
   ];
 
   return (
@@ -1073,6 +1087,7 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
               transition={{ delay: 0.2 + index * 0.05 }}
               whileHover={{ background: `rgba(${primaryRgb}, 0.03)` }}
               whileTap={{ scale: 0.99 }}
+              onClick={item.action}
             >
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -1121,6 +1136,11 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
         transition={{ delay: 0.5 }}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
+        onClick={() => {
+          if (confirm('Are you sure you want to sign out?')) {
+            alert('You have been signed out.\n\nReturning to login page...');
+          }
+        }}
       >
         Sign Out
       </motion.button>
@@ -1160,6 +1180,7 @@ function EventsTab({ organization }: EventsTabProps) {
           }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          onClick={() => alert('📅 Calendar View\n\nSwitching to calendar view to see all events by date.')}
         >
           <CalendarIcon className="w-4 h-4" />
           Calendar
@@ -1182,6 +1203,7 @@ function EventsTab({ organization }: EventsTabProps) {
             style={index === 0 ? { background: organization.theme.gradientBtn } : undefined}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => alert(`🔍 Filtering: ${filter}\n\nShowing ${filter.toLowerCase()} events.`)}
           >
             {filter}
           </motion.button>
@@ -1281,6 +1303,11 @@ export function MemberPortal({ organization, account, onSwitchToAdmin }: MemberP
   const handleQuickLinkClick = (id: string) => {
     if (id === 'events') setActiveTab('events');
     else if (id === 'profile') setActiveTab('profile');
+    else if (id === 'payments') alert('💳 Payments\n\nView payment history, upcoming dues, and manage payment methods.');
+    else if (id === 'documents') alert('📄 Documents\n\n2 new documents available:\n• Annual Report 2024\n• Membership Certificate');
+    else if (id === 'messages') alert('💬 Messages\n\n5 unread messages from:\n• Membership Committee\n• Events Team\n• President\'s Office');
+    else if (id === 'rewards') alert('🎁 Rewards\n\nYou have 2,450 points!\n\nRedeem for exclusive member perks and experiences.');
+    else if (id === 'membership') alert('🪪 Digital Card\n\nYour digital membership card with QR code for event check-in.');
   };
 
   return (
@@ -1318,6 +1345,7 @@ export function MemberPortal({ organization, account, onSwitchToAdmin }: MemberP
                 organization={organization}
                 account={account}
                 onQuickLinkClick={handleQuickLinkClick}
+                onViewAllEvents={() => setActiveTab('events')}
               />
             </motion.div>
           )}

@@ -196,9 +196,10 @@ interface EventCardProps {
   event: Event;
   organization: Organization;
   onClick: () => void;
+  onRegister: (eventId: string, eventTitle: string) => void;
 }
 
-function EventCard({ event, organization, onClick }: EventCardProps) {
+function EventCard({ event, organization, onClick, onRegister }: EventCardProps) {
   const typeColors = {
     conference: '#9333EA',
     workshop: '#0EA5E9',
@@ -317,6 +318,12 @@ function EventCard({ event, organization, onClick }: EventCardProps) {
             color: capacityPercent >= 100 ? '#9CA3AF' : 'white',
           }}
           disabled={capacityPercent >= 100}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (capacityPercent < 100) {
+              onRegister(event.id, event.title);
+            }
+          }}
         >
           {capacityPercent >= 100 ? 'Sold Out' : 'Register Now'}
         </button>
@@ -459,6 +466,9 @@ export function EventsPavilionPage({ organization, account }: EventsPavilionPage
               event={event}
               organization={organization}
               onClick={() => console.log('Event clicked:', event.id)}
+              onRegister={(eventId, eventTitle) => {
+                alert(`🎟️ Registration confirmed!\n\nYou're registered for:\n"${eventTitle}"\n\nA confirmation email will be sent shortly.`);
+              }}
             />
           </motion.div>
         ))}

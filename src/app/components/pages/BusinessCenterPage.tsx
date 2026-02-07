@@ -269,6 +269,10 @@ function RoomServicePanel({ organization }: { organization: Organization }) {
           <button
             className="w-full py-3 rounded-lg text-white font-medium transition-transform hover:-translate-y-0.5"
             style={{ background: organization.theme.gradientBtn }}
+            onClick={() => {
+              alert(`Requesting ${selectedItems.length} service(s) for $${totalPrice}. A concierge will contact you shortly!`);
+              setSelectedItems([]);
+            }}
           >
             Request Services
           </button>
@@ -359,8 +363,8 @@ export function BusinessCenterPage({ organization, account }: BusinessCenterPage
               { label: 'Collected', value: '$35,800' },
             ]}
             actions={[
-              { label: 'Create Invoice', onClick: () => {} },
-              { label: 'View All', onClick: () => {} },
+              { label: 'Create Invoice', onClick: () => alert('Invoice creation wizard coming soon!') },
+              { label: 'View All', onClick: () => alert('Viewing all 23 invoices...') },
             ]}
             organization={organization}
           />
@@ -375,7 +379,7 @@ export function BusinessCenterPage({ organization, account }: BusinessCenterPage
             ]}
             actions={[
               { label: 'Generate Report', onClick: () => setShowReportBuilder(true) },
-              { label: 'Schedule', onClick: () => {} },
+              { label: 'Schedule', onClick: () => alert('Report scheduling coming soon!') },
             ]}
             organization={organization}
           />
@@ -389,8 +393,8 @@ export function BusinessCenterPage({ organization, account }: BusinessCenterPage
               { label: 'Contracts', value: '18' },
             ]}
             actions={[
-              { label: 'Add Vendor', onClick: () => {} },
-              { label: 'View All', onClick: () => {} },
+              { label: 'Add Vendor', onClick: () => alert('Add vendor form coming soon!') },
+              { label: 'View All', onClick: () => alert('Viewing 24 active vendors...') },
             ]}
             organization={organization}
           />
@@ -404,8 +408,8 @@ export function BusinessCenterPage({ organization, account }: BusinessCenterPage
               { label: 'This Month', value: '$4,250' },
             ]}
             actions={[
-              { label: 'New Order', onClick: () => {} },
-              { label: 'Catalog', onClick: () => {} },
+              { label: 'New Order', onClick: () => alert('New order form coming soon!') },
+              { label: 'Catalog', onClick: () => alert('Product catalog coming soon!') },
             ]}
             organization={organization}
           />

@@ -153,10 +153,14 @@ interface DocumentRowProps {
   document: Document;
   organization: Organization;
   onSelect: () => void;
+  onOpen: () => void;
+  onMenuAction: (action: 'download' | 'share' | 'rename' | 'delete') => void;
   isSelected: boolean;
 }
 
-function DocumentRow({ document, organization, onSelect, isSelected }: DocumentRowProps) {
+function DocumentRow({ document, organization, onSelect, onOpen, onMenuAction, isSelected }: DocumentRowProps) {
+  const [showMenu, setShowMenu] = useState(false);
+
   return (
     <motion.div
       className={`flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-colors ${
@@ -167,6 +171,7 @@ function DocumentRow({ document, organization, onSelect, isSelected }: DocumentR
         ringColor: isSelected ? organization.theme.primary : undefined,
       }}
       onClick={onSelect}
+      onDoubleClick={onOpen}
       whileHover={{ backgroundColor: `rgba(${organization.theme.primaryRgb}, 0.03)` }}
     >
       {/* Icon */}
@@ -196,15 +201,58 @@ function DocumentRow({ document, organization, onSelect, isSelected }: DocumentR
       </div>
 
       {/* Actions */}
-      <button
-        className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-        onClick={(e) => {
-          e.stopPropagation();
-          // Handle menu
-        }}
-      >
-        <MoreVerticalIcon className="w-4 h-4 text-gray-400" />
-      </button>
+      <div className="relative">
+        <button
+          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowMenu(!showMenu);
+          }}
+        >
+          <MoreVerticalIcon className="w-4 h-4 text-gray-400" />
+        </button>
+
+        {/* Context Menu */}
+        <AnimatePresence>
+          {showMenu && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -5 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -5 }}
+              transition={{ duration: 0.15 }}
+              className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border z-50 py-1"
+              style={{ borderColor: '#EDE8DD' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                onClick={() => { onMenuAction('download'); setShowMenu(false); }}
+              >
+                Download
+              </button>
+              <button
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                onClick={() => { onMenuAction('share'); setShowMenu(false); }}
+              >
+                Share
+              </button>
+              <button
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                onClick={() => { onMenuAction('rename'); setShowMenu(false); }}
+              >
+                Rename
+              </button>
+              <hr className="my-1 border-gray-100" />
+              <button
+                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
+                onClick={() => { onMenuAction('delete'); setShowMenu(false); }}
+              >
+                Delete
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 }
@@ -247,6 +295,7 @@ export function VaultPage({ organization, account }: VaultPageProps) {
         <button
           className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-white font-medium text-sm"
           style={{ background: organization.theme.gradientBtn }}
+          onClick={() => alert('📁 Upload File\n\nFile upload dialog would open here.\nDrag and drop or browse to select files.')}
         >
           <UploadIcon className="w-4 h-4" />
           Upload File
@@ -324,6 +373,19 @@ export function VaultPage({ organization, account }: VaultPageProps) {
                   document={folder}
                   organization={organization}
                   onSelect={() => setSelectedDoc(folder.id)}
+                  onOpen={() => {
+                    setCurrentFolder(folder.id);
+                    alert(`📂 Opening folder: "${folder.name}"\n\nFolder navigation coming soon!`);
+                  }}
+                  onMenuAction={(action) => {
+                    const messages = {
+                      download: `Downloading folder "${folder.name}" as ZIP...`,
+                      share: `Share settings for "${folder.name}"`,
+                      rename: `Rename folder "${folder.name}"`,
+                      delete: `Are you sure you want to delete "${folder.name}" and all its contents?`,
+                    };
+                    alert(messages[action]);
+                  }}
                   isSelected={selectedDoc === folder.id}
                 />
               ))}
@@ -345,6 +407,23 @@ export function VaultPage({ organization, account }: VaultPageProps) {
                 document={doc}
                 organization={organization}
                 onSelect={() => setSelectedDoc(doc.id)}
+                onOpen={() => {
+                  if (doc.type === 'folder') {
+                    setCurrentFolder(doc.id);
+                    alert(`📂 Opening folder: "${doc.name}"`);
+                  } else {
+                    alert(`📄 Opening file: "${doc.name}"\n\nDocument preview would open here.`);
+                  }
+                }}
+                onMenuAction={(action) => {
+                  const messages = {
+                    download: `⬇️ Downloading "${doc.name}"...`,
+                    share: `🔗 Share settings for "${doc.name}"`,
+                    rename: `✏️ Rename "${doc.name}"`,
+                    delete: `🗑️ Are you sure you want to delete "${doc.name}"?`,
+                  };
+                  alert(messages[action]);
+                }}
                 isSelected={selectedDoc === doc.id}
               />
             ))}

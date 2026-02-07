@@ -599,8 +599,9 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     </div>
                     <span style={{ color: colors.textMuted }}>Remember me</span>
                   </label>
-                  <a
-                    href="#"
+                  <button
+                    type="button"
+                    onClick={() => alert(`🔑 Password Reset\n\nA password reset link will be sent to:\n${account.email}\n\nCheck your inbox shortly.`)}
                     className="transition-opacity hover:opacity-100"
                     style={{
                       color: colors.primary,
@@ -608,7 +609,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     }}
                   >
                     Forgot password?
-                  </a>
+                  </button>
                 </div>
 
                 {/* Submit Button */}
