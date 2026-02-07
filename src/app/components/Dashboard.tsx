@@ -12,6 +12,8 @@ import type { Organization, Account } from '../data/themes';
 interface DashboardProps {
   organization?: Organization;
   account?: Account;
+  onNavigate?: (page: string) => void;
+  onQuickAction?: (actionId: string) => void;
 }
 
 // ============================================================================
@@ -520,7 +522,7 @@ function getEventTypeStyles(type: UpcomingEvent['type']) {
 // MAIN COMPONENT
 // ============================================================================
 
-export function Dashboard({ organization, account }: DashboardProps) {
+export function Dashboard({ organization, account, onNavigate, onQuickAction }: DashboardProps) {
   // Default theme values if no org selected
   const primaryColor = organization?.theme.primary || '#D4AF37';
   const primaryRgb = organization?.theme.primaryRgb || '212,175,55';
@@ -607,6 +609,29 @@ export function Dashboard({ organization, account }: DashboardProps) {
                   backgroundColor: `rgba(${primaryRgb}, 0.05)`,
                   borderColor: primaryColor,
                 }}
+                onClick={() => {
+                  // Handle quick actions
+                  if (onQuickAction) {
+                    onQuickAction(action.id);
+                  } else {
+                    // Default behavior: navigate to relevant page
+                    switch (action.id) {
+                      case 'add-member':
+                        onNavigate?.('registry');
+                        break;
+                      case 'create-event':
+                        onNavigate?.('events');
+                        break;
+                      case 'upload-document':
+                        onNavigate?.('vault');
+                        break;
+                      case 'send-message':
+                        // Placeholder - no communications page yet
+                        alert('Communications feature coming soon!');
+                        break;
+                    }
+                  }
+                }}
               >
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center mb-2"
@@ -692,8 +717,9 @@ export function Dashboard({ organization, account }: DashboardProps) {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold" style={{ color: textPrimary }}>Recent Activity</h2>
             <button
-              className="text-sm font-medium transition-colors"
+              className="text-sm font-medium transition-colors hover:opacity-80"
               style={{ color: primaryColor }}
+              onClick={() => alert('Activity feed coming soon!')}
             >
               View All
             </button>
@@ -739,8 +765,9 @@ export function Dashboard({ organization, account }: DashboardProps) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold" style={{ color: textPrimary }}>Upcoming Events</h2>
           <button
-            className="text-sm font-medium transition-colors"
+            className="text-sm font-medium transition-colors hover:opacity-80"
             style={{ color: primaryColor }}
+            onClick={() => onNavigate?.('events')}
           >
             View Calendar
           </button>

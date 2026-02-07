@@ -122,6 +122,11 @@ export interface OrgTheme {
 
   // Theme Mode Preference
   prefersDark: boolean;
+
+  // Visual Identity (Phase 2 extensions)
+  backgroundPattern: 'geometric' | 'waves' | 'leaves' | 'hexagons' | 'artDeco' | 'minimal' | 'particles';
+  logoShape: 'circle' | 'diamond' | 'hexagon' | 'crown' | 'wave' | 'leaf' | 'octagon';
+  riveAsset?: string; // Optional path to org-specific Rive animation file
 }
 
 export interface Organization {
@@ -256,6 +261,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: false,
+
+      backgroundPattern: 'artDeco',
+      logoShape: 'diamond',
     },
   },
 
@@ -345,6 +353,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: false,
 
       prefersDark: false,
+
+      backgroundPattern: 'geometric',
+      logoShape: 'hexagon',
     },
   },
 
@@ -434,6 +445,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: false,
 
       prefersDark: false,
+
+      backgroundPattern: 'geometric',
+      logoShape: 'hexagon',
     },
   },
 
@@ -523,6 +537,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: false,
+
+      backgroundPattern: 'leaves',
+      logoShape: 'leaf',
     },
   },
 
@@ -612,6 +629,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: false,
+
+      backgroundPattern: 'artDeco',
+      logoShape: 'crown',
     },
   },
 
@@ -701,6 +721,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: false,
 
       prefersDark: true,
+
+      backgroundPattern: 'waves',
+      logoShape: 'octagon',
     },
   },
 
@@ -790,6 +813,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: false,
+
+      backgroundPattern: 'geometric',
+      logoShape: 'circle',
     },
   },
 
@@ -879,6 +905,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: false,
+
+      backgroundPattern: 'minimal',
+      logoShape: 'circle',
     },
   },
 
@@ -968,6 +997,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: false,
+
+      backgroundPattern: 'geometric',
+      logoShape: 'hexagon',
     },
   },
 
@@ -1057,6 +1089,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: false,
 
       prefersDark: false,
+
+      backgroundPattern: 'particles',
+      logoShape: 'circle',
     },
   },
 
@@ -1146,6 +1181,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: false,
 
       prefersDark: false,
+
+      backgroundPattern: 'hexagons',
+      logoShape: 'hexagon',
     },
   },
 
@@ -1235,6 +1273,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: false,
+
+      backgroundPattern: 'artDeco',
+      logoShape: 'diamond',
     },
   },
 
@@ -1324,6 +1365,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: false,
 
       prefersDark: false,
+
+      backgroundPattern: 'leaves',
+      logoShape: 'leaf',
     },
   },
 
@@ -1413,6 +1457,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: false,
+
+      backgroundPattern: 'leaves',
+      logoShape: 'wave',
     },
   },
 
@@ -1502,6 +1549,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: false,
 
       prefersDark: false,
+
+      backgroundPattern: 'hexagons',
+      logoShape: 'hexagon',
     },
   },
 
@@ -1595,6 +1645,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: true,
+
+      backgroundPattern: 'particles',
+      logoShape: 'octagon',
     },
   },
 
@@ -1684,6 +1737,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: false,
 
       prefersDark: false,
+
+      backgroundPattern: 'minimal',
+      logoShape: 'circle',
     },
   },
 
@@ -1773,6 +1829,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: false,
 
       prefersDark: false,
+
+      backgroundPattern: 'geometric',
+      logoShape: 'hexagon',
     },
   },
 
@@ -1862,6 +1921,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: false,
+
+      backgroundPattern: 'artDeco',
+      logoShape: 'diamond',
     },
   },
 
@@ -1951,6 +2013,9 @@ export const ORGANIZATIONS: Record<string, Organization> = {
       hasGlowEffects: true,
 
       prefersDark: true,
+
+      backgroundPattern: 'particles',
+      logoShape: 'circle',
     },
   },
 };

@@ -1,7 +1,15 @@
 import { motion } from 'motion/react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { GeometricOctagon } from './GeometricOctagon';
 import type { Account, Organization } from '../data/themes';
+import {
+  getOrgColors,
+  getOrgFonts,
+  getMotionVariants,
+  getPageTransitionVariants,
+  getCardClasses,
+  getAnimationClasses,
+} from '../utils/themeMapper';
 
 interface WelcomeScreenProps {
   account: Account;
@@ -10,52 +18,132 @@ interface WelcomeScreenProps {
 }
 
 export function WelcomeScreen({ account, organization, onComplete }: WelcomeScreenProps) {
-  
-  // Auto-advance after 4 seconds for a smoother experience
+  // Theme-aware values derived from organization
+  const theme = organization.theme;
+  const colors = useMemo(() => getOrgColors(organization), [organization]);
+  const fonts = useMemo(() => getOrgFonts(organization), [organization]);
+  const motionVariants = useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
+  const pageTransition = useMemo(() => getPageTransitionVariants(theme.animationStyle), [theme.animationStyle]);
+
+  // Get CSS utility classes from theme
+  const cardClasses = useMemo(() => getCardClasses(theme), [theme]);
+  const animationClasses = useMemo(() => getAnimationClasses(theme), [theme]);
+
+  // Animation timing based on theme
+  const animationDurations = useMemo(() => {
+    switch (theme.animationStyle) {
+      case 'elegant':
+        return { base: 1.2, delay: 0.3, stagger: 0.2 };
+      case 'smooth':
+        return { base: 0.9, delay: 0.25, stagger: 0.15 };
+      case 'energetic':
+        return { base: 0.5, delay: 0.1, stagger: 0.08 };
+      case 'dramatic':
+        return { base: 1.0, delay: 0.3, stagger: 0.18 };
+      case 'subtle':
+        return { base: 0.7, delay: 0.2, stagger: 0.12 };
+      default:
+        return { base: 0.9, delay: 0.25, stagger: 0.15 };
+    }
+  }, [theme.animationStyle]);
+
+  // Theme-derived easing
+  const easing = useMemo(() => {
+    switch (theme.animationStyle) {
+      case 'elegant':
+        return [0.22, 1, 0.36, 1];
+      case 'smooth':
+        return [0.4, 0, 0.2, 1];
+      case 'energetic':
+        return [0.34, 1.56, 0.64, 1];
+      case 'dramatic':
+        return [0.6, 0.01, 0, 0.9];
+      case 'subtle':
+        return [0.4, 0, 1, 1];
+      default:
+        return [0.4, 0, 0.2, 1];
+    }
+  }, [theme.animationStyle]);
+
+  // Particle behavior based on animation style
+  const particleConfig = useMemo(() => {
+    switch (theme.animationStyle) {
+      case 'elegant':
+        return { count: 30, duration: 3.5, distance: 40 };
+      case 'smooth':
+        return { count: 25, duration: 3, distance: 35 };
+      case 'energetic':
+        return { count: 40, duration: 2, distance: 60 };
+      case 'dramatic':
+        return { count: 35, duration: 3.2, distance: 50 };
+      case 'subtle':
+        return { count: 20, duration: 4, distance: 30 };
+      default:
+        return { count: 30, duration: 3, distance: 40 };
+    }
+  }, [theme.animationStyle]);
+
+  // Auto-advance timing based on animation style (faster for energetic, slower for elegant)
+  const autoAdvanceTime = useMemo(() => {
+    switch (theme.animationStyle) {
+      case 'elegant':
+        return 5000;
+      case 'energetic':
+        return 2500;
+      case 'dramatic':
+        return 4500;
+      default:
+        return 4000;
+    }
+  }, [theme.animationStyle]);
+
+  // Auto-advance after calculated time
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
-    }, 4000);
+    }, autoAdvanceTime);
 
     return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, [onComplete, autoAdvanceTime]);
 
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
-      style={{ background: '#FAF6E9' }}
+      style={{ background: colors.bgPrimary }}
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 1.02 }}
-      transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: animationDurations.base, ease: easing }}
     >
       {/* Animated Octagon Background */}
       <div className="absolute inset-0">
-        <GeometricOctagon primaryColor={organization.theme.primary} />
+        <GeometricOctagon primaryColor={colors.primary} />
       </div>
 
-      {/* Ambient Glow */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px]"
-          style={{
-            background: `radial-gradient(circle, rgba(${organization.theme.primaryRgb}, 0.12), transparent 70%)`,
-          }}
-        />
-      </motion.div>
+      {/* Ambient Glow - with theme-aware glow effect */}
+      {theme.hasGlowEffects && (
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: animationDurations.base * 1.5, ease: easing }}
+        >
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px]"
+            style={{
+              background: `radial-gradient(circle, rgba(${theme.primaryRgb}, 0.12), transparent 70%)`,
+            }}
+          />
+        </motion.div>
+      )}
 
-      {/* Floating Particles */}
+      {/* Floating Particles - with theme-aware behavior */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 30 }).map((_, i) => (
+        {Array.from({ length: particleConfig.count }).map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 rounded-full"
             style={{
-              background: organization.theme.primary,
+              background: colors.primary,
               left: `${10 + Math.random() * 80}%`,
               top: `${10 + Math.random() * 80}%`,
             }}
@@ -63,12 +151,12 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
             animate={{
               opacity: [0, 0.4, 0.6, 0.4, 0],
               scale: [0, 1, 1.5, 1, 0],
-              y: [0, -20 - Math.random() * 40, -50 - Math.random() * 50],
+              y: [0, -particleConfig.distance * 0.5 - Math.random() * particleConfig.distance * 0.6, -particleConfig.distance - Math.random() * particleConfig.distance * 0.8],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
-              delay: 0.5 + Math.random() * 1.5,
-              ease: [0.22, 1, 0.36, 1],
+              duration: particleConfig.duration + Math.random() * 2,
+              delay: animationDurations.delay + Math.random() * 1.5,
+              ease: easing,
             }}
           />
         ))}
@@ -80,14 +168,14 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay, ease: easing }}
         >
           <h2
             className="text-xl mb-2"
             style={{
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: fonts.body,
               fontWeight: 500,
-              color: '#5A5247',
+              color: colors.textSecondary,
               letterSpacing: '0.05em',
             }}
           >
@@ -97,16 +185,18 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
 
         {/* Name with Gradient */}
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.9 }}
+          initial={{ opacity: 0, y: 30, scale: theme.animationStyle === 'dramatic' ? 0.85 : 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: animationDurations.base, delay: animationDurations.delay + animationDurations.stagger, ease: easing }}
         >
-          <h1 
-            className="text-6xl mb-6"
+          <h1
+            className={`text-6xl mb-6 ${animationClasses}`}
             style={{
-              fontFamily: 'Cormorant Garamond, Georgia, serif',
-              fontWeight: 400,
-              background: `linear-gradient(135deg, ${organization.theme.primary}, ${organization.theme.primaryLight})`,
+              fontFamily: fonts.display,
+              fontWeight: parseInt(fonts.weightHeading),
+              background: theme.hasGradientText
+                ? `linear-gradient(135deg, ${colors.primary}, ${colors.primaryLight})`
+                : colors.primary,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -118,24 +208,24 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
 
         {/* Organization Badge */}
         <motion.div
-          className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-4"
+          className={`inline-flex items-center gap-3 px-6 py-3 rounded-full mb-4 ${cardClasses}`}
           style={{
-            background: `rgba(${organization.theme.primaryRgb}, 0.08)`,
-            border: `1px solid rgba(${organization.theme.primaryRgb}, 0.15)`,
+            background: `rgba(${theme.primaryRgb}, 0.08)`,
+            border: `1px solid rgba(${theme.primaryRgb}, 0.15)`,
           }}
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 2.5, ease: easing }}
         >
-          <div 
+          <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm"
             style={{
-              background: organization.theme.gradientBtn,
+              background: theme.gradientBtn,
             }}
           >
-            <span 
+            <span
               style={{
-                fontFamily: 'Cormorant Garamond, Georgia, serif',
+                fontFamily: fonts.display,
                 fontStyle: 'italic',
                 fontWeight: 300,
               }}
@@ -146,9 +236,9 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
           <span
             className="text-lg"
             style={{
-              fontFamily: 'Cormorant Garamond, Georgia, serif',
+              fontFamily: fonts.display,
               fontWeight: 600,
-              color: '#1A1815',
+              color: colors.textPrimary,
             }}
           >
             {organization.name}
@@ -159,13 +249,13 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 3.5, ease: easing }}
         >
           <p
             className="text-sm mb-3"
             style={{
-              color: '#5A5247',
-              fontFamily: 'DM Sans, sans-serif',
+              color: colors.textSecondary,
+              fontFamily: fonts.body,
               fontWeight: 500,
             }}
           >
@@ -177,13 +267,13 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 4.5, ease: easing }}
         >
           <p
             className="text-base italic mb-6"
             style={{
-              fontFamily: 'Cormorant Garamond, Georgia, serif',
-              color: organization.theme.primary,
+              fontFamily: fonts.display,
+              color: colors.primary,
               opacity: 0.95,
               fontWeight: 500,
             }}
@@ -196,13 +286,13 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 5.5, ease: easing }}
         >
           <p
             className="text-xs"
             style={{
-              color: '#8A8278',
-              fontFamily: 'DM Sans, sans-serif',
+              color: colors.textMuted,
+              fontFamily: fonts.body,
               letterSpacing: '0.05em',
               fontWeight: 500,
             }}
@@ -218,27 +308,27 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
           </p>
         </motion.div>
 
-        {/* Loading Indicator */}
+        {/* Loading Indicator - with theme-aware animation speed */}
         <motion.div
           className="mt-12 flex items-center justify-center gap-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1.6 }}
+          transition={{ duration: animationDurations.base * 0.5, delay: animationDurations.delay + animationDurations.stagger * 6 }}
         >
           {[0, 1, 2].map((i) => (
             <motion.div
               key={i}
               className="w-2 h-2 rounded-full"
-              style={{ background: organization.theme.primary }}
+              style={{ background: colors.primary }}
               animate={{
                 opacity: [0.3, 1, 0.3],
                 scale: [0.8, 1.2, 0.8],
               }}
               transition={{
-                duration: 1.5,
+                duration: theme.animationStyle === 'energetic' ? 1 : 1.5,
                 repeat: Infinity,
-                delay: i * 0.2,
-                ease: [0.22, 1, 0.36, 1],
+                delay: i * (theme.animationStyle === 'energetic' ? 0.1 : 0.2),
+                ease: easing,
               }}
             />
           ))}

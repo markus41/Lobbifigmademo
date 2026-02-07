@@ -283,7 +283,7 @@ export function EventBuilder({
   }, [config, onPublish]);
 
   return (
-    <div className={cn('h-[800px] bg-gray-50 rounded-xl overflow-hidden', className)}>
+    <div className={cn('h-full max-h-[800px] min-h-[600px] bg-gray-50 rounded-xl overflow-hidden flex flex-col', className)}>
       <LobbiWizard
         steps={WIZARD_STEPS}
         onComplete={handleComplete}

@@ -109,7 +109,7 @@ export default function App() {
 
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard organization={selectedOrg} account={selectedAccount} />;
+        return <Dashboard organization={selectedOrg} account={selectedAccount} onNavigate={setCurrentPage} />;
       case 'registry':
         return <RegistryPage organization={selectedOrg} account={selectedAccount} />;
       case 'business':
@@ -121,7 +121,7 @@ export default function App() {
       case 'settings':
         return <SettingsPage organization={selectedOrg} account={selectedAccount} />;
       default:
-        return <Dashboard organization={selectedOrg} account={selectedAccount} />;
+        return <Dashboard organization={selectedOrg} account={selectedAccount} onNavigate={setCurrentPage} />;
     }
   };
 

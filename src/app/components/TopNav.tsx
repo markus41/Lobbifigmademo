@@ -43,7 +43,7 @@ export function TopNav({
 
   // Update document title when organization changes
   useEffect(() => {
-    document.title = `${organization.shortName} | The Lobbi`;
+    document.title = `${organization.short || organization.name} | The Lobbi`;
 
     // Update theme-color meta tag
     const themeColor = document.querySelector('meta[name="theme-color"]');

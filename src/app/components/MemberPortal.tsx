@@ -1,12 +1,16 @@
 /**
- * Member Portal - Mobile-First View
+ * Member Portal - Ultra-Premium Mobile Experience
  *
- * A simplified, mobile-optimized view for standard members.
- * Focuses on essential features with touch-friendly navigation.
+ * A jaw-droppingly beautiful, mobile-first experience with:
+ * - Stunning glassmorphism effects
+ * - Floating ambient orbs with glow
+ * - Holographic membership card
+ * - Premium micro-interactions
+ * - Immersive animations throughout
  */
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'motion/react';
 import type { Organization, Account } from '../data/themes';
 
 interface MemberPortalProps {
@@ -24,6 +28,7 @@ interface QuickLink {
   label: string;
   icon: React.ReactNode;
   badge?: number;
+  gradient: string;
 }
 
 interface UpcomingEvent {
@@ -33,11 +38,13 @@ interface UpcomingEvent {
   time: string;
   location: string;
   isRegistered: boolean;
+  attendees?: number;
+  image?: string;
 }
 
 interface Notification {
   id: string;
-  type: 'info' | 'event' | 'payment' | 'message';
+  type: 'info' | 'event' | 'payment' | 'message' | 'achievement';
   title: string;
   message: string;
   time: string;
@@ -45,18 +52,18 @@ interface Notification {
 }
 
 // ============================================================================
-// ICONS
+// PREMIUM ICONS - Enhanced with gradients
 // ============================================================================
 
-const HomeIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const HomeIcon = ({ className, filled }: { className?: string; filled?: boolean }) => (
+  <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
     <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-    <polyline points="9 22 9 12 15 12 15 22" />
+    {!filled && <polyline points="9 22 9 12 15 12 15 22" />}
   </svg>
 );
 
-const CalendarIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const CalendarIcon = ({ className, filled }: { className?: string; filled?: boolean }) => (
+  <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
     <rect x="3" y="4" width="18" height="18" rx="2" />
     <line x1="16" y1="2" x2="16" y2="6" />
     <line x1="8" y1="2" x2="8" y2="6" />
@@ -65,28 +72,28 @@ const CalendarIcon = ({ className }: { className?: string }) => (
 );
 
 const CreditCardIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <rect x="1" y="4" width="22" height="16" rx="2" />
     <line x1="1" y1="10" x2="23" y2="10" />
   </svg>
 );
 
-const BellIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const BellIcon = ({ className, filled }: { className?: string; filled?: boolean }) => (
+  <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
     <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
     <path d="M13.73 21a2 2 0 01-3.46 0" />
   </svg>
 );
 
-const UserIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const UserIcon = ({ className, filled }: { className?: string; filled?: boolean }) => (
+  <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
 const FileTextIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
     <polyline points="14 2 14 8 20 8" />
     <line x1="16" y1="13" x2="8" y2="13" />
@@ -95,17 +102,17 @@ const FileTextIcon = ({ className }: { className?: string }) => (
 );
 
 const MessageIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
   </svg>
 );
 
 const QrCodeIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="7" height="7" />
-    <rect x="14" y="3" width="7" height="7" />
-    <rect x="14" y="14" width="7" height="7" />
-    <rect x="3" y="14" width="7" height="7" />
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <rect x="3" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="14" width="7" height="7" rx="1" />
+    <rect x="3" y="14" width="7" height="7" rx="1" />
   </svg>
 );
 
@@ -122,17 +129,143 @@ const CheckCircleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const SparklesIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+  </svg>
+);
+
+const GiftIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <rect x="3" y="8" width="18" height="4" rx="1" />
+    <rect x="5" y="12" width="14" height="9" rx="1" />
+    <line x1="12" y1="8" x2="12" y2="21" />
+    <path d="M12 8c-2-3-6-3-6 0s4 3 6 0c2-3 6-3 6 0s-4 3-6 0" />
+  </svg>
+);
+
+const StarIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
+
+const TrophyIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <path d="M6 9H4a2 2 0 01-2-2V4a2 2 0 012-2h2" />
+    <path d="M18 9h2a2 2 0 002-2V4a2 2 0 00-2-2h-2" />
+    <path d="M4 22h16" />
+    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+    <path d="M18 2H6v7a6 6 0 0012 0V2z" />
+  </svg>
+);
+
 // ============================================================================
-// MOCK DATA
+// FLOATING ORBS - Stunning ambient background
 // ============================================================================
 
-const QUICK_LINKS: QuickLink[] = [
-  { id: 'events', label: 'Events', icon: <CalendarIcon className="w-6 h-6" />, badge: 3 },
-  { id: 'payments', label: 'Payments', icon: <CreditCardIcon className="w-6 h-6" /> },
-  { id: 'documents', label: 'Documents', icon: <FileTextIcon className="w-6 h-6" />, badge: 2 },
-  { id: 'messages', label: 'Messages', icon: <MessageIcon className="w-6 h-6" />, badge: 5 },
-  { id: 'profile', label: 'Profile', icon: <UserIcon className="w-6 h-6" /> },
-  { id: 'membership', label: 'Card', icon: <QrCodeIcon className="w-6 h-6" /> },
+interface FloatingOrbsProps {
+  primaryRgb: string;
+  count?: number;
+}
+
+function FloatingOrbs({ primaryRgb, count = 6 }: FloatingOrbsProps) {
+  const orbs = useMemo(() => {
+    return Array.from({ length: count }, (_, i) => ({
+      id: i,
+      size: Math.random() * 200 + 100,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      duration: Math.random() * 20 + 15,
+      delay: Math.random() * 5,
+      opacity: Math.random() * 0.15 + 0.05,
+    }));
+  }, [count]);
+
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+      {orbs.map((orb) => (
+        <motion.div
+          key={orb.id}
+          className="absolute rounded-full blur-3xl"
+          style={{
+            width: orb.size,
+            height: orb.size,
+            left: `${orb.x}%`,
+            top: `${orb.y}%`,
+            background: `radial-gradient(circle, rgba(${primaryRgb}, ${orb.opacity}) 0%, transparent 70%)`,
+          }}
+          animate={{
+            x: [0, 50, -30, 20, 0],
+            y: [0, -40, 30, -20, 0],
+            scale: [1, 1.2, 0.9, 1.1, 1],
+          }}
+          transition={{
+            duration: orb.duration,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: orb.delay,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ============================================================================
+// GLASSMORPHIC CARD - Reusable premium container
+// ============================================================================
+
+interface GlassCardProps {
+  children: React.ReactNode;
+  className?: string;
+  glow?: boolean;
+  glowColor?: string;
+  interactive?: boolean;
+  onClick?: () => void;
+}
+
+function GlassCard({ children, className = '', glow, glowColor, interactive, onClick }: GlassCardProps) {
+  return (
+    <motion.div
+      className={`
+        relative overflow-hidden
+        bg-white/70 backdrop-blur-xl
+        border border-white/40
+        shadow-xl shadow-black/5
+        ${className}
+      `}
+      onClick={onClick}
+      whileTap={interactive ? { scale: 0.98 } : undefined}
+      style={{
+        boxShadow: glow && glowColor
+          ? `0 8px 32px ${glowColor}, 0 0 0 1px rgba(255,255,255,0.2) inset`
+          : undefined,
+      }}
+    >
+      {/* Shimmer overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-transparent opacity-50 pointer-events-none" />
+
+      {/* Content */}
+      <div className="relative z-10">
+        {children}
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// MOCK DATA - Enhanced with more visual appeal
+// ============================================================================
+
+const createQuickLinks = (primaryRgb: string): QuickLink[] => [
+  { id: 'events', label: 'Events', icon: <CalendarIcon className="w-6 h-6" />, badge: 3, gradient: `linear-gradient(135deg, rgba(${primaryRgb}, 0.2) 0%, rgba(${primaryRgb}, 0.05) 100%)` },
+  { id: 'payments', label: 'Payments', icon: <CreditCardIcon className="w-6 h-6" />, gradient: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0.05) 100%)' },
+  { id: 'documents', label: 'Documents', icon: <FileTextIcon className="w-6 h-6" />, badge: 2, gradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.05) 100%)' },
+  { id: 'messages', label: 'Messages', icon: <MessageIcon className="w-6 h-6" />, badge: 5, gradient: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.05) 100%)' },
+  { id: 'rewards', label: 'Rewards', icon: <GiftIcon className="w-6 h-6" />, gradient: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(236, 72, 153, 0.05) 100%)' },
+  { id: 'membership', label: 'Card', icon: <QrCodeIcon className="w-6 h-6" />, gradient: `linear-gradient(135deg, rgba(${primaryRgb}, 0.15) 0%, rgba(${primaryRgb}, 0.03) 100%)` },
 ];
 
 const UPCOMING_EVENTS: UpcomingEvent[] = [
@@ -143,6 +276,7 @@ const UPCOMING_EVENTS: UpcomingEvent[] = [
     time: '6:00 PM',
     location: 'Grand Ballroom',
     isRegistered: true,
+    attendees: 156,
   },
   {
     id: '2',
@@ -151,6 +285,7 @@ const UPCOMING_EVENTS: UpcomingEvent[] = [
     time: '10:00 AM',
     location: 'Conference Room A',
     isRegistered: false,
+    attendees: 42,
   },
   {
     id: '3',
@@ -159,12 +294,21 @@ const UPCOMING_EVENTS: UpcomingEvent[] = [
     time: '5:30 PM',
     location: 'Rooftop Lounge',
     isRegistered: false,
+    attendees: 89,
   },
 ];
 
 const NOTIFICATIONS: Notification[] = [
   {
     id: '1',
+    type: 'achievement',
+    title: 'Achievement Unlocked!',
+    message: 'You earned the "Event Enthusiast" badge',
+    time: '1h ago',
+    read: false,
+  },
+  {
+    id: '2',
     type: 'event',
     title: 'Event Reminder',
     message: 'Annual Member Gala is in 3 days',
@@ -172,15 +316,15 @@ const NOTIFICATIONS: Notification[] = [
     read: false,
   },
   {
-    id: '2',
+    id: '3',
     type: 'payment',
-    title: 'Payment Due',
-    message: 'Q2 dues payment due by March 31',
+    title: 'Payment Received',
+    message: 'Thank you! Q1 dues payment confirmed',
     time: '1d ago',
-    read: false,
+    read: true,
   },
   {
-    id: '3',
+    id: '4',
     type: 'message',
     title: 'New Message',
     message: 'From: Membership Committee',
@@ -190,7 +334,7 @@ const NOTIFICATIONS: Notification[] = [
 ];
 
 // ============================================================================
-// BOTTOM NAV COMPONENT
+// PREMIUM BOTTOM NAV - Floating glassmorphism with glow
 // ============================================================================
 
 interface BottomNavProps {
@@ -209,60 +353,97 @@ function BottomNav({ activeTab, onTabChange, primaryColor, primaryRgb }: BottomN
   ];
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 bg-white border-t z-50 safe-area-inset-bottom"
-      style={{ borderColor: '#EDE8DD' }}
-    >
-      <div className="flex items-center justify-around h-16">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
+    <nav className="fixed bottom-4 left-4 right-4 z-50">
+      <motion.div
+        className="relative bg-white/80 backdrop-blur-2xl rounded-3xl border border-white/50 shadow-2xl shadow-black/10 overflow-hidden"
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      >
+        {/* Gradient top border */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ background: `linear-gradient(90deg, transparent, rgba(${primaryRgb}, 0.5), transparent)` }}
+        />
 
-          return (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className="relative flex flex-col items-center justify-center flex-1 h-full"
-            >
-              <div className="relative">
-                <Icon
-                  className={`w-6 h-6 transition-colors ${isActive ? '' : 'text-gray-400'}`}
-                  style={{ color: isActive ? primaryColor : undefined }}
-                />
-                {tab.badge && (
-                  <span
-                    className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center text-white"
-                    style={{ background: '#DC2626' }}
-                  >
-                    {tab.badge}
-                  </span>
-                )}
-              </div>
-              <span
-                className={`text-[10px] mt-1 font-medium transition-colors ${
-                  isActive ? '' : 'text-gray-400'
-                }`}
-                style={{ color: isActive ? primaryColor : undefined }}
+        <div className="flex items-center justify-around h-18 px-2">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+
+            return (
+              <motion.button
+                key={tab.id}
+                onClick={() => onTabChange(tab.id)}
+                className="relative flex flex-col items-center justify-center flex-1 py-3 rounded-2xl"
+                whileTap={{ scale: 0.92 }}
               >
-                {tab.label}
-              </span>
-              {isActive && (
-                <motion.div
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 rounded-full"
-                  style={{ background: primaryColor }}
-                  layoutId="bottomNavIndicator"
-                />
-              )}
-            </button>
-          );
-        })}
-      </div>
+                {/* Active background glow */}
+                {isActive && (
+                  <motion.div
+                    className="absolute inset-1 rounded-2xl"
+                    style={{
+                      background: `rgba(${primaryRgb}, 0.1)`,
+                      boxShadow: `0 0 20px rgba(${primaryRgb}, 0.2)`,
+                    }}
+                    layoutId="navActiveBackground"
+                    transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                  />
+                )}
+
+                <div className="relative z-10">
+                  <motion.div
+                    animate={{
+                      scale: isActive ? 1.15 : 1,
+                      y: isActive ? -2 : 0,
+                    }}
+                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                  >
+                    <Icon
+                      className={`w-6 h-6 transition-colors duration-300`}
+                      filled={isActive}
+                      style={{ color: isActive ? primaryColor : '#9CA3AF' }}
+                    />
+                  </motion.div>
+
+                  {/* Badge */}
+                  {tab.badge && (
+                    <motion.span
+                      className="absolute -top-1 -right-2 min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center text-white shadow-lg"
+                      style={{
+                        background: `linear-gradient(135deg, #EF4444 0%, #DC2626 100%)`,
+                        boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
+                      }}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", damping: 15, stiffness: 400 }}
+                    >
+                      {tab.badge}
+                    </motion.span>
+                  )}
+                </div>
+
+                <motion.span
+                  className={`relative z-10 text-[11px] mt-1.5 font-semibold tracking-wide transition-colors duration-300`}
+                  style={{ color: isActive ? primaryColor : '#9CA3AF' }}
+                  animate={{ opacity: isActive ? 1 : 0.7 }}
+                >
+                  {tab.label}
+                </motion.span>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        {/* Safe area padding for iOS */}
+        <div className="h-safe-area-inset-bottom" />
+      </motion.div>
     </nav>
   );
 }
 
 // ============================================================================
-// MEMBERSHIP CARD COMPONENT
+// HOLOGRAPHIC MEMBERSHIP CARD - Premium 3D effect
 // ============================================================================
 
 interface MembershipCardProps {
@@ -271,70 +452,320 @@ interface MembershipCardProps {
 }
 
 function MembershipCard({ organization, account }: MembershipCardProps) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const rotateX = useTransform(y, [-100, 100], [10, -10]);
+  const rotateY = useTransform(x, [-100, 100], [-10, 10]);
+
+  const springRotateX = useSpring(rotateX, { stiffness: 300, damping: 30 });
+  const springRotateY = useSpring(rotateY, { stiffness: 300, damping: 30 });
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    x.set(event.clientX - centerX);
+    y.set(event.clientY - centerY);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  const memberId = useMemo(() => `MBR-2024-${Math.floor(Math.random() * 9000) + 1000}`, []);
+
   return (
     <motion.div
-      className="relative overflow-hidden rounded-2xl p-6 text-white"
+      className="relative perspective-1000"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{
-        background: organization.theme.gradientBtn,
-        boxShadow: `0 8px 32px rgba(${organization.theme.primaryRgb}, 0.3)`,
+        rotateX: springRotateX,
+        rotateY: springRotateY,
+        transformStyle: 'preserve-3d',
       }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: "spring", damping: 25, stiffness: 200 }}
     >
-      {/* Pattern overlay */}
       <div
-        className="absolute inset-0 opacity-10"
+        className="relative overflow-hidden rounded-3xl p-6 text-white"
         style={{
-          backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)`,
+          background: organization.theme.gradientBtn,
+          boxShadow: `
+            0 25px 50px -12px rgba(${organization.theme.primaryRgb}, 0.4),
+            0 0 0 1px rgba(255,255,255,0.1) inset,
+            0 0 80px -20px rgba(${organization.theme.primaryRgb}, 0.3)
+          `,
         }}
-      />
+      >
+        {/* Holographic shimmer effect */}
+        <motion.div
+          className="absolute inset-0 opacity-30"
+          style={{
+            background: `
+              linear-gradient(105deg,
+                transparent 20%,
+                rgba(255,255,255,0.4) 25%,
+                rgba(255,255,255,0.1) 30%,
+                transparent 35%,
+                transparent 65%,
+                rgba(255,255,255,0.1) 70%,
+                rgba(255,255,255,0.4) 75%,
+                transparent 80%
+              )
+            `,
+            backgroundSize: '250% 100%',
+          }}
+          animate={{
+            backgroundPosition: ['200% 0%', '-200% 0%'],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
 
-      {/* Logo */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/20"
-          >
-            <span
-              className="text-lg italic font-medium"
+        {/* Pattern overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.08]"
+          style={{
+            backgroundImage: `
+              repeating-linear-gradient(45deg,
+                transparent,
+                transparent 8px,
+                rgba(255,255,255,0.3) 8px,
+                rgba(255,255,255,0.3) 16px
+              )
+            `,
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <motion.div
+                className="w-12 h-12 rounded-xl flex items-center justify-center bg-white/20 backdrop-blur-sm border border-white/20"
+                whileHover={{ scale: 1.05, rotate: 5 }}
+              >
+                <span
+                  className="text-xl italic font-semibold"
+                  style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+                >
+                  {organization.logoLetter}
+                </span>
+              </motion.div>
+              <div>
+                <p className="text-xs opacity-70 font-medium tracking-wide">MEMBER SINCE 2020</p>
+                <p className="font-semibold text-lg">{organization.short}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center gap-1 justify-end mb-1">
+                <SparklesIcon className="w-4 h-4 text-yellow-300" />
+                <span className="text-[10px] uppercase tracking-widest font-semibold text-yellow-200">Premium</span>
+              </div>
+              <p className="text-sm font-semibold">Active</p>
+            </div>
+          </div>
+
+          {/* Member Info */}
+          <div className="mb-6">
+            <motion.p
+              className="text-3xl font-light tracking-tight"
               style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
             >
-              {organization.logoLetter}
-            </span>
+              {account.name}
+            </motion.p>
+            <p className="text-sm opacity-70 font-medium mt-1">{account.role}</p>
           </div>
-          <div>
-            <p className="text-xs opacity-80">Member Since 2020</p>
-            <p className="font-semibold">{organization.short}</p>
+
+          {/* Member ID & QR */}
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-[10px] uppercase tracking-widest opacity-50 font-medium">Member ID</p>
+              <p className="font-mono text-sm font-semibold tracking-wider">{memberId}</p>
+            </div>
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/20"
+            >
+              <QrCodeIcon className="w-8 h-8 opacity-80" />
+            </motion.div>
           </div>
         </div>
-        <div className="text-right">
-          <p className="text-[10px] uppercase tracking-wider opacity-80">Status</p>
-          <p className="text-sm font-semibold">Active</p>
-        </div>
-      </div>
-
-      {/* Member Info */}
-      <div className="mb-4">
-        <p className="text-2xl font-light" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}>
-          {account.name}
-        </p>
-        <p className="text-sm opacity-80">{account.role}</p>
-      </div>
-
-      {/* Member ID */}
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider opacity-60">Member ID</p>
-          <p className="font-mono text-sm">MBR-2024-{Math.floor(Math.random() * 9000) + 1000}</p>
-        </div>
-        <QrCodeIcon className="w-10 h-10 opacity-60" />
       </div>
     </motion.div>
   );
 }
 
 // ============================================================================
-// HOME TAB COMPONENT
+// QUICK LINK CARD - Premium micro-interaction
+// ============================================================================
+
+interface QuickLinkCardProps {
+  link: QuickLink;
+  primaryColor: string;
+  primaryRgb: string;
+  index: number;
+  onClick: () => void;
+}
+
+function QuickLinkCard({ link, primaryColor, primaryRgb, index, onClick }: QuickLinkCardProps) {
+  return (
+    <motion.button
+      className="relative flex flex-col items-center justify-center p-4 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/40 shadow-lg shadow-black/5 overflow-hidden"
+      onClick={onClick}
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: index * 0.05, type: "spring", damping: 20 }}
+      whileHover={{ scale: 1.02, y: -2 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      {/* Gradient background */}
+      <div
+        className="absolute inset-0 opacity-60"
+        style={{ background: link.gradient }}
+      />
+
+      {/* Icon container with glow */}
+      <motion.div
+        className="relative z-10 w-12 h-12 rounded-2xl flex items-center justify-center mb-2"
+        style={{
+          background: `rgba(${primaryRgb}, 0.12)`,
+          color: primaryColor,
+          boxShadow: `0 4px 12px rgba(${primaryRgb}, 0.15)`,
+        }}
+        whileHover={{
+          scale: 1.1,
+          boxShadow: `0 8px 24px rgba(${primaryRgb}, 0.25)`,
+        }}
+      >
+        {link.icon}
+      </motion.div>
+
+      <span className="relative z-10 text-xs font-semibold text-gray-700">{link.label}</span>
+
+      {/* Badge */}
+      {link.badge && (
+        <motion.span
+          className="absolute top-2 right-2 min-w-[20px] h-5 rounded-full text-[10px] font-bold flex items-center justify-center text-white shadow-lg px-1"
+          style={{
+            background: `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}dd 100%)`,
+            boxShadow: `0 2px 8px rgba(${primaryRgb}, 0.4)`,
+          }}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: index * 0.05 + 0.3, type: "spring", damping: 15 }}
+        >
+          {link.badge}
+        </motion.span>
+      )}
+    </motion.button>
+  );
+}
+
+// ============================================================================
+// EVENT CARD - Stunning visual design
+// ============================================================================
+
+interface EventCardProps {
+  event: UpcomingEvent;
+  organization: Organization;
+  index: number;
+}
+
+function EventCard({ event, organization, index }: EventCardProps) {
+  const primaryColor = organization.theme.primary;
+  const primaryRgb = organization.theme.primaryRgb;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.1 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      <GlassCard className="rounded-2xl p-4" interactive>
+        <div className="flex items-start gap-4">
+          {/* Date badge */}
+          <motion.div
+            className="flex-shrink-0 w-14 h-14 rounded-2xl flex flex-col items-center justify-center text-white"
+            style={{
+              background: organization.theme.gradientBtn,
+              boxShadow: `0 4px 16px rgba(${primaryRgb}, 0.3)`,
+            }}
+            whileHover={{ scale: 1.05, rotate: 2 }}
+          >
+            <span className="text-lg font-bold leading-none">{event.date.split(' ')[1].replace(',', '')}</span>
+            <span className="text-[10px] uppercase font-medium opacity-80">{event.date.split(' ')[0]}</span>
+          </motion.div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-gray-900 leading-tight">{event.title}</h3>
+            <p className="text-sm text-gray-500 mt-0.5">{event.time} • {event.location}</p>
+
+            {/* Attendees */}
+            <div className="flex items-center gap-2 mt-2">
+              <div className="flex -space-x-2">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-6 h-6 rounded-full border-2 border-white bg-gradient-to-br from-gray-200 to-gray-300"
+                    style={{ zIndex: 3 - i }}
+                  />
+                ))}
+              </div>
+              <span className="text-xs text-gray-400 font-medium">
+                +{event.attendees} attending
+              </span>
+            </div>
+          </div>
+
+          {/* Action */}
+          {event.isRegistered ? (
+            <motion.span
+              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
+              style={{
+                background: `rgba(${primaryRgb}, 0.1)`,
+                color: primaryColor,
+              }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+            >
+              <CheckCircleIcon className="w-3.5 h-3.5" />
+              Registered
+            </motion.span>
+          ) : (
+            <motion.button
+              className="text-xs font-semibold px-4 py-2 rounded-full text-white shadow-lg"
+              style={{
+                background: organization.theme.gradientBtn,
+                boxShadow: `0 4px 12px rgba(${primaryRgb}, 0.3)`,
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Register
+            </motion.button>
+          )}
+        </div>
+      </GlassCard>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// HOME TAB - Immersive experience
 // ============================================================================
 
 interface HomeTabProps {
@@ -344,103 +775,100 @@ interface HomeTabProps {
 }
 
 function HomeTab({ organization, account, onQuickLinkClick }: HomeTabProps) {
+  const quickLinks = useMemo(() => createQuickLinks(organization.theme.primaryRgb), [organization.theme.primaryRgb]);
+  const primaryColor = organization.theme.primary;
+  const primaryRgb = organization.theme.primaryRgb;
+
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
-      <div>
-        <p className="text-gray-500 text-sm">Welcome back,</p>
-        <h1
-          className="text-2xl font-light"
-          style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#2C2A25' }}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between"
+      >
+        <div>
+          <motion.p
+            className="text-gray-500 text-sm font-medium"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1 }}
+          >
+            Welcome back,
+          </motion.p>
+          <motion.h1
+            className="text-3xl font-light tracking-tight"
+            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1F2937' }}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            {account.first} ✨
+          </motion.h1>
+        </div>
+
+        {/* Points badge */}
+        <motion.div
+          className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-100"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          whileHover={{ scale: 1.02 }}
         >
-          {account.first}
-        </h1>
-      </div>
+          <StarIcon className="w-5 h-5 text-yellow-500" />
+          <div className="text-right">
+            <p className="text-sm font-bold text-yellow-700">2,450</p>
+            <p className="text-[10px] text-yellow-600 font-medium">Points</p>
+          </div>
+        </motion.div>
+      </motion.div>
 
       {/* Membership Card */}
       <MembershipCard organization={organization} account={account} />
 
       {/* Quick Links Grid */}
       <div className="grid grid-cols-3 gap-3">
-        {QUICK_LINKS.map((link) => (
-          <motion.button
+        {quickLinks.map((link, index) => (
+          <QuickLinkCard
             key={link.id}
-            className="relative flex flex-col items-center justify-center p-4 bg-white rounded-xl border"
-            style={{ borderColor: '#EDE8DD' }}
+            link={link}
+            primaryColor={primaryColor}
+            primaryRgb={primaryRgb}
+            index={index}
             onClick={() => onQuickLinkClick(link.id)}
-            whileTap={{ scale: 0.95 }}
-          >
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
-              style={{ background: `rgba(${organization.theme.primaryRgb}, 0.1)`, color: organization.theme.primary }}
-            >
-              {link.icon}
-            </div>
-            <span className="text-xs font-medium text-gray-700">{link.label}</span>
-            {link.badge && (
-              <span
-                className="absolute top-2 right-2 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center text-white"
-                style={{ background: organization.theme.primary }}
-              >
-                {link.badge}
-              </span>
-            )}
-          </motion.button>
+          />
         ))}
       </div>
 
       {/* Upcoming Events */}
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Upcoming Events</h2>
-          <button className="text-sm" style={{ color: organization.theme.primary }}>
+          <motion.button
+            className="text-sm font-semibold flex items-center gap-1"
+            style={{ color: primaryColor }}
+            whileHover={{ x: 3 }}
+          >
             View All
-          </button>
+            <ChevronRightIcon className="w-4 h-4" />
+          </motion.button>
         </div>
         <div className="space-y-3">
-          {UPCOMING_EVENTS.slice(0, 2).map((event) => (
-            <motion.div
-              key={event.id}
-              className="bg-white rounded-xl border p-4"
-              style={{ borderColor: '#EDE8DD' }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900">{event.title}</h3>
-                  <p className="text-sm text-gray-500">{event.date} at {event.time}</p>
-                  <p className="text-xs text-gray-400 mt-1">{event.location}</p>
-                </div>
-                {event.isRegistered ? (
-                  <span
-                    className="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full"
-                    style={{
-                      background: `rgba(${organization.theme.primaryRgb}, 0.1)`,
-                      color: organization.theme.primary,
-                    }}
-                  >
-                    <CheckCircleIcon className="w-3 h-3" />
-                    Registered
-                  </span>
-                ) : (
-                  <button
-                    className="text-xs font-medium px-3 py-1.5 rounded-full text-white"
-                    style={{ background: organization.theme.gradientBtn }}
-                  >
-                    Register
-                  </button>
-                )}
-              </div>
-            </motion.div>
+          {UPCOMING_EVENTS.slice(0, 2).map((event, index) => (
+            <EventCard key={event.id} event={event} organization={organization} index={index} />
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
 
 // ============================================================================
-// NOTIFICATIONS TAB COMPONENT
+// NOTIFICATIONS TAB - Premium design
 // ============================================================================
 
 interface NotificationsTabProps {
@@ -448,49 +876,98 @@ interface NotificationsTabProps {
 }
 
 function NotificationsTab({ organization }: NotificationsTabProps) {
+  const primaryColor = organization.theme.primary;
+  const primaryRgb = organization.theme.primaryRgb;
+
+  const getNotificationIcon = (type: Notification['type']) => {
+    switch (type) {
+      case 'achievement': return <TrophyIcon className="w-5 h-5" />;
+      case 'event': return <CalendarIcon className="w-5 h-5" />;
+      case 'payment': return <CreditCardIcon className="w-5 h-5" />;
+      case 'message': return <MessageIcon className="w-5 h-5" />;
+      default: return <BellIcon className="w-5 h-5" />;
+    }
+  };
+
+  const getNotificationGradient = (type: Notification['type']) => {
+    switch (type) {
+      case 'achievement': return 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.05) 100%)';
+      case 'event': return `linear-gradient(135deg, rgba(${primaryRgb}, 0.15) 0%, rgba(${primaryRgb}, 0.05) 100%)`;
+      case 'payment': return 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.05) 100%)';
+      case 'message': return 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(79, 70, 229, 0.05) 100%)';
+      default: return `linear-gradient(135deg, rgba(${primaryRgb}, 0.15) 0%, rgba(${primaryRgb}, 0.05) 100%)`;
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      <h1
-        className="text-2xl font-light"
-        style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#2C2A25' }}
+    <div className="space-y-6">
+      <motion.h1
+        className="text-3xl font-light tracking-tight"
+        style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1F2937' }}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
       >
         Notifications
-      </h1>
+      </motion.h1>
 
       <div className="space-y-3">
-        {NOTIFICATIONS.map((notification) => (
+        {NOTIFICATIONS.map((notification, index) => (
           <motion.div
             key={notification.id}
-            className={`bg-white rounded-xl border p-4 ${!notification.read ? 'border-l-4' : ''}`}
-            style={{
-              borderColor: '#EDE8DD',
-              borderLeftColor: !notification.read ? organization.theme.primary : undefined,
-            }}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
           >
-            <div className="flex items-start gap-3">
+            <GlassCard
+              className={`rounded-2xl p-4 ${!notification.read ? 'border-l-4' : ''}`}
+              glow={!notification.read}
+              glowColor={`rgba(${primaryRgb}, 0.1)`}
+              interactive
+            >
               <div
-                className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                className="absolute inset-0 opacity-40 rounded-2xl"
                 style={{
-                  background: `rgba(${organization.theme.primaryRgb}, 0.1)`,
-                  color: organization.theme.primary,
+                  background: getNotificationGradient(notification.type),
+                  borderLeftColor: !notification.read ? primaryColor : undefined,
                 }}
-              >
-                {notification.type === 'event' && <CalendarIcon className="w-5 h-5" />}
-                {notification.type === 'payment' && <CreditCardIcon className="w-5 h-5" />}
-                {notification.type === 'message' && <MessageIcon className="w-5 h-5" />}
-                {notification.type === 'info' && <BellIcon className="w-5 h-5" />}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="font-medium text-gray-900">{notification.title}</p>
-                  <span className="text-xs text-gray-400">{notification.time}</span>
+              />
+
+              <div className="relative z-10 flex items-start gap-3">
+                <motion.div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: `rgba(${primaryRgb}, 0.12)`,
+                    color: primaryColor,
+                  }}
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  {getNotificationIcon(notification.type)}
+                </motion.div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-gray-900">{notification.title}</p>
+                    <span className="text-xs text-gray-400 font-medium">{notification.time}</span>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">{notification.message}</p>
                 </div>
-                <p className="text-sm text-gray-500 truncate">{notification.message}</p>
+
+                <ChevronRightIcon className="w-5 h-5 text-gray-300 flex-shrink-0" />
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-300 flex-shrink-0" />
-            </div>
+
+              {/* Unread indicator dot */}
+              {!notification.read && (
+                <motion.div
+                  className="absolute top-4 left-4 w-2.5 h-2.5 rounded-full"
+                  style={{
+                    background: primaryColor,
+                    boxShadow: `0 0 8px ${primaryColor}`,
+                  }}
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                />
+              )}
+            </GlassCard>
           </motion.div>
         ))}
       </div>
@@ -499,7 +976,7 @@ function NotificationsTab({ organization }: NotificationsTabProps) {
 }
 
 // ============================================================================
-// PROFILE TAB COMPONENT
+// PROFILE TAB - Elegant design
 // ============================================================================
 
 interface ProfileTabProps {
@@ -509,64 +986,126 @@ interface ProfileTabProps {
 }
 
 function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps) {
+  const primaryColor = organization.theme.primary;
+  const primaryRgb = organization.theme.primaryRgb;
+
   const menuItems = [
-    { id: 'personal', label: 'Personal Information', icon: UserIcon },
-    { id: 'membership', label: 'Membership Details', icon: CreditCardIcon },
-    { id: 'documents', label: 'My Documents', icon: FileTextIcon },
-    { id: 'preferences', label: 'Preferences', icon: BellIcon },
+    { id: 'personal', label: 'Personal Information', icon: UserIcon, description: 'Name, email, phone' },
+    { id: 'membership', label: 'Membership Details', icon: CreditCardIcon, description: 'Plan, billing, renewal' },
+    { id: 'documents', label: 'My Documents', icon: FileTextIcon, description: 'Certificates, receipts' },
+    { id: 'preferences', label: 'Preferences', icon: BellIcon, description: 'Notifications, privacy' },
   ];
 
   return (
     <div className="space-y-6">
       {/* Profile Header */}
-      <div className="flex items-center gap-4">
-        <div
-          className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-semibold"
-          style={{ background: organization.theme.gradientBtn }}
+      <motion.div
+        className="flex items-center gap-4"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <motion.div
+          className="relative"
+          whileHover={{ scale: 1.05 }}
         >
-          {account.initials}
-        </div>
-        <div>
+          <div
+            className="w-20 h-20 rounded-2xl flex items-center justify-center text-white text-2xl font-semibold shadow-xl"
+            style={{
+              background: organization.theme.gradientBtn,
+              boxShadow: `0 8px 24px rgba(${primaryRgb}, 0.35)`,
+            }}
+          >
+            {account.initials}
+          </div>
+          {/* Status indicator */}
+          <div
+            className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-3 border-white flex items-center justify-center"
+            style={{ borderWidth: 3 }}
+          >
+            <CheckCircleIcon className="w-3.5 h-3.5 text-white" />
+          </div>
+        </motion.div>
+
+        <div className="flex-1">
           <h1
-            className="text-xl font-light"
-            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#2C2A25' }}
+            className="text-2xl font-light tracking-tight"
+            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1F2937' }}
           >
             {account.name}
           </h1>
-          <p className="text-sm text-gray-500">{account.role}</p>
-          <p className="text-xs text-gray-400">{account.email}</p>
+          <p className="text-sm text-gray-500 font-medium">{account.role}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{account.email}</p>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Stats Row */}
+      <motion.div
+        className="grid grid-cols-3 gap-3"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        {[
+          { label: 'Events', value: '12', icon: CalendarIcon },
+          { label: 'Points', value: '2.4K', icon: StarIcon },
+          { label: 'Years', value: '5', icon: TrophyIcon },
+        ].map((stat, index) => (
+          <GlassCard key={stat.label} className="rounded-2xl p-4 text-center">
+            <stat.icon className="w-5 h-5 mx-auto mb-2" style={{ color: primaryColor }} />
+            <p className="text-xl font-bold text-gray-900">{stat.value}</p>
+            <p className="text-xs text-gray-500 font-medium">{stat.label}</p>
+          </GlassCard>
+        ))}
+      </motion.div>
 
       {/* Menu Items */}
-      <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: '#EDE8DD' }}>
+      <GlassCard className="rounded-2xl overflow-hidden">
         {menuItems.map((item, index) => {
           const Icon = item.icon;
           return (
             <motion.button
               key={item.id}
               className={`w-full flex items-center gap-4 p-4 text-left ${
-                index < menuItems.length - 1 ? 'border-b' : ''
+                index < menuItems.length - 1 ? 'border-b border-gray-100' : ''
               }`}
-              style={{ borderColor: '#EDE8DD' }}
-              whileTap={{ background: `rgba(${organization.theme.primaryRgb}, 0.05)` }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 + index * 0.05 }}
+              whileHover={{ background: `rgba(${primaryRgb}, 0.03)` }}
+              whileTap={{ scale: 0.99 }}
             >
-              <Icon className="w-5 h-5 text-gray-400" />
-              <span className="flex-1 text-gray-700">{item.label}</span>
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ background: `rgba(${primaryRgb}, 0.08)` }}
+              >
+                <Icon className="w-5 h-5" style={{ color: primaryColor }} />
+              </div>
+              <div className="flex-1">
+                <span className="text-gray-800 font-medium">{item.label}</span>
+                <p className="text-xs text-gray-400">{item.description}</p>
+              </div>
               <ChevronRightIcon className="w-5 h-5 text-gray-300" />
             </motion.button>
           );
         })}
-      </div>
+      </GlassCard>
 
       {/* Switch to Admin View */}
       {onSwitchToAdmin && (
         <motion.button
           onClick={onSwitchToAdmin}
-          className="w-full py-4 rounded-xl text-sm font-medium border-2"
+          className="w-full py-4 rounded-2xl text-sm font-semibold border-2 backdrop-blur-sm"
           style={{
-            borderColor: organization.theme.primary,
-            color: organization.theme.primary,
+            borderColor: primaryColor,
+            color: primaryColor,
+            background: `rgba(${primaryRgb}, 0.05)`,
+          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          whileHover={{
+            scale: 1.01,
+            background: `rgba(${primaryRgb}, 0.1)`,
           }}
           whileTap={{ scale: 0.98 }}
         >
@@ -575,15 +1114,163 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
       )}
 
       {/* Sign Out */}
-      <button className="w-full py-3 text-center text-sm text-red-500 font-medium">
+      <motion.button
+        className="w-full py-3 text-center text-sm text-red-500 font-semibold"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
         Sign Out
-      </button>
+      </motion.button>
     </div>
   );
 }
 
 // ============================================================================
-// MAIN COMPONENT
+// EVENTS TAB - Full events view
+// ============================================================================
+
+interface EventsTabProps {
+  organization: Organization;
+}
+
+function EventsTab({ organization }: EventsTabProps) {
+  const primaryColor = organization.theme.primary;
+
+  return (
+    <div className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between"
+      >
+        <h1
+          className="text-3xl font-light tracking-tight"
+          style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1F2937' }}
+        >
+          Events
+        </h1>
+        <motion.button
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold"
+          style={{
+            background: organization.theme.gradientBtn,
+            color: 'white',
+          }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <CalendarIcon className="w-4 h-4" />
+          Calendar
+        </motion.button>
+      </motion.div>
+
+      {/* Filter chips */}
+      <motion.div
+        className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+      >
+        {['All Events', 'Registered', 'Upcoming', 'Past'].map((filter, index) => (
+          <motion.button
+            key={filter}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+              index === 0 ? 'text-white' : 'bg-white/60 text-gray-600 border border-white/40'
+            }`}
+            style={index === 0 ? { background: organization.theme.gradientBtn } : undefined}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            {filter}
+          </motion.button>
+        ))}
+      </motion.div>
+
+      <div className="space-y-3">
+        {UPCOMING_EVENTS.map((event, index) => (
+          <EventCard key={event.id} event={event} organization={organization} index={index} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// PREMIUM HEADER - Floating glass design
+// ============================================================================
+
+interface HeaderProps {
+  organization: Organization;
+  primaryRgb: string;
+  onSwitchToAdmin?: () => void;
+}
+
+function Header({ organization, primaryRgb, onSwitchToAdmin }: HeaderProps) {
+  return (
+    <motion.header
+      className="sticky top-0 z-40 px-4 py-3"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <div className="bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-lg shadow-black/5 px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {/* Back to Admin Button */}
+            {onSwitchToAdmin && (
+              <motion.button
+                onClick={onSwitchToAdmin}
+                className="p-2 rounded-xl bg-white/60 border border-white/40 text-gray-600 hover:text-gray-900"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                title="Back to Admin"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </motion.button>
+            )}
+            <motion.div
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-semibold shadow-lg"
+              style={{
+                background: organization.theme.gradientBtn,
+                boxShadow: `0 4px 12px rgba(${primaryRgb}, 0.3)`,
+              }}
+              whileHover={{ scale: 1.05, rotate: 3 }}
+            >
+              {organization.logoLetter}
+            </motion.div>
+            <div>
+              <span className="font-semibold text-gray-900">{organization.short}</span>
+              <p className="text-[10px] text-gray-400 font-medium">Member Portal</p>
+            </div>
+          </div>
+
+          <motion.button
+            className="relative p-2.5 rounded-xl bg-white/60 border border-white/40"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <BellIcon className="w-5 h-5 text-gray-600" />
+            <motion.span
+              className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full"
+              style={{
+                background: organization.theme.primary,
+                boxShadow: `0 0 8px ${organization.theme.primary}`,
+              }}
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            />
+          </motion.button>
+        </div>
+      </div>
+    </motion.header>
+  );
+}
+
+// ============================================================================
+// MAIN COMPONENT - The Portal Experience
 // ============================================================================
 
 export function MemberPortal({ organization, account, onSwitchToAdmin }: MemberPortalProps) {
@@ -594,45 +1281,38 @@ export function MemberPortal({ organization, account, onSwitchToAdmin }: MemberP
   const handleQuickLinkClick = (id: string) => {
     if (id === 'events') setActiveTab('events');
     else if (id === 'profile') setActiveTab('profile');
-    // Handle other quick links
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-stone-100 relative overflow-hidden">
+      {/* Floating ambient orbs */}
+      <FloatingOrbs primaryRgb={primaryRgb} count={5} />
+
+      {/* Gradient mesh background */}
+      <div
+        className="fixed inset-0 opacity-30 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(ellipse at 20% 20%, rgba(${primaryRgb}, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 80%, rgba(${primaryRgb}, 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.8) 0%, transparent 80%)
+          `,
+        }}
+      />
+
       {/* Header */}
-      <header
-        className="sticky top-0 z-40 bg-white border-b px-4 py-3"
-        style={{ borderColor: '#EDE8DD' }}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-medium"
-              style={{ background: organization.theme.gradientBtn }}
-            >
-              {organization.logoLetter}
-            </div>
-            <span className="font-semibold text-gray-900">{organization.short}</span>
-          </div>
-          <button className="relative p-2">
-            <BellIcon className="w-6 h-6 text-gray-500" />
-            <span
-              className="absolute top-1 right-1 w-2 h-2 rounded-full"
-              style={{ background: primaryColor }}
-            />
-          </button>
-        </div>
-      </header>
+      <Header organization={organization} primaryRgb={primaryRgb} onSwitchToAdmin={onSwitchToAdmin} />
 
       {/* Main Content */}
-      <main className="px-4 py-6 pb-24">
+      <main className="relative z-10 px-4 py-4 pb-28">
         <AnimatePresence mode="wait">
           {activeTab === 'home' && (
             <motion.div
               key="home"
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+              exit={{ opacity: 0, x: 30 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
             >
               <HomeTab
                 organization={organization}
@@ -644,62 +1324,21 @@ export function MemberPortal({ organization, account, onSwitchToAdmin }: MemberP
           {activeTab === 'events' && (
             <motion.div
               key="events"
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+              exit={{ opacity: 0, x: 30 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
             >
-              <div className="space-y-4">
-                <h1
-                  className="text-2xl font-light"
-                  style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#2C2A25' }}
-                >
-                  Events
-                </h1>
-                <div className="space-y-3">
-                  {UPCOMING_EVENTS.map((event) => (
-                    <motion.div
-                      key={event.id}
-                      className="bg-white rounded-xl border p-4"
-                      style={{ borderColor: '#EDE8DD' }}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900">{event.title}</h3>
-                          <p className="text-sm text-gray-500">{event.date} at {event.time}</p>
-                          <p className="text-xs text-gray-400 mt-1">{event.location}</p>
-                        </div>
-                        {event.isRegistered ? (
-                          <span
-                            className="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full"
-                            style={{
-                              background: `rgba(${primaryRgb}, 0.1)`,
-                              color: primaryColor,
-                            }}
-                          >
-                            <CheckCircleIcon className="w-3 h-3" />
-                            Registered
-                          </span>
-                        ) : (
-                          <button
-                            className="text-xs font-medium px-3 py-1.5 rounded-full text-white"
-                            style={{ background: organization.theme.gradientBtn }}
-                          >
-                            Register
-                          </button>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
+              <EventsTab organization={organization} />
             </motion.div>
           )}
           {activeTab === 'notifications' && (
             <motion.div
               key="notifications"
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+              exit={{ opacity: 0, x: 30 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
             >
               <NotificationsTab organization={organization} />
             </motion.div>
@@ -707,9 +1346,10 @@ export function MemberPortal({ organization, account, onSwitchToAdmin }: MemberP
           {activeTab === 'profile' && (
             <motion.div
               key="profile"
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+              exit={{ opacity: 0, x: 30 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
             >
               <ProfileTab
                 organization={organization}
@@ -721,7 +1361,7 @@ export function MemberPortal({ organization, account, onSwitchToAdmin }: MemberP
         </AnimatePresence>
       </main>
 
-      {/* Bottom Navigation */}
+      {/* Premium Bottom Navigation */}
       <BottomNav
         activeTab={activeTab}
         onTabChange={setActiveTab}

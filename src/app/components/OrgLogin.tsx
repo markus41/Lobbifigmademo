@@ -1,8 +1,18 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { Organization, Account } from '@/app/data/themes';
 import { GeometricOctagon } from './GeometricOctagon';
+import {
+  getOrgColors,
+  getOrgFonts,
+  getMotionVariants,
+  getCardEntranceVariants,
+  getCardClasses,
+  getButtonClasses,
+  getInputClasses,
+  getAnimationClasses,
+} from '../utils/themeMapper';
 
 interface OrgLoginProps {
   account: Account;
@@ -64,6 +74,87 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
   const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
 
+  // Theme-aware values derived from organization
+  const theme = organization.theme;
+  const colors = useMemo(() => getOrgColors(organization), [organization]);
+  const fonts = useMemo(() => getOrgFonts(organization), [organization]);
+  const motionVariants = useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
+  const cardEntranceVariants = useMemo(() => getCardEntranceVariants(theme.animationStyle), [theme.animationStyle]);
+
+  // CSS utility classes based on theme
+  const cardClasses = useMemo(() => getCardClasses(theme), [theme]);
+  const buttonClasses = useMemo(() => getButtonClasses(theme), [theme]);
+  const inputClasses = useMemo(() => getInputClasses(theme), [theme]);
+  const animationClasses = useMemo(() => getAnimationClasses(theme), [theme]);
+
+  // Animation timing based on theme
+  const animationDurations = useMemo(() => {
+    switch (theme.animationStyle) {
+      case 'elegant':
+        return { base: 1.2, delay: 0.4 };
+      case 'smooth':
+        return { base: 0.9, delay: 0.3 };
+      case 'energetic':
+        return { base: 0.5, delay: 0.15 };
+      case 'dramatic':
+        return { base: 1.0, delay: 0.35 };
+      case 'subtle':
+        return { base: 0.7, delay: 0.25 };
+      default:
+        return { base: 0.9, delay: 0.3 };
+    }
+  }, [theme.animationStyle]);
+
+  // Theme-derived easing
+  const easing = useMemo(() => {
+    switch (theme.animationStyle) {
+      case 'elegant':
+        return [0.22, 1, 0.36, 1];
+      case 'smooth':
+        return [0.4, 0, 0.2, 1];
+      case 'energetic':
+        return [0.34, 1.56, 0.64, 1];
+      case 'dramatic':
+        return [0.6, 0.01, 0, 0.9];
+      case 'subtle':
+        return [0.4, 0, 1, 1];
+      default:
+        return [0.4, 0, 0.2, 1];
+    }
+  }, [theme.animationStyle]);
+
+  // Generate card background based on theme colors
+  const cardBg = useMemo(() => {
+    return `linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(${theme.primaryRgb},0.08) 100%)`;
+  }, [theme.primaryRgb]);
+
+  // Generate accent pattern based on theme
+  const accentPattern = useMemo(() => {
+    switch (theme.backgroundPattern) {
+      case 'artDeco':
+        return `repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(${theme.primaryRgb},0.03) 10px, rgba(${theme.primaryRgb},0.03) 20px)`;
+      case 'geometric':
+        return `repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(${theme.primaryRgb},0.04) 8px, rgba(${theme.primaryRgb},0.04) 16px)`;
+      case 'waves':
+        return `radial-gradient(circle at 80% 20%, rgba(${theme.primaryRgb},0.04) 0%, transparent 50%)`;
+      case 'leaves':
+        return `repeating-linear-gradient(135deg, transparent, transparent 12px, rgba(${theme.primaryRgb},0.03) 12px, rgba(${theme.primaryRgb},0.03) 24px)`;
+      case 'hexagons':
+        return `radial-gradient(circle at 20% 50%, rgba(${theme.primaryRgb},0.03) 0%, transparent 50%)`;
+      case 'particles':
+        return `repeating-radial-gradient(circle at 50% 50%, transparent, transparent 8px, rgba(${theme.primaryRgb},0.02) 8px, rgba(${theme.primaryRgb},0.02) 16px)`;
+      case 'minimal':
+      default:
+        return 'none';
+    }
+  }, [theme.backgroundPattern, theme.primaryRgb]);
+
+  // Border width based on border style
+  const borderWidth = theme.borderStyle === 'double' ? '3px' : '2px';
+
+  // Logo shape from theme (use theme.logoShape)
+  const logoShape = theme.logoShape;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
@@ -97,68 +188,12 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
     }, 500);
   };
 
-  // Get org-specific styling
-  const getOrgStyle = () => {
-    switch (organization.id) {
-      case 'luxe-haven':
-        return {
-          cardBg: 'linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(250,246,233,0.92) 100%)',
-          borderStyle: 'double',
-          borderWidth: '3px',
-          accentPattern: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(212,175,55,0.03) 10px, rgba(212,175,55,0.03) 20px)',
-          logoShape: 'diamond',
-        };
-      case 'pacific-club':
-        return {
-          cardBg: 'linear-gradient(165deg, rgba(250,253,255,0.95) 0%, rgba(240,248,255,0.92) 100%)',
-          borderStyle: 'solid',
-          borderWidth: '2px',
-          accentPattern: 'repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(46,107,138,0.04) 8px, rgba(46,107,138,0.04) 16px)',
-          logoShape: 'wave',
-        };
-      case 'summit-group':
-        return {
-          cardBg: 'linear-gradient(165deg, rgba(255,253,250,0.95) 0%, rgba(248,244,235,0.92) 100%)',
-          borderStyle: 'ridge',
-          borderWidth: '2px',
-          accentPattern: 'radial-gradient(circle at 20% 50%, rgba(139,107,62,0.03) 0%, transparent 50%)',
-          logoShape: 'hexagon',
-        };
-      case 'verde-collective':
-        return {
-          cardBg: 'linear-gradient(165deg, rgba(250,255,252,0.95) 0%, rgba(240,250,245,0.92) 100%)',
-          borderStyle: 'solid',
-          borderWidth: '2px',
-          accentPattern: 'repeating-linear-gradient(135deg, transparent, transparent 12px, rgba(61,123,95,0.03) 12px, rgba(61,123,95,0.03) 24px)',
-          logoShape: 'leaf',
-        };
-      case 'crown-estates':
-        return {
-          cardBg: 'linear-gradient(165deg, rgba(253,250,255,0.95) 0%, rgba(248,245,253,0.92) 100%)',
-          borderStyle: 'double',
-          borderWidth: '3px',
-          accentPattern: 'radial-gradient(circle at 80% 20%, rgba(110,61,123,0.04) 0%, transparent 50%)',
-          logoShape: 'crown',
-        };
-      default:
-        return {
-          cardBg: 'rgba(255, 255, 255, 0.90)',
-          borderStyle: 'solid',
-          borderWidth: '2px',
-          accentPattern: 'none',
-          logoShape: 'circle',
-        };
-    }
-  };
-
-  const orgStyle = getOrgStyle();
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: animationDurations.base, ease: easing }}
       className="fixed inset-0 z-20 flex items-center justify-center p-4"
     >
       {/* Org-specific ambient background */}
@@ -166,7 +201,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
         <motion.div
           className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full blur-[120px]"
           style={{
-            background: `radial-gradient(circle, rgba(${organization.theme.primaryRgb}, 0.12), transparent 70%)`,
+            background: `radial-gradient(circle, rgba(${theme.primaryRgb}, 0.12), transparent 70%)`,
           }}
           animate={{
             scale: [1, 1.1, 1],
@@ -189,7 +224,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             style={{
               width: `${2 + Math.random() * 3}px`,
               height: `${2 + Math.random() * 3}px`,
-              background: organization.theme.primary,
+              background: colors.primary,
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
@@ -210,64 +245,64 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
       <motion.div
         className="w-full max-w-[420px] px-4 relative"
-        initial={{ y: 40, scale: 0.95 }}
-        animate={{ y: 0, scale: 1 }}
-        exit={{ y: -30, scale: 0.95 }}
-        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        initial={cardEntranceVariants.initial}
+        animate={cardEntranceVariants.animate}
+        exit={{ y: -30, scale: 0.95, opacity: 0 }}
+        transition={{ duration: animationDurations.base, ease: easing }}
       >
-        {/* Ornamental corners - org specific */}
-        <div className="absolute -top-4 -left-4 w-12 h-12 border-l border-t rounded-tl-2xl" 
-          style={{ 
-            borderColor: organization.theme.primary, 
+        {/* Ornamental corners - theme-aware */}
+        <div className="absolute -top-4 -left-4 w-12 h-12 border-l border-t rounded-tl-2xl"
+          style={{
+            borderColor: colors.primary,
             opacity: 0.3,
-            borderStyle: orgStyle.borderStyle as any,
-          }} 
+            borderStyle: theme.borderStyle,
+          }}
         />
-        <div className="absolute -top-4 -right-4 w-12 h-12 border-r border-t rounded-tr-2xl" 
-          style={{ 
-            borderColor: organization.theme.primary, 
+        <div className="absolute -top-4 -right-4 w-12 h-12 border-r border-t rounded-tr-2xl"
+          style={{
+            borderColor: colors.primary,
             opacity: 0.3,
-            borderStyle: orgStyle.borderStyle as any,
-          }} 
+            borderStyle: theme.borderStyle,
+          }}
         />
-        <div className="absolute -bottom-4 -left-4 w-12 h-12 border-l border-b rounded-bl-2xl" 
-          style={{ 
-            borderColor: organization.theme.primary, 
+        <div className="absolute -bottom-4 -left-4 w-12 h-12 border-l border-b rounded-bl-2xl"
+          style={{
+            borderColor: colors.primary,
             opacity: 0.3,
-            borderStyle: orgStyle.borderStyle as any,
-          }} 
+            borderStyle: theme.borderStyle,
+          }}
         />
-        <div className="absolute -bottom-4 -right-4 w-12 h-12 border-r border-b rounded-br-2xl" 
-          style={{ 
-            borderColor: organization.theme.primary, 
+        <div className="absolute -bottom-4 -right-4 w-12 h-12 border-r border-b rounded-br-2xl"
+          style={{
+            borderColor: colors.primary,
             opacity: 0.3,
-            borderStyle: orgStyle.borderStyle as any,
-          }} 
+            borderStyle: theme.borderStyle,
+          }}
         />
 
-        {/* Card with org-specific styling */}
+        {/* Card with theme-aware styling */}
         <div
-          className="relative px-6 sm:px-8 md:px-10 py-8 sm:py-10 rounded-2xl overflow-hidden"
+          className={`relative px-6 sm:px-8 md:px-10 py-8 sm:py-10 rounded-2xl overflow-hidden ${cardClasses}`}
           style={{
-            background: orgStyle.cardBg,
+            background: cardBg,
             backdropFilter: 'blur(24px)',
             WebkitBackdropFilter: 'blur(24px)',
-            borderColor: `rgba(${organization.theme.primaryRgb}, 0.2)`,
-            borderStyle: orgStyle.borderStyle as any,
-            borderWidth: orgStyle.borderWidth,
+            borderColor: `rgba(${theme.primaryRgb}, 0.2)`,
+            borderStyle: theme.borderStyle,
+            borderWidth: borderWidth,
             boxShadow: `
-              0 30px 70px rgba(0,0,0,0.12), 
-              0 0 0 1px rgba(${organization.theme.primaryRgb}, 0.08), 
+              0 30px 70px rgba(0,0,0,0.12),
+              0 0 0 1px rgba(${theme.primaryRgb}, 0.08),
               inset 0 2px 0 rgba(255,255,255,0.9),
-              inset 0 0 120px rgba(${organization.theme.primaryRgb}, 0.03)
+              inset 0 0 120px rgba(${theme.primaryRgb}, 0.03)
             `,
           }}
         >
-          {/* Org-specific pattern overlay */}
-          <div 
+          {/* Theme-aware pattern overlay */}
+          <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: orgStyle.accentPattern,
+              background: accentPattern,
               opacity: 1,
             }}
           />
@@ -276,7 +311,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
           <motion.div 
             className="absolute top-0 left-0 right-0 h-1"
             style={{
-              background: `linear-gradient(90deg, transparent, ${organization.theme.primary}, transparent)`,
+              background: `linear-gradient(90deg, transparent, ${colors.primary}, transparent)`,
             }}
             animate={{
               opacity: [0.3, 0.6, 0.3],
@@ -290,50 +325,51 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
           {/* Header */}
           <div className="text-center mb-6 relative z-10">
-            {/* Org Logo with unique shape per org */}
+            {/* Org Logo with theme-aware shape */}
             <motion.div
-              className="inline-flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-xl relative overflow-hidden"
+              className={`inline-flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-xl relative overflow-hidden ${animationClasses}`}
               style={{
-                background: organization.theme.gradientBtn,
-                borderRadius: orgStyle.logoShape === 'diamond' ? '12px' :
-                             orgStyle.logoShape === 'hexagon' ? '8px' :
-                             orgStyle.logoShape === 'crown' ? '16px 16px 4px 4px' : '50%',
-                transform: orgStyle.logoShape === 'diamond' ? 'rotate(45deg)' : 'none',
+                background: theme.gradientBtn,
+                borderRadius: logoShape === 'diamond' ? '12px' :
+                             logoShape === 'hexagon' ? '8px' :
+                             logoShape === 'crown' ? '16px 16px 4px 4px' :
+                             logoShape === 'octagon' ? '6px' : '50%',
+                transform: logoShape === 'diamond' ? 'rotate(45deg)' : 'none',
               }}
-              initial={{ scale: 0, rotate: orgStyle.logoShape === 'diamond' ? -15 : 0 }}
-              animate={{ 
-                scale: 1, 
-                rotate: orgStyle.logoShape === 'diamond' ? 45 : 0 
+              initial={{ scale: 0, rotate: logoShape === 'diamond' ? -15 : 0 }}
+              animate={{
+                scale: 1,
+                rotate: logoShape === 'diamond' ? 45 : 0
               }}
-              transition={{ 
-                duration: 0.8, 
-                delay: 0.2,
+              transition={{
+                duration: animationDurations.base * 0.7,
+                delay: animationDurations.delay * 0.5,
                 type: 'spring',
-                stiffness: 160,
+                stiffness: theme.animationStyle === 'energetic' ? 200 : 160,
               }}
             >
-              <div 
+              <div
                 className="absolute inset-0"
                 style={{
                   boxShadow: 'inset 0 2px 12px rgba(0,0,0,0.25)',
                   borderRadius: 'inherit',
                 }}
               />
-              
+
               <span
                 className="relative z-10 text-2xl"
                 style={{
-                  fontFamily: 'Cormorant Garamond, Georgia, serif',
+                  fontFamily: fonts.display,
                   fontWeight: 400,
                   fontStyle: 'italic',
-                  color: '#fff',
-                  transform: orgStyle.logoShape === 'diamond' ? 'rotate(-45deg)' : 'none',
+                  color: theme.textInverse,
+                  transform: logoShape === 'diamond' ? 'rotate(-45deg)' : 'none',
                 }}
               >
                 {organization.logoLetter}
               </span>
-              
-              <div 
+
+              <div
                 className="absolute inset-0"
                 style={{
                   background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 60%)',
@@ -345,28 +381,28 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             <motion.h2
               className="text-2xl mb-2"
               style={{
-                fontFamily: 'Cormorant Garamond, Georgia, serif',
-                fontWeight: 500,
-                color: '#2C2A25',
+                fontFamily: fonts.display,
+                fontWeight: fonts.weightHeading,
+                color: colors.textPrimary,
                 letterSpacing: '-0.01em',
               }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
+              transition={{ delay: animationDurations.delay, duration: animationDurations.base * 0.7, ease: easing }}
             >
               {organization.name}
             </motion.h2>
 
             <motion.p
               className="text-sm italic mb-4"
-              style={{ 
-                fontFamily: 'Cormorant Garamond, Georgia, serif',
-                color: organization.theme.primary,
+              style={{
+                fontFamily: fonts.display,
+                color: colors.primary,
                 opacity: 0.85,
               }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.85 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
+              transition={{ delay: animationDurations.delay + 0.1, duration: animationDurations.base * 0.7, ease: easing }}
             >
               "{organization.motto}"
             </motion.p>
@@ -374,27 +410,27 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             <motion.div
               className="w-16 h-px mx-auto mb-3 relative"
               style={{
-                background: `linear-gradient(90deg, transparent, ${organization.theme.primary}, transparent)`,
+                background: `linear-gradient(90deg, transparent, ${colors.primary}, transparent)`,
               }}
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
+              transition={{ delay: animationDurations.delay + 0.2, duration: animationDurations.base * 0.7, ease: easing }}
             >
-              <div 
+              <div
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45"
-                style={{ 
-                  background: organization.theme.primary,
-                  boxShadow: `0 0 12px ${organization.theme.primary}`,
+                style={{
+                  background: colors.primary,
+                  boxShadow: theme.hasGlowEffects ? `0 0 12px ${colors.primary}` : 'none',
                 }}
               />
             </motion.div>
 
             <motion.p
               className="text-sm"
-              style={{ color: '#8A8578', fontFamily: 'DM Sans, sans-serif' }}
+              style={{ color: colors.textMuted, fontFamily: fonts.body }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.7, duration: 0.6 }}
+              transition={{ delay: animationDurations.delay + 0.3, duration: animationDurations.base * 0.5, ease: easing }}
             >
               Sign in to continue
             </motion.p>
@@ -425,7 +461,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
                 style={{
-                  background: loginMethod === method.id ? organization.theme.gradientBtn : 'transparent',
+                  background: loginMethod === method.id ? theme.gradientBtn : 'transparent',
                 }}
               >
                 {method.label}
@@ -450,7 +486,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                   <label
                     className="block text-xs uppercase tracking-widest mb-2 font-medium"
                     style={{
-                      color: organization.theme.primary,
+                      color: colors.primary,
                       opacity: 0.7,
                       letterSpacing: '0.15em',
                     }}
@@ -461,7 +497,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     <Mail
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all"
                       style={{
-                        color: organization.theme.primary,
+                        color: colors.primary,
                         opacity: 0.4,
                       }}
                     />
@@ -469,12 +505,12 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       type="email"
                       value={account.email}
                       readOnly
-                      className="w-full pl-10 pr-4 py-3.5 border-2 rounded-xl text-sm outline-none cursor-not-allowed transition-all"
+                      className={`w-full pl-10 pr-4 py-3.5 border-2 text-sm outline-none cursor-not-allowed transition-all ${inputClasses}`}
                       style={{
-                        background: `rgba(${organization.theme.primaryRgb}, 0.03)`,
-                        borderColor: `rgba(${organization.theme.primaryRgb}, 0.15)`,
-                        color: '#2C2A25',
-                        fontFamily: 'DM Sans, sans-serif',
+                        background: `rgba(${theme.primaryRgb}, 0.03)`,
+                        borderColor: `rgba(${theme.primaryRgb}, 0.15)`,
+                        color: colors.textPrimary,
+                        fontFamily: fonts.body,
                         boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
                       }}
                     />
@@ -486,7 +522,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                   <label
                     className="block text-xs uppercase tracking-widest mb-2 font-medium"
                     style={{
-                      color: organization.theme.primary,
+                      color: colors.primary,
                       opacity: 0.7,
                       letterSpacing: '0.15em',
                     }}
@@ -497,7 +533,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     <Lock
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all"
                       style={{
-                        color: organization.theme.primary,
+                        color: colors.primary,
                         opacity: 0.4,
                       }}
                     />
@@ -507,19 +543,19 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       required
-                      className="w-full pl-10 pr-12 py-3.5 bg-white border-2 rounded-xl text-sm transition-all outline-none placeholder:text-gray-300 focus:scale-[1.01]"
+                      className={`w-full pl-10 pr-12 py-3.5 bg-white border-2 text-sm transition-all outline-none placeholder:text-gray-300 focus:scale-[1.01] ${inputClasses}`}
                       style={{
-                        borderColor: `rgba(${organization.theme.primaryRgb}, 0.2)`,
-                        color: '#2C2A25',
-                        fontFamily: 'DM Sans, sans-serif',
+                        borderColor: `rgba(${theme.primaryRgb}, 0.2)`,
+                        color: colors.textPrimary,
+                        fontFamily: fonts.body,
                         boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
                       }}
                       onFocus={(e) => {
-                        e.target.style.borderColor = `rgba(${organization.theme.primaryRgb}, 0.5)`;
-                        e.target.style.boxShadow = `0 0 0 4px rgba(${organization.theme.primaryRgb}, 0.1), 0 4px 12px rgba(0,0,0,0.08)`;
+                        e.target.style.borderColor = `rgba(${theme.primaryRgb}, 0.5)`;
+                        e.target.style.boxShadow = `0 0 0 4px rgba(${theme.primaryRgb}, 0.1), 0 4px 12px rgba(0,0,0,0.08)`;
                       }}
                       onBlur={(e) => {
-                        e.target.style.borderColor = `rgba(${organization.theme.primaryRgb}, 0.2)`;
+                        e.target.style.borderColor = `rgba(${theme.primaryRgb}, 0.2)`;
                         e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.04)';
                       }}
                     />
@@ -528,7 +564,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-100"
                       style={{
-                        color: organization.theme.primary,
+                        color: colors.primary,
                         opacity: 0.5,
                       }}
                     >
@@ -545,12 +581,12 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                         type="checkbox"
                         className="peer w-4 h-4 cursor-pointer appearance-none border rounded transition-all"
                         style={{
-                          borderColor: `rgba(${organization.theme.primaryRgb}, 0.3)`,
+                          borderColor: `rgba(${theme.primaryRgb}, 0.3)`,
                         }}
                       />
                       <svg
                         className="absolute inset-0 w-4 h-4 pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
-                        style={{ color: organization.theme.primary }}
+                        style={{ color: colors.primary }}
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -561,13 +597,13 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     </div>
-                    <span style={{ color: '#8A8578' }}>Remember me</span>
+                    <span style={{ color: colors.textMuted }}>Remember me</span>
                   </label>
                   <a
                     href="#"
                     className="transition-opacity hover:opacity-100"
                     style={{
-                      color: organization.theme.primary,
+                      color: colors.primary,
                       opacity: 0.7,
                     }}
                   >
@@ -579,15 +615,15 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                 <motion.button
                   type="submit"
                   disabled={isLoggingIn || !password}
-                  className="relative w-full py-3.5 rounded-xl text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed group mt-6"
+                  className={`relative w-full py-3.5 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed group mt-6 ${buttonClasses}`}
                   style={{
-                    background: organization.theme.gradientBtn,
+                    background: theme.gradientBtn,
                     color: '#fff',
-                    boxShadow: `0 6px 20px rgba(${organization.theme.primaryRgb}, 0.25), 0 2px 4px rgba(0,0,0,0.06)`,
+                    boxShadow: `0 6px 20px rgba(${theme.primaryRgb}, 0.25), 0 2px 4px rgba(0,0,0,0.06)`,
                   }}
                   whileHover={!isLoggingIn && password ? {
                     y: -2,
-                    boxShadow: `0 12px 32px rgba(${organization.theme.primaryRgb}, 0.4), 0 4px 8px rgba(0,0,0,0.1)`,
+                    boxShadow: `0 12px 32px rgba(${theme.primaryRgb}, 0.4), 0 4px 8px rgba(0,0,0,0.1)`,
                     transition: { duration: 0.2 }
                   } : {}}
                   whileTap={!isLoggingIn && password ? {
@@ -637,9 +673,9 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     <div className="text-center mb-4">
                       <div
                         className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
-                        style={{ background: `rgba(${organization.theme.primaryRgb}, 0.1)` }}
+                        style={{ background: `rgba(${theme.primaryRgb}, 0.1)` }}
                       >
-                        <MagicWandIcon className="w-8 h-8" style={{ color: organization.theme.primary }} />
+                        <MagicWandIcon className="w-8 h-8" style={{ color: colors.primary }} />
                       </div>
                       <p className="text-sm text-gray-600">
                         We'll send a magic link to your email for passwordless sign in
@@ -651,7 +687,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       <label
                         className="block text-xs uppercase tracking-widest mb-3 font-medium"
                         style={{
-                          color: organization.theme.primary,
+                          color: colors.primary,
                           opacity: 0.7,
                           letterSpacing: '0.2em',
                         }}
@@ -662,7 +698,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                         <Mail
                           className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] transition-all"
                           style={{
-                            color: organization.theme.primary,
+                            color: colors.primary,
                             opacity: 0.4,
                           }}
                         />
@@ -670,12 +706,12 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                           type="email"
                           value={account.email}
                           readOnly
-                          className="w-full pl-12 pr-5 py-4 border-2 rounded-xl text-[15px] outline-none cursor-not-allowed transition-all"
+                          className={`w-full pl-12 pr-5 py-4 border-2 text-[15px] outline-none cursor-not-allowed transition-all ${inputClasses}`}
                           style={{
-                            background: `rgba(${organization.theme.primaryRgb}, 0.03)`,
-                            borderColor: `rgba(${organization.theme.primaryRgb}, 0.15)`,
-                            color: '#2C2A25',
-                            fontFamily: 'DM Sans, sans-serif',
+                            background: `rgba(${theme.primaryRgb}, 0.03)`,
+                            borderColor: `rgba(${theme.primaryRgb}, 0.15)`,
+                            color: colors.textPrimary,
+                            fontFamily: fonts.body,
                           }}
                         />
                       </div>
@@ -685,11 +721,11 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     <motion.button
                       type="submit"
                       disabled={isLoggingIn}
-                      className="relative w-full py-4 rounded-xl text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`relative w-full py-4 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed ${buttonClasses}`}
                       style={{
-                        background: organization.theme.gradientBtn,
+                        background: theme.gradientBtn,
                         color: '#fff',
-                        boxShadow: `0 4px 16px rgba(${organization.theme.primaryRgb}, 0.25)`,
+                        boxShadow: `0 4px 16px rgba(${theme.primaryRgb}, 0.25)`,
                       }}
                       whileHover={{ y: -3 }}
                       whileTap={{ y: -1 }}
@@ -717,14 +753,14 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     {/* Success icon */}
                     <motion.div
                       className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6"
-                      style={{ background: `rgba(${organization.theme.primaryRgb}, 0.1)` }}
+                      style={{ background: `rgba(${theme.primaryRgb}, 0.1)` }}
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: 'spring', stiffness: 200 }}
                     >
                       <svg
                         className="w-10 h-10"
-                        style={{ color: organization.theme.primary }}
+                        style={{ color: colors.primary }}
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -745,11 +781,11 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       type="button"
                       onClick={handleMagicLinkContinue}
                       disabled={isLoggingIn}
-                      className="relative w-full py-4 rounded-xl text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50"
+                      className={`relative w-full py-4 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 ${buttonClasses}`}
                       style={{
-                        background: organization.theme.gradientBtn,
+                        background: theme.gradientBtn,
                         color: '#fff',
-                        boxShadow: `0 4px 16px rgba(${organization.theme.primaryRgb}, 0.25)`,
+                        boxShadow: `0 4px 16px rgba(${theme.primaryRgb}, 0.25)`,
                       }}
                       whileHover={{ y: -3 }}
                       whileTap={{ y: -1 }}
@@ -825,17 +861,17 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
           <motion.div
             className="mt-6 pt-4 border-t text-center"
             style={{
-              borderColor: `rgba(${organization.theme.primaryRgb}, 0.1)`,
+              borderColor: `rgba(${theme.primaryRgb}, 0.1)`,
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.6 }}
+            transition={{ delay: animationDurations.delay + 0.8, duration: animationDurations.base * 0.5, ease: easing }}
           >
             <div className="flex items-center justify-center gap-2 mb-2">
-              <span 
+              <span
                 className="text-lg italic"
-                style={{ 
-                  fontFamily: 'Cormorant Garamond, Georgia, serif',
+                style={{
+                  fontFamily: fonts.display,
                   background: 'linear-gradient(135deg, #F5E6A3, #D4AF37, #8B7330)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
@@ -847,7 +883,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                 Powered by The Lobbi
               </span>
             </div>
-            <p className="text-[10px]" style={{ color: '#B8B0A0' }}>
+            <p className="text-[10px]" style={{ color: colors.textMuted }}>
               Demo mode: Any password will work
             </p>
           </motion.div>

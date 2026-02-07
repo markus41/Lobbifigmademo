@@ -383,16 +383,21 @@ function WizardNavigation() {
   } = useWizard();
 
   return (
-    <div className="px-6 py-4 border-t border-gray-200 bg-white">
+    <div className="px-6 py-4 border-t border-gray-200 bg-white flex-shrink-0">
       <div className="flex items-center justify-between max-w-4xl mx-auto">
-        <LobbiButton
-          variant="secondary"
-          onClick={goPrev}
-          disabled={!canGoPrev || isSubmitting}
-          leftIcon={<ChevronLeft className="w-4 h-4" />}
-        >
-          Previous
-        </LobbiButton>
+        {/* Only show Previous button when not on first step */}
+        {!isFirstStep ? (
+          <LobbiButton
+            variant="secondary"
+            onClick={goPrev}
+            disabled={!canGoPrev || isSubmitting}
+            leftIcon={<ChevronLeft className="w-4 h-4" />}
+          >
+            Previous
+          </LobbiButton>
+        ) : (
+          <div /> /* Empty placeholder to maintain spacing */
+        )}
 
         <LobbiButton
           variant="primary"

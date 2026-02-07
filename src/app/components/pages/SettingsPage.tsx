@@ -197,6 +197,17 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
     timezone: 'America/Los_Angeles',
   });
 
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+
+  const handleSaveProfile = () => {
+    setSaveStatus('saving');
+    // Simulate API call
+    setTimeout(() => {
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    }, 800);
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
@@ -251,13 +262,28 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
               organization={organization}
             />
           </div>
-          <div className="mt-4 pt-4 border-t" style={{ borderColor: '#EDE8DD' }}>
+          <div className="mt-4 pt-4 border-t flex items-center gap-3" style={{ borderColor: '#EDE8DD' }}>
             <button
-              className="px-6 py-2.5 rounded-lg text-white font-medium text-sm"
+              className="px-6 py-2.5 rounded-lg text-white font-medium text-sm transition-all disabled:opacity-50"
               style={{ background: organization.theme.gradientBtn }}
+              onClick={handleSaveProfile}
+              disabled={saveStatus === 'saving'}
             >
-              Save Changes
+              {saveStatus === 'saving' ? 'Saving...' : 'Save Changes'}
             </button>
+            {saveStatus === 'saved' && (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                className="text-sm text-green-600 flex items-center gap-1"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Changes saved!
+              </motion.span>
+            )}
           </div>
         </SettingSection>
 
@@ -311,21 +337,23 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
           </div>
           <div className="mt-4 pt-4 border-t flex gap-3" style={{ borderColor: '#EDE8DD' }}>
             <button
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-80"
               style={{
                 border: `1px solid rgba(${organization.theme.primaryRgb}, 0.3)`,
                 color: organization.theme.primary,
               }}
+              onClick={() => alert('Password change feature coming soon!')}
             >
               <KeyIcon className="w-4 h-4 inline mr-2" />
               Change Password
             </button>
             <button
-              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-80"
               style={{
                 border: `1px solid rgba(${organization.theme.primaryRgb}, 0.3)`,
                 color: organization.theme.primary,
               }}
+              onClick={() => alert('Active sessions: 1 session (this device)')}
             >
               <GlobeIcon className="w-4 h-4 inline mr-2" />
               Active Sessions
@@ -385,11 +413,15 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
                   </div>
                 </div>
                 <button
-                  className={`px-4 py-1.5 rounded-lg text-sm font-medium ${
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     service.connected
                       ? 'text-red-600 hover:bg-red-50'
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
+                  onClick={() => alert(service.connected
+                    ? `${service.name} disconnection requires confirmation`
+                    : `${service.name} connection coming soon!`
+                  )}
                 >
                   {service.connected ? 'Disconnect' : 'Connect'}
                 </button>
@@ -424,20 +456,22 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
           </div>
           <div className="flex gap-3">
             <button
-              className="px-4 py-2 rounded-lg text-sm font-medium"
+              className="px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
               style={{
                 background: organization.theme.gradientBtn,
                 color: 'white',
               }}
+              onClick={() => alert('Upgrade plans available soon!')}
             >
               Upgrade Plan
             </button>
             <button
-              className="px-4 py-2 rounded-lg text-sm font-medium"
+              className="px-4 py-2 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity"
               style={{
                 border: `1px solid rgba(${organization.theme.primaryRgb}, 0.3)`,
                 color: organization.theme.primary,
               }}
+              onClick={() => alert('Invoice history: 2 invoices on file')}
             >
               View Invoices
             </button>
