@@ -2160,9 +2160,18 @@ export function getOrganizationList(): { id: string; name: string; short: string
 // HELPER: APPLY THEME TO CSS VARIABLES
 // ============================================================================
 
-export function applyTheme(org: Organization): void {
+export function applyTheme(org: Organization, animate: boolean = true): void {
   const root = document.documentElement;
   const theme = org.theme;
+
+  // Add morphing class for smooth transitions
+  if (animate) {
+    root.classList.add('theme-morphing');
+    // Remove the class after transition completes
+    setTimeout(() => {
+      root.classList.remove('theme-morphing');
+    }, 850); // Slightly longer than the 800ms transition
+  }
 
   // Primary colors
   root.style.setProperty('--theme-primary', theme.primary);
