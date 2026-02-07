@@ -171,12 +171,11 @@ function AccountDropdown({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed left-1/2 -translate-x-1/2 w-full max-w-[calc(100vw-2rem)] sm:max-w-[450px] mt-2 bg-white rounded-xl border overflow-hidden z-[100]"
+            className="absolute left-0 right-0 mt-2 bg-white rounded-xl border overflow-hidden z-[100]"
             style={{
               borderColor: `rgba(${primaryRgb}, 0.15)`,
               boxShadow: '0 20px 50px -12px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.02)',
-              top: dropdownRef.current?.getBoundingClientRect().bottom || 0,
-              maxHeight: 'min(60vh, 500px)',
+              maxHeight: 'min(50vh, 400px)',
             }}
           >
             {/* Header */}
