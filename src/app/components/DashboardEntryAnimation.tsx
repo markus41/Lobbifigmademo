@@ -93,7 +93,8 @@ export function DashboardEntryAnimation({
   return (
     <motion.div
       ref={containerRef}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#FAF6E9]"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+      style={{ background: `var(--theme-bg-primary, #FAF6E9)` }}
     >
       {/* Welcome Message - GSAP timeline sequence */}
       <div className="text-center" style={{ perspective: '600px' }}>
@@ -110,9 +111,10 @@ export function DashboardEntryAnimation({
 
         <h1
           ref={nameRef}
-          className="text-5xl mb-3 font-normal text-[#2C2A25]"
+          className="text-5xl mb-3 font-normal"
           style={{
-            fontFamily: 'Cormorant Garamond, Georgia, serif',
+            fontFamily: `var(--theme-font-display, 'Cormorant Garamond', Georgia, serif)`,
+            color: `var(--theme-text-primary, #2C2A25)`,
           }}
         >
           {account.first} {account.last}
@@ -121,7 +123,7 @@ export function DashboardEntryAnimation({
         <p
           ref={orgRef}
           className="text-sm"
-          style={{ color: '#8A8578', opacity: 0 }}
+          style={{ color: `var(--theme-text-muted, #8A8578)`, opacity: 0, fontFamily: `var(--theme-font-body, 'DM Sans', sans-serif)` }}
         >
           {organization.name}
         </p>

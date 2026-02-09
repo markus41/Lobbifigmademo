@@ -321,6 +321,19 @@ export function generateCSSVariables(theme: OrgTheme): Record<string, string> {
   };
 }
 
+// Chakra v3 System & Recipes
+export { system, config } from './system';
+export {
+  lobbiButtonRecipe,
+  lobbiCardRecipe,
+  lobbiInputRecipe,
+  lobbiBadgeRecipe,
+  lobbiNavItemRecipe,
+} from './system';
+
+// Org Theme Registry
+export { orgThemeRegistry, getOrgTheme } from './orgThemeRegistry';
+
 // Default export
 export default {
   colors,

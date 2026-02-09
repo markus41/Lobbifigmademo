@@ -320,12 +320,14 @@ interface MemberStat {
   color: string;
 }
 
-const MEMBER_STATS: MemberStat[] = [
-  { label: 'Premium', value: 342, percentage: 27, color: '#D4AF37' },
-  { label: 'Professional', value: 518, percentage: 40, color: '#8B7330' },
-  { label: 'Standard', value: 289, percentage: 23, color: '#B8B0A0' },
-  { label: 'Student', value: 135, percentage: 10, color: '#E5DFD1' },
-];
+function getMemberStats(primary: string, primaryRgb: string): MemberStat[] {
+  return [
+    { label: 'Premium', value: 342, percentage: 27, color: primary },
+    { label: 'Professional', value: 518, percentage: 40, color: `rgba(${primaryRgb},0.6)` },
+    { label: 'Standard', value: 289, percentage: 23, color: `rgba(${primaryRgb},0.3)` },
+    { label: 'Student', value: 135, percentage: 10, color: `rgba(${primaryRgb},0.15)` },
+  ];
+}
 
 // ============================================================================
 // SPARKLINE COMPONENT
@@ -739,6 +741,8 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
   const fontDisplay = organization?.theme.fontDisplay || "'Inter', system-ui, sans-serif";
   const fontBody = organization?.theme.fontBody || "'Inter', system-ui, sans-serif";
 
+  const memberStats = getMemberStats(primaryColor, primaryRgb);
+
   // Zinc-based color system
   const borderColor = organization?.theme.borderColor || (isDarkTheme ? '#27272A' : '#E4E4E7');
   const bgCard = organization?.theme.bgCard || (isDarkTheme ? '#18181B' : '#FFFFFF');
@@ -898,7 +902,7 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
             {/* Donut Chart */}
             <div className="relative w-32 h-32 mx-auto mb-5">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                {MEMBER_STATS.reduce((acc, stat) => {
+                {memberStats.reduce((acc, stat) => {
                   const offset = acc.offset;
                   const dashArray = stat.percentage;
                   const dashOffset = 100 - offset;
@@ -940,7 +944,7 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
 
             {/* Legend */}
             <div className="flex flex-col gap-2.5">
-              {MEMBER_STATS.map((stat) => (
+              {memberStats.map((stat) => (
                 <div key={stat.label} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div
