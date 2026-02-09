@@ -181,7 +181,7 @@ export default function App() {
 
   return (
     <PlatformDemoBanner defaultPhase="all" defaultRole="org-admin">
-    <div className="relative w-full h-screen overflow-hidden bg-[#FAF6E9]">
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-b from-[#FCF8EF] via-[#F6F0E2] to-[#ECE3D3]">
       {/* Cinematic Background - Only for non-dashboard stages */}
       {stage !== 'dashboard' && (
         <CinematicBackground primaryRgb={currentRgb} stage={stage} />
@@ -234,7 +234,7 @@ export default function App() {
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, scale: 0.96, filter: 'blur(4px)' }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-60 flex flex-col bg-gray-50"
+            className="fixed inset-0 z-60 flex flex-col bg-[#F8F3E8]"
           >
             {/* Main Layout */}
             <div className="flex flex-1 min-h-0">
@@ -256,7 +256,7 @@ export default function App() {
                   onNavigate={setCurrentPage}
                 />
 
-                <main className="flex-1 overflow-y-auto bg-gray-50">
+                <main className="flex-1 overflow-y-auto bg-transparent">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentPage}
