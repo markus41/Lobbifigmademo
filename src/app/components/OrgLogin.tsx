@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/notifications';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { Organization, Account } from '@/app/data/themes';
 // GeometricOctagon available for org-themed login backgrounds

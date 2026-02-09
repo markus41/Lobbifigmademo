@@ -1,17 +1,17 @@
 /**
  * MotionGrid - Animated grid container with Framer Motion.
  */
-import { forwardRef } from 'react'
-import { Grid, type GridProps } from '@chakra-ui/react'
+import { forwardRef, type HTMLAttributes, type CSSProperties } from 'react'
 import { motion, type MotionProps } from 'motion/react'
 
-export type MotionGridProps = GridProps & MotionProps
-
-const MotionGridBase = motion.create(Grid)
+export type MotionGridProps = HTMLAttributes<HTMLDivElement> & MotionProps
 
 export const MotionGrid = forwardRef<HTMLDivElement, MotionGridProps>(
-  function MotionGrid(props, ref) {
-    // @ts-expect-error - Chakra css prop type conflicts with motion/react css prop
-    return <MotionGridBase ref={ref} {...props} />
+  function MotionGrid({ style, ...props }, ref) {
+    const gridStyle: CSSProperties = {
+      display: 'grid',
+      ...style,
+    }
+    return <motion.div ref={ref} style={gridStyle} {...props} />
   }
 )

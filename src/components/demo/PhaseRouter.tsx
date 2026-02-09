@@ -6,7 +6,7 @@
  */
 
 import { lazy, Suspense, type LazyExoticComponent, type ComponentType } from "react";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, Loader } from "@mantine/core";
 import { AnimatePresence, motion } from "motion/react";
 import { useDemoContext, type SprintPhase } from "./PlatformDemoBanner";
 
@@ -44,22 +44,14 @@ const PHASE_COMPONENTS: Record<SprintPhase, LazyComponent> = {
 function LoadingFallback() {
   return (
     <Flex
-      minH="200px"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-      gap={3}
+      mih="200px"
+      align="center"
+      justify="center"
+      direction="column"
+      gap="md"
     >
-      <Box
-        w="32px"
-        h="32px"
-        borderRadius="full"
-        border="3px solid"
-        borderColor="gray.200"
-        borderTopColor="blue.500"
-        animation="spin 0.8s linear infinite"
-      />
-      <Text fontSize="sm" color="gray.500">
+      <Loader size="sm" color="blue" type="dots" />
+      <Text fz="sm" c="dimmed">
         Loading showcase...
       </Text>
     </Flex>
@@ -72,7 +64,7 @@ export function PhaseRouter() {
   const PhaseComponent = PHASE_COMPONENTS[currentPhase] ?? PHASE_COMPONENTS.all;
 
   return (
-    <Box minH="calc(100vh - 60px)">
+    <Box mih="calc(100vh - 60px)">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentPhase}

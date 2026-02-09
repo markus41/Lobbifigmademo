@@ -4,7 +4,6 @@
  */
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
-import { Box } from '@chakra-ui/react'
 
 interface FadeInProps {
   children: ReactNode
@@ -16,8 +15,6 @@ interface FadeInProps {
   amount?: number
   blur?: boolean
 }
-
-const MotionDiv = motion.create(Box)
 
 export function FadeIn({
   children,
@@ -38,7 +35,7 @@ export function FadeIn({
   }
 
   return (
-    <MotionDiv
+    <motion.div
       initial={{
         opacity: 0,
         ...directionMap[direction],
@@ -58,6 +55,6 @@ export function FadeIn({
       }}
     >
       {children}
-    </MotionDiv>
+    </motion.div>
   )
 }

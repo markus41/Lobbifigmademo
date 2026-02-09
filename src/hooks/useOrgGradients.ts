@@ -3,7 +3,7 @@
  * Returns gradients (brand, button, avatar, hero, glow) from the org theme.
  */
 import { useMemo } from 'react'
-import { useCurrentOrg } from '../theme/ThemeProvider.v3'
+import { useCurrentOrg } from '../mantine-theme/MantineThemeProvider'
 import type { OrgGradients } from '../theme/types/theme.types'
 import { getOrgTheme } from '../theme/orgThemeRegistry'
 

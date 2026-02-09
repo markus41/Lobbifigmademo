@@ -11,7 +11,7 @@
 
 import { useState, useMemo, type CSSProperties } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'motion/react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/notifications';
 import type { Organization, Account } from '../data/themes';
 
 interface MemberPortalProps {

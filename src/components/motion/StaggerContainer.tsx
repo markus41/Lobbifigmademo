@@ -4,7 +4,6 @@
  */
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
-import { Box } from '@chakra-ui/react'
 
 interface StaggerContainerProps {
   children: ReactNode
@@ -12,15 +11,13 @@ interface StaggerContainerProps {
   delayChildren?: number
 }
 
-const MotionDiv = motion.create(Box)
-
 export function StaggerContainer({
   children,
   staggerDelay = 0.06,
   delayChildren = 0.1,
 }: StaggerContainerProps) {
   return (
-    <MotionDiv
+    <motion.div
       initial="initial"
       animate="animate"
       variants={{
@@ -34,7 +31,7 @@ export function StaggerContainer({
       }}
     >
       {children}
-    </MotionDiv>
+    </motion.div>
   )
 }
 
@@ -43,7 +40,7 @@ export function StaggerContainer({
  */
 export function StaggerItem({ children }: { children: ReactNode }) {
   return (
-    <MotionDiv
+    <motion.div
       variants={{
         initial: { opacity: 0, y: 16, filter: 'blur(4px)' },
         animate: {
@@ -60,6 +57,6 @@ export function StaggerItem({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-    </MotionDiv>
+    </motion.div>
   )
 }

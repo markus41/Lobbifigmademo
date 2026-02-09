@@ -1,5 +1,5 @@
 
-import { Box, Flex, Text, Badge, SimpleGrid } from "@chakra-ui/react";
+import { Box, Flex, Text, Badge, SimpleGrid } from "@mantine/core";
 import { motion } from "motion/react";
 
 interface ComponentCard {
@@ -68,23 +68,23 @@ export function Sprint0Showcase() {
   const doneCount = COMPONENTS.filter((c) => c.status === "done").length;
 
   return (
-    <Box p={6}>
-      <Flex justifyContent="space-between" alignItems="center" mb={6}>
+    <Box p="xl">
+      <Flex justify="space-between" align="center" mb="xl">
         <Box>
-          <Text fontSize="2xl" fontWeight="bold">Sprint 0: Foundation</Text>
-          <Text fontSize="sm" color="gray.500">Theme system, providers, hooks, motion, recipes</Text>
+          <Text fz="xl" fw={700}>Sprint 0: Foundation</Text>
+          <Text fz="sm" c="dimmed">Theme system, providers, hooks, motion, recipes</Text>
         </Box>
-        <Badge bg="#6366f1" color="white" px={3} py={1} borderRadius="full" fontSize="sm">
+        <Badge color="indigo" variant="filled" size="lg" radius="xl">
           {doneCount}/{COMPONENTS.length} Complete
         </Badge>
       </Flex>
 
       {categories.map((cat) => (
-        <Box key={cat} mb={6}>
-          <Text fontSize="md" fontWeight="semibold" mb={3} color="gray.600">
+        <Box key={cat} mb="xl">
+          <Text fz="md" fw={600} mb="sm" c="dimmed">
             {cat}
           </Text>
-          <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap={3}>
+          <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="sm">
             {COMPONENTS.filter((c) => c.category === cat).map((comp, i) => (
               <motion.div
                 key={comp.id}
@@ -93,21 +93,22 @@ export function Sprint0Showcase() {
                 transition={{ delay: i * 0.03 }}
               >
                 <Flex
-                  p={3}
-                  borderRadius="lg"
-                  border="1px solid"
-                  borderColor="gray.200"
-                  alignItems="center"
-                  gap={2}
-                  _hover={{ borderColor: "#6366f1", bg: "gray.50" }}
-                  transition="all 0.15s"
+                  p="sm"
+                  style={{
+                    borderRadius: 'var(--mantine-radius-md)',
+                    border: '1px solid var(--mantine-color-gray-3)',
+                    cursor: 'default',
+                    transition: 'all 0.15s',
+                  }}
+                  align="center"
+                  gap="xs"
                 >
-                  <Box w="8px" h="8px" borderRadius="full" bg={STATUS_COLORS[comp.status]} flexShrink={0} />
-                  <Box flex={1} minW={0}>
-                    <Text fontSize="sm" fontWeight="medium" lineClamp={1}>
+                  <Box w={8} h={8} style={{ borderRadius: '50%', backgroundColor: STATUS_COLORS[comp.status], flexShrink: 0 }} />
+                  <Box style={{ flex: 1, minWidth: 0 }}>
+                    <Text fz="sm" fw={500} lineClamp={1}>
                       {comp.name}
                     </Text>
-                    <Text fontSize="2xs" color="gray.400">#{comp.id}</Text>
+                    <Text fz="xs" c="dimmed">#{comp.id}</Text>
                   </Box>
                 </Flex>
               </motion.div>

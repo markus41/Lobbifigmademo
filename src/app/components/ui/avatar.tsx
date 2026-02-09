@@ -1,34 +1,50 @@
 "use client";
 
 import * as React from "react";
-import * as AvatarPrimitive from "@radix-ui/react-avatar";
-
+import {
+  Avatar as MantineAvatar,
+  type AvatarProps as MantineAvatarProps,
+} from "@mantine/core";
 import { cn } from "./utils";
 
-function Avatar({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Root>) {
+interface AvatarProps extends Omit<MantineAvatarProps, "src"> {
+  className?: string;
+  src?: string;
+  alt?: string;
+  children?: React.ReactNode;
+}
+
+function Avatar({ className, src, alt, children, ...props }: AvatarProps) {
   return (
-    <AvatarPrimitive.Root
+    <MantineAvatar
       data-slot="avatar"
+      src={src}
+      alt={alt}
+      radius="xl"
       className={cn(
         "relative flex size-10 shrink-0 overflow-hidden rounded-full",
-        className,
+        className
       )}
       {...props}
-    />
+    >
+      {children}
+    </MantineAvatar>
   );
 }
 
 function AvatarImage({
   className,
+  src,
+  alt,
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+}: React.ComponentProps<"img">) {
+  if (!src) return null;
   return (
-    <AvatarPrimitive.Image
+    <img
       data-slot="avatar-image"
-      className={cn("aspect-square size-full", className)}
+      src={src}
+      alt={alt}
+      className={cn("aspect-square size-full object-cover", className)}
       {...props}
     />
   );
@@ -36,17 +52,20 @@ function AvatarImage({
 
 function AvatarFallback({
   className,
+  children,
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+}: React.ComponentProps<"span">) {
   return (
-    <AvatarPrimitive.Fallback
+    <span
       data-slot="avatar-fallback"
       className={cn(
-        "bg-muted flex size-full items-center justify-center rounded-full",
-        className,
+        "bg-muted flex size-full items-center justify-center rounded-full text-sm",
+        className
       )}
       {...props}
-    />
+    >
+      {children}
+    </span>
   );
 }
 

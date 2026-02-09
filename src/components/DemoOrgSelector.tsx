@@ -9,14 +9,14 @@
  * - Current org highlight
  */
 import { useEffect, useCallback } from 'react'
-import { Box, Flex, Text, Grid } from '@chakra-ui/react'
+import { Box, Flex, Text, SimpleGrid, UnstyledButton } from '@mantine/core'
 import {
   useOrgTheme,
   useThemeMode,
   ORG_NAMES,
   AVAILABLE_ORGS,
   type OrgId,
-} from '../theme/ThemeProvider.v3'
+} from '../mantine-theme/MantineThemeProvider'
 import { orgPrimaryColors } from '../lib/org-colors'
 
 /**
@@ -86,122 +86,119 @@ export function DemoOrgSelector({
   const fontSize = compact ? 'xs' : 'sm'
 
   return (
-    <Box p={compact ? 3 : 5}>
+    <Box p={compact ? 'sm' : 'lg'}>
       {/* Header */}
-      <Flex justify="space-between" align="center" mb={4}>
+      <Flex justify="space-between" align="center" mb="md">
         <Box>
-          <Text fontSize="lg" fontWeight="bold" color="text.primary">
+          <Text fz="lg" fw={700}>
             Organization Theme
           </Text>
-          <Text fontSize="sm" color="text.muted">
+          <Text fz="sm" c="dimmed">
             Select an org to preview its theme
           </Text>
         </Box>
 
         {showModeToggle && (
-          <Box
-            as="button"
+          <UnstyledButton
             onClick={toggleMode}
-            px={4}
-            py={2}
-            borderRadius="lg"
-            bg="bg.subtle"
-            color="text.primary"
-            fontSize="sm"
-            fontWeight="medium"
-            cursor="pointer"
-            _hover={{ bg: 'bg.muted' }}
-            transition="all 0.2s"
+            px="md"
+            py="xs"
+            style={{
+              borderRadius: 'var(--mantine-radius-md)',
+              backgroundColor: 'var(--mantine-color-gray-1)',
+              fontSize: 'var(--mantine-font-size-sm)',
+              fontWeight: 500,
+              transition: 'all 0.2s',
+            }}
           >
-            {resolvedMode === 'dark' ? '☀️ Light' : '🌙 Dark'}
-          </Box>
+            {resolvedMode === 'dark' ? 'Light' : 'Dark'}
+          </UnstyledButton>
         )}
       </Flex>
 
       {/* Current org display */}
       <Flex
         align="center"
-        gap={3}
-        mb={4}
-        p={3}
-        borderRadius="lg"
-        bg="bg.surface"
-        borderWidth="1px"
-        borderColor="border.accent"
+        gap="sm"
+        mb="md"
+        p="sm"
+        style={{
+          borderRadius: 'var(--mantine-radius-md)',
+          border: '1px solid var(--mantine-color-gray-3)',
+          backgroundColor: 'var(--mantine-color-gray-0)',
+        }}
       >
         <Box
-          w="32px"
-          h="32px"
-          borderRadius="lg"
-          bg={orgPrimaryColors[currentOrg]}
-          flexShrink={0}
+          w={32}
+          h={32}
+          style={{
+            borderRadius: 'var(--mantine-radius-md)',
+            backgroundColor: orgPrimaryColors[currentOrg],
+            flexShrink: 0,
+          }}
         />
         <Box>
-          <Text fontSize="sm" fontWeight="bold" color="text.primary">
+          <Text fz="sm" fw={700}>
             {ORG_NAMES[currentOrg]}
           </Text>
-          <Text fontSize="xs" color="text.muted">
+          <Text fz="xs" c="dimmed">
             {currentOrg}
           </Text>
         </Box>
       </Flex>
 
       {/* Org Grid */}
-      <Grid
-        templateColumns={`repeat(${columns}, 1fr)`}
-        gap={compact ? 2 : 3}
+      <SimpleGrid
+        cols={columns}
+        spacing={compact ? 'xs' : 'sm'}
       >
         {AVAILABLE_ORGS.map((orgId) => {
           const isActive = orgId === currentOrg
           const color = orgPrimaryColors[orgId]
 
           return (
-            <Box
+            <UnstyledButton
               key={orgId}
-              as="button"
               onClick={() => handleSelectOrg(orgId)}
-              p={compact ? 2 : 3}
-              borderRadius="lg"
-              bg={isActive ? 'bg.brandSubtle' : 'bg.surface'}
-              borderWidth="2px"
-              borderColor={isActive ? color : 'border.subtle'}
-              cursor="pointer"
-              transition="all 0.2s"
-              _hover={{
-                borderColor: color,
-                transform: 'translateY(-1px)',
-                shadow: 'md',
+              p={compact ? 'xs' : 'sm'}
+              style={{
+                borderRadius: 'var(--mantine-radius-md)',
+                backgroundColor: isActive ? `${color}10` : 'var(--mantine-color-gray-0)',
+                border: `2px solid ${isActive ? color : 'var(--mantine-color-gray-3)'}`,
+                textAlign: 'center',
+                minHeight: cardSize,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 'var(--mantine-spacing-xs)',
+                transition: 'all 0.2s',
               }}
-              textAlign="center"
-              minH={cardSize}
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
-              gap={2}
             >
               {/* Color indicator */}
               <Box
-                w={compact ? '20px' : '28px'}
-                h={compact ? '20px' : '28px'}
-                borderRadius="full"
-                bg={color}
-                shadow={isActive ? `0 0 12px ${color}60` : 'none'}
-                transition="all 0.2s"
+                w={compact ? 20 : 28}
+                h={compact ? 20 : 28}
+                style={{
+                  borderRadius: '50%',
+                  backgroundColor: color,
+                  boxShadow: isActive ? `0 0 12px ${color}60` : 'none',
+                  transition: 'all 0.2s',
+                }}
               />
               {/* Org name */}
               <Text
-                fontSize={fontSize}
-                fontWeight={isActive ? 'bold' : 'medium'}
-                color={isActive ? 'text.brand' : 'text.secondary'}
+                fz={fontSize}
+                fw={isActive ? 700 : 500}
+                c={isActive ? undefined : 'dimmed'}
                 lineClamp={2}
               >
                 {ORG_NAMES[orgId]}
               </Text>
-            </Box>
+            </UnstyledButton>
           )
         })}
-      </Grid>
+      </SimpleGrid>
     </Box>
   )
 }

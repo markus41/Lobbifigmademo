@@ -4,7 +4,6 @@
  */
 import type { ReactNode } from 'react'
 import { AnimatePresence, motion, type Variants } from 'motion/react'
-import { Box } from '@chakra-ui/react'
 
 interface AnimatedPageProps {
   children: ReactNode
@@ -43,8 +42,6 @@ const defaultVariants: Variants = {
   },
 }
 
-const MotionDiv = motion.create(Box)
-
 export function AnimatedPage({
   children,
   pageKey,
@@ -52,16 +49,16 @@ export function AnimatedPage({
 }: AnimatedPageProps) {
   return (
     <AnimatePresence mode="wait">
-      <MotionDiv
+      <motion.div
         key={pageKey}
         initial="initial"
         animate="animate"
         exit="exit"
         variants={variants}
-        minH="100vh"
+        style={{ minHeight: '100vh' }}
       >
         {children}
-      </MotionDiv>
+      </motion.div>
     </AnimatePresence>
   )
 }

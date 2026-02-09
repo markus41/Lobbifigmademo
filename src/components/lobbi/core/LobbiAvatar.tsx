@@ -1,5 +1,6 @@
 /**
  * LobbiAvatar - Premium avatar component for The Lobbi
+ * Migrated to Mantine v8 Avatar primitive with luxury aesthetic preserved.
  *
  * Features:
  * - Themed gradient backgrounds
@@ -8,7 +9,13 @@
  * - Group avatar stacking
  */
 
-import { forwardRef, HTMLAttributes, ReactNode } from 'react';
+import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
+import {
+  Avatar,
+  Avatar as MantineAvatar,
+  Indicator,
+  type AvatarProps,
+} from '@mantine/core';
 import { cn } from '@/lib/utils';
 
 export interface LobbiAvatarProps extends HTMLAttributes<HTMLDivElement> {
@@ -22,29 +29,29 @@ export interface LobbiAvatarProps extends HTMLAttributes<HTMLDivElement> {
   showBorder?: boolean;
 }
 
-const sizeStyles = {
-  xs: 'w-6 h-6 text-[9px]',
-  sm: 'w-8 h-8 text-[11px]',
-  md: 'w-10 h-10 text-[13px]',
-  lg: 'w-12 h-12 text-[15px]',
-  xl: 'w-16 h-16 text-[20px]',
-  '2xl': 'w-24 h-24 text-[32px]',
+const mantineSizeMap: Record<string, AvatarProps['size']> = {
+  xs: 24,
+  sm: 32,
+  md: 40,
+  lg: 48,
+  xl: 64,
+  '2xl': 96,
 };
 
-const statusSizes = {
-  xs: 'w-1.5 h-1.5 right-0 bottom-0',
-  sm: 'w-2 h-2 right-0 bottom-0',
-  md: 'w-2.5 h-2.5 right-0 bottom-0',
-  lg: 'w-3 h-3 right-0.5 bottom-0.5',
-  xl: 'w-4 h-4 right-1 bottom-1',
-  '2xl': 'w-5 h-5 right-1.5 bottom-1.5',
+const statusColors: Record<string, string> = {
+  online: 'green',
+  offline: 'gray',
+  away: 'yellow',
+  busy: 'red',
 };
 
-const statusColors = {
-  online: 'bg-emerald-500',
-  offline: 'bg-gray-400',
-  away: 'bg-amber-500',
-  busy: 'bg-red-500',
+const indicatorSizes: Record<string, number> = {
+  xs: 6,
+  sm: 8,
+  md: 10,
+  lg: 12,
+  xl: 16,
+  '2xl': 20,
 };
 
 function getInitials(name: string): string {
@@ -73,69 +80,67 @@ export const LobbiAvatar = forwardRef<HTMLDivElement, LobbiAvatarProps>(
     ref
   ) => {
     const initials = name ? getInitials(name) : '?';
+    const radius = variant === 'circle' ? 'xl' : 'md';
 
-    return (
-      <div
+    const avatarContent = (
+      <MantineAvatar
         ref={ref}
+        src={src}
+        alt={alt || name}
+        size={mantineSizeMap[size]}
+        radius={radius}
         className={cn(
-          'relative inline-flex items-center justify-center flex-shrink-0',
-          'overflow-hidden',
-          variant === 'circle' ? 'rounded-full' : 'rounded-lg',
+          'flex-shrink-0',
           showBorder && 'ring-2 ring-white',
-          sizeStyles[size],
           className
         )}
-        {...props}
+        styles={{
+          root: {
+            '--avatar-bg': 'transparent',
+          },
+          placeholder: {
+            background:
+              'var(--t-avatar-bg, linear-gradient(135deg, #F4D03F 0%, #D4AF37 50%, #8B7330 100%))',
+            color: 'white',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontWeight: 600,
+            position: 'relative',
+          },
+          image: {
+            objectFit: 'cover',
+          },
+        }}
+        {...(props as any)}
       >
-        {/* Background gradient */}
-        {!src && (
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'var(--t-avatar-bg, linear-gradient(135deg, #F4D03F 0%, #D4AF37 50%, #8B7330 100%))',
-            }}
-          />
-        )}
-
-        {/* Gradient overlay for depth */}
-        {!src && (
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.15), transparent)',
-            }}
-          />
-        )}
-
-        {/* Image */}
-        {src ? (
-          <img
-            src={src}
-            alt={alt || name}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          /* Initials */
-          <span
-            className="relative z-10 text-white font-semibold"
-            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-          >
-            {initials}
-          </span>
-        )}
-
-        {/* Status indicator */}
-        {showStatus && (
-          <span
-            className={cn(
-              'absolute rounded-full border-2 border-white',
-              statusSizes[size],
-              statusColors[status]
-            )}
-          />
-        )}
-      </div>
+        {/* Light overlay for depth on placeholder */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(255,255,255,0.15), transparent)',
+            borderRadius: 'inherit',
+          }}
+        />
+        <span className="relative z-10">{initials}</span>
+      </MantineAvatar>
     );
+
+    if (showStatus) {
+      return (
+        <Indicator
+          color={statusColors[status]}
+          size={indicatorSizes[size]}
+          offset={size === 'xs' || size === 'sm' ? 2 : 4}
+          position="bottom-end"
+          withBorder
+          processing={status === 'online'}
+        >
+          {avatarContent}
+        </Indicator>
+      );
+    }
+
+    return avatarContent;
   }
 );
 
@@ -148,41 +153,36 @@ export interface LobbiAvatarGroupProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
-export const LobbiAvatarGroup = forwardRef<HTMLDivElement, LobbiAvatarGroupProps>(
-  ({ max = 4, size = 'md', children, className, ...props }, ref) => {
-    const avatars = Array.isArray(children) ? children : [children];
-    const visibleAvatars = avatars.slice(0, max);
-    const remainingCount = avatars.length - max;
+export const LobbiAvatarGroup = forwardRef<
+  HTMLDivElement,
+  LobbiAvatarGroupProps
+>(({ max = 4, size = 'md', children, className, ...props }, ref) => {
+  const avatars = Array.isArray(children) ? children : [children];
+  const visibleAvatars = avatars.slice(0, max);
+  const remainingCount = avatars.length - max;
 
-    return (
-      <div
-        ref={ref}
-        className={cn('flex items-center -space-x-2', className)}
-        {...props}
-      >
-        {visibleAvatars.map((avatar, index) => (
-          <div key={index} className="relative" style={{ zIndex: visibleAvatars.length - index }}>
-            {avatar}
-          </div>
-        ))}
-
-        {remainingCount > 0 && (
-          <div
-            className={cn(
-              'relative inline-flex items-center justify-center',
-              'rounded-full bg-gray-100 border-2 border-white',
-              'text-gray-600 font-medium',
-              sizeStyles[size]
-            )}
-            style={{ zIndex: 0 }}
-          >
-            +{remainingCount}
-          </div>
-        )}
-      </div>
-    );
-  }
-);
+  return (
+    <Avatar.Group ref={ref} className={className} {...(props as any)}>
+      {visibleAvatars}
+      {remainingCount > 0 && (
+        <MantineAvatar
+          size={mantineSizeMap[size]}
+          radius="xl"
+          className="bg-gray-100 border-2 border-white text-gray-600 font-medium"
+          styles={{
+            placeholder: {
+              background: '#f3f4f6',
+              color: '#4b5563',
+              fontWeight: 500,
+            },
+          }}
+        >
+          +{remainingCount}
+        </MantineAvatar>
+      )}
+    </Avatar.Group>
+  );
+});
 
 LobbiAvatarGroup.displayName = 'LobbiAvatarGroup';
 
@@ -194,56 +194,53 @@ export interface LobbiOrgAvatarProps extends HTMLAttributes<HTMLDivElement> {
   size?: 'sm' | 'md' | 'lg';
 }
 
+const orgSizeMap: Record<string, AvatarProps['size']> = {
+  sm: 32,
+  md: 40,
+  lg: 48,
+};
+
 export const LobbiOrgAvatar = forwardRef<HTMLDivElement, LobbiOrgAvatarProps>(
   ({ src, letter, name = '', size = 'md', className, ...props }, ref) => {
     const displayLetter = letter || (name ? name[0].toUpperCase() : 'O');
 
-    const sizes = {
-      sm: 'w-8 h-8 text-[13px] rounded-md',
-      md: 'w-10 h-10 text-[15px] rounded-lg',
-      lg: 'w-12 h-12 text-[18px] rounded-lg',
-    };
-
     return (
-      <div
+      <MantineAvatar
         ref={ref}
-        className={cn(
-          'relative inline-flex items-center justify-center flex-shrink-0',
-          'overflow-hidden',
-          sizes[size],
-          className
-        )}
-        {...props}
+        src={src}
+        alt={name}
+        size={orgSizeMap[size]}
+        radius="md"
+        className={cn('flex-shrink-0', className)}
+        styles={{
+          root: {
+            '--avatar-bg': 'transparent',
+          },
+          placeholder: {
+            background:
+              'var(--t-avatar-bg, linear-gradient(135deg, #F4D03F 0%, #D4AF37 50%, #8B7330 100%))',
+            color: 'white',
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontWeight: 600,
+            fontStyle: 'italic',
+            position: 'relative',
+          },
+          image: {
+            objectFit: 'cover',
+          },
+        }}
+        {...(props as any)}
       >
-        {!src && (
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'var(--t-avatar-bg, linear-gradient(135deg, #F4D03F 0%, #D4AF37 50%, #8B7330 100%))',
-            }}
-          />
-        )}
-
-        {!src && (
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.15), transparent)',
-            }}
-          />
-        )}
-
-        {src ? (
-          <img src={src} alt={name} className="w-full h-full object-cover" />
-        ) : (
-          <span
-            className="relative z-10 text-white font-semibold italic"
-            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-          >
-            {displayLetter}
-          </span>
-        )}
-      </div>
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(255,255,255,0.15), transparent)',
+            borderRadius: 'inherit',
+          }}
+        />
+        <span className="relative z-10">{displayLetter}</span>
+      </MantineAvatar>
     );
   }
 );

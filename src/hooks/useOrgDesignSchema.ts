@@ -3,7 +3,7 @@
  * Returns the OrgIdentity (personality, era, mood) from the org theme.
  */
 import { useMemo } from 'react'
-import { useCurrentOrg } from '../theme/ThemeProvider.v3'
+import { useCurrentOrg } from '../mantine-theme/MantineThemeProvider'
 import type { OrgIdentity } from '../theme/types/theme.types'
 import { getOrgTheme } from '../theme/orgThemeRegistry'
 

@@ -1,5 +1,5 @@
 
-import { Box, Flex, Text, Badge, SimpleGrid } from "@chakra-ui/react";
+import { Box, Flex, Text, Badge, SimpleGrid } from "@mantine/core";
 import { motion } from "motion/react";
 
 const COMPONENTS = [
@@ -38,20 +38,25 @@ const STATUS_COLORS: Record<string, string> = { done: "#10b981", "in-progress": 
 export function Sprint10Showcase() {
   const doneCount = COMPONENTS.filter(c => c.status === "done").length;
   return (
-    <Box p={6}>
-      <Flex justifyContent="space-between" alignItems="center" mb={6}>
+    <Box p="xl">
+      <Flex justify="space-between" align="center" mb="xl">
         <Box>
-          <Text fontSize="2xl" fontWeight="bold">Sprint 10: Shared/Utility</Text>
-          <Text fontSize="sm" color="gray.500">Form fields, data display, feedback — Components 161-188</Text>
+          <Text fz="xl" fw={700}>Sprint 10: Shared/Utility</Text>
+          <Text fz="sm" c="dimmed">Form fields, data display, feedback — Components 161-188</Text>
         </Box>
-        <Badge bg="#64748b" color="white" px={3} py={1} borderRadius="full" fontSize="sm">{doneCount}/{COMPONENTS.length} Complete</Badge>
+        <Badge color="gray" variant="filled" size="lg" radius="xl">{doneCount}/{COMPONENTS.length} Complete</Badge>
       </Flex>
-      <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap={3}>
+      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="sm">
         {COMPONENTS.map((comp, i) => (
           <motion.div key={comp.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-            <Flex p={3} borderRadius="lg" border="1px solid" borderColor="gray.200" alignItems="center" gap={2} _hover={{ borderColor: "#64748b", bg: "gray.50" }} transition="all 0.15s">
-              <Box w="8px" h="8px" borderRadius="full" bg={STATUS_COLORS[comp.status]} flexShrink={0} />
-              <Box flex={1}><Text fontSize="sm" fontWeight="medium">{comp.name}</Text><Text fontSize="2xs" color="gray.400">#{comp.id}</Text></Box>
+            <Flex
+              p="sm"
+              style={{ borderRadius: 'var(--mantine-radius-md)', border: '1px solid var(--mantine-color-gray-3)', cursor: 'default', transition: 'all 0.15s' }}
+              align="center"
+              gap="xs"
+            >
+              <Box w={8} h={8} style={{ borderRadius: '50%', backgroundColor: STATUS_COLORS[comp.status], flexShrink: 0 }} />
+              <Box style={{ flex: 1 }}><Text fz="sm" fw={500}>{comp.name}</Text><Text fz="xs" c="dimmed">#{comp.id}</Text></Box>
             </Flex>
           </motion.div>
         ))}

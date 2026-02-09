@@ -1,17 +1,18 @@
 /**
  * MotionStack - Animated stack container with Framer Motion.
  */
-import { forwardRef } from 'react'
-import { Stack, type StackProps } from '@chakra-ui/react'
+import { forwardRef, type HTMLAttributes, type CSSProperties } from 'react'
 import { motion, type MotionProps } from 'motion/react'
 
-export type MotionStackProps = StackProps & MotionProps
-
-const MotionStackBase = motion.create(Stack)
+export type MotionStackProps = HTMLAttributes<HTMLDivElement> & MotionProps
 
 export const MotionStack = forwardRef<HTMLDivElement, MotionStackProps>(
-  function MotionStack(props, ref) {
-    // @ts-expect-error - Chakra css prop type conflicts with motion/react css prop
-    return <MotionStackBase ref={ref} {...props} />
+  function MotionStack({ style, ...props }, ref) {
+    const stackStyle: CSSProperties = {
+      display: 'flex',
+      flexDirection: 'column',
+      ...style,
+    }
+    return <motion.div ref={ref} style={stackStyle} {...props} />
   }
 )

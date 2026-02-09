@@ -2,7 +2,7 @@
  * Org primary colors for the DemoOrgSelector visual indicators.
  * Maps each org ID to its primary hex color.
  */
-import type { OrgId } from '../theme/ThemeProvider.v3'
+import type { OrgId } from '../mantine-theme/MantineThemeProvider'
 
 export const orgPrimaryColors: Record<OrgId, string> = {
   'luxe-haven': '#D4AF37',

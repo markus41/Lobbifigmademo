@@ -1,5 +1,6 @@
 /**
  * LobbiBadge - Premium badge/pill component for The Lobbi
+ * Migrated to Mantine v8 Badge primitive with luxury aesthetic preserved.
  *
  * Features:
  * - Themed variants matching org colors
@@ -8,17 +9,25 @@
  * - Pill and tag styles
  */
 
-import { forwardRef, HTMLAttributes, ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { forwardRef, type HTMLAttributes, type ReactNode } from 'react';
+import { Badge, type BadgeProps } from '@mantine/core';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export interface LobbiBadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info' | 'outline';
+  variant?:
+    | 'default'
+    | 'primary'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info'
+    | 'outline';
   size?: 'sm' | 'md' | 'lg';
   children?: ReactNode;
 }
 
-const variantStyles = {
+const variantStyles: Record<string, string> = {
   default: 'bg-gray-100 text-gray-700 border-gray-200',
   primary: 'bg-gold-400/10 text-gold-700 border-gold-400/20',
   success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -28,17 +37,30 @@ const variantStyles = {
   outline: 'bg-transparent text-gray-600 border-gray-300',
 };
 
-const sizeStyles = {
+const sizeStyles: Record<string, string> = {
   sm: 'text-[9px] px-2 py-0.5',
   md: 'text-[10px] px-2.5 py-1',
   lg: 'text-[11px] px-3 py-1.5',
 };
 
+const mantineSizeMap: Record<string, BadgeProps['size']> = {
+  sm: 'xs',
+  md: 'sm',
+  lg: 'md',
+};
+
 export const LobbiBadge = forwardRef<HTMLSpanElement, LobbiBadgeProps>(
-  ({ variant = 'default', size = 'md', children, className, ...props }, ref) => {
+  (
+    { variant = 'default', size = 'md', children, className, ...props },
+    ref
+  ) => {
     return (
-      <span
-        ref={ref}
+      <Badge
+        ref={ref as any}
+        component="span"
+        variant="light"
+        size={mantineSizeMap[size]}
+        radius="xl"
         className={cn(
           'inline-flex items-center gap-1',
           'rounded-full border',
@@ -48,10 +70,23 @@ export const LobbiBadge = forwardRef<HTMLSpanElement, LobbiBadgeProps>(
           sizeStyles[size],
           className
         )}
-        {...props}
+        styles={{
+          root: {
+            '--badge-bg': 'transparent',
+            '--badge-color': 'inherit',
+            '--badge-bd': 'none',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            fontFamily: "'DM Sans', sans-serif",
+          },
+          label: {
+            textTransform: 'uppercase',
+          },
+        }}
+        {...(props as any)}
       >
         {children}
-      </span>
+      </Badge>
     );
   }
 );
@@ -67,7 +102,17 @@ export interface LobbiKPIBadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 export const LobbiKPIBadge = forwardRef<HTMLSpanElement, LobbiKPIBadgeProps>(
-  ({ value, suffix = '', showIcon = true, size = 'md', className, ...props }, ref) => {
+  (
+    {
+      value,
+      suffix = '',
+      showIcon = true,
+      size = 'md',
+      className,
+      ...props
+    },
+    ref
+  ) => {
     const isPositive = value > 0;
     const isNegative = value < 0;
     const isNeutral = value === 0;
@@ -75,8 +120,13 @@ export const LobbiKPIBadge = forwardRef<HTMLSpanElement, LobbiKPIBadgeProps>(
     const Icon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus;
 
     return (
-      <span
-        ref={ref}
+      <Badge
+        ref={ref as any}
+        component="span"
+        variant="light"
+        size={mantineSizeMap[size]}
+        radius="xl"
+        leftSection={showIcon ? <Icon className="w-3 h-3" /> : undefined}
         className={cn(
           'inline-flex items-center gap-1',
           'rounded-full',
@@ -88,15 +138,19 @@ export const LobbiKPIBadge = forwardRef<HTMLSpanElement, LobbiKPIBadgeProps>(
           isNeutral && 'bg-gray-100 text-gray-600',
           className
         )}
-        {...props}
+        styles={{
+          root: {
+            '--badge-bg': 'transparent',
+            '--badge-color': 'inherit',
+            '--badge-bd': 'none',
+          },
+        }}
+        {...(props as any)}
       >
-        {showIcon && <Icon className="w-3 h-3" />}
-        <span>
-          {isPositive && '+'}
-          {value}
-          {suffix}
-        </span>
-      </span>
+        {isPositive && '+'}
+        {value}
+        {suffix}
+      </Badge>
     );
   }
 );
@@ -104,87 +158,165 @@ export const LobbiKPIBadge = forwardRef<HTMLSpanElement, LobbiKPIBadgeProps>(
 LobbiKPIBadge.displayName = 'LobbiKPIBadge';
 
 // Status Badge - for member status, approval status, etc.
-export interface LobbiStatusBadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  status: 'active' | 'inactive' | 'pending' | 'approved' | 'rejected' | 'expired';
+export interface LobbiStatusBadgeProps
+  extends HTMLAttributes<HTMLSpanElement> {
+  status:
+    | 'active'
+    | 'inactive'
+    | 'pending'
+    | 'approved'
+    | 'rejected'
+    | 'expired';
   size?: 'sm' | 'md' | 'lg';
   showDot?: boolean;
 }
 
-const statusConfig = {
-  active: { label: 'Active', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500' },
-  inactive: { label: 'Inactive', color: 'bg-gray-100 text-gray-600 border-gray-200', dot: 'bg-gray-400' },
-  pending: { label: 'Pending', color: 'bg-amber-50 text-amber-700 border-amber-200', dot: 'bg-amber-500' },
-  approved: { label: 'Approved', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500' },
-  rejected: { label: 'Rejected', color: 'bg-red-50 text-red-700 border-red-200', dot: 'bg-red-500' },
-  expired: { label: 'Expired', color: 'bg-gray-100 text-gray-600 border-gray-200', dot: 'bg-gray-400' },
+const statusConfig: Record<
+  string,
+  { label: string; color: string; dot: string }
+> = {
+  active: {
+    label: 'Active',
+    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    dot: 'bg-emerald-500',
+  },
+  inactive: {
+    label: 'Inactive',
+    color: 'bg-gray-100 text-gray-600 border-gray-200',
+    dot: 'bg-gray-400',
+  },
+  pending: {
+    label: 'Pending',
+    color: 'bg-amber-50 text-amber-700 border-amber-200',
+    dot: 'bg-amber-500',
+  },
+  approved: {
+    label: 'Approved',
+    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    dot: 'bg-emerald-500',
+  },
+  rejected: {
+    label: 'Rejected',
+    color: 'bg-red-50 text-red-700 border-red-200',
+    dot: 'bg-red-500',
+  },
+  expired: {
+    label: 'Expired',
+    color: 'bg-gray-100 text-gray-600 border-gray-200',
+    dot: 'bg-gray-400',
+  },
 };
 
-export const LobbiStatusBadge = forwardRef<HTMLSpanElement, LobbiStatusBadgeProps>(
-  ({ status, size = 'md', showDot = true, className, ...props }, ref) => {
-    const config = statusConfig[status];
+export const LobbiStatusBadge = forwardRef<
+  HTMLSpanElement,
+  LobbiStatusBadgeProps
+>(({ status, size = 'md', showDot = true, className, ...props }, ref) => {
+  const config = statusConfig[status];
 
-    return (
-      <span
-        ref={ref}
-        className={cn(
-          'inline-flex items-center gap-1.5',
-          'rounded-full border',
-          'font-medium uppercase tracking-[0.06em]',
-          "font-['DM_Sans']",
-          config.color,
-          sizeStyles[size],
-          className
-        )}
-        {...props}
-      >
-        {showDot && (
+  return (
+    <Badge
+      ref={ref as any}
+      component="span"
+      variant="light"
+      size={mantineSizeMap[size]}
+      radius="xl"
+      leftSection={
+        showDot ? (
           <span className={cn('w-1.5 h-1.5 rounded-full', config.dot)} />
-        )}
-        {config.label}
-      </span>
-    );
-  }
-);
+        ) : undefined
+      }
+      className={cn(
+        'inline-flex items-center gap-1.5',
+        'rounded-full border',
+        'font-medium uppercase tracking-[0.06em]',
+        "font-['DM_Sans']",
+        config.color,
+        sizeStyles[size],
+        className
+      )}
+      styles={{
+        root: {
+          '--badge-bg': 'transparent',
+          '--badge-color': 'inherit',
+          '--badge-bd': 'none',
+          textTransform: 'uppercase',
+        },
+      }}
+      {...(props as any)}
+    >
+      {config.label}
+    </Badge>
+  );
+});
 
 LobbiStatusBadge.displayName = 'LobbiStatusBadge';
 
 // Membership Type Badge
-export interface LobbiMembershipBadgeProps extends HTMLAttributes<HTMLSpanElement> {
+export interface LobbiMembershipBadgeProps
+  extends HTMLAttributes<HTMLSpanElement> {
   type: 'gold' | 'silver' | 'bronze' | 'platinum' | 'standard';
   size?: 'sm' | 'md' | 'lg';
 }
 
-const membershipConfig = {
-  platinum: { label: 'Platinum', color: 'bg-slate-100 text-slate-700 border-slate-300' },
-  gold: { label: 'Gold', color: 'bg-gold-400/10 text-gold-700 border-gold-400/30' },
-  silver: { label: 'Silver', color: 'bg-gray-100 text-gray-600 border-gray-300' },
-  bronze: { label: 'Bronze', color: 'bg-amber-100/50 text-amber-700 border-amber-300' },
-  standard: { label: 'Standard', color: 'bg-gray-50 text-gray-600 border-gray-200' },
+const membershipConfig: Record<string, { label: string; color: string }> = {
+  platinum: {
+    label: 'Platinum',
+    color: 'bg-slate-100 text-slate-700 border-slate-300',
+  },
+  gold: {
+    label: 'Gold',
+    color: 'bg-gold-400/10 text-gold-700 border-gold-400/30',
+  },
+  silver: {
+    label: 'Silver',
+    color: 'bg-gray-100 text-gray-600 border-gray-300',
+  },
+  bronze: {
+    label: 'Bronze',
+    color: 'bg-amber-100/50 text-amber-700 border-amber-300',
+  },
+  standard: {
+    label: 'Standard',
+    color: 'bg-gray-50 text-gray-600 border-gray-200',
+  },
 };
 
-export const LobbiMembershipBadge = forwardRef<HTMLSpanElement, LobbiMembershipBadgeProps>(
-  ({ type, size = 'md', className, ...props }, ref) => {
-    const config = membershipConfig[type];
+export const LobbiMembershipBadge = forwardRef<
+  HTMLSpanElement,
+  LobbiMembershipBadgeProps
+>(({ type, size = 'md', className, ...props }, ref) => {
+  const config = membershipConfig[type];
 
-    return (
-      <span
-        ref={ref}
-        className={cn(
-          'inline-flex items-center',
-          'rounded-full border',
-          'font-semibold uppercase tracking-[0.08em]',
-          "font-['DM_Sans']",
-          config.color,
-          sizeStyles[size],
-          className
-        )}
-        {...props}
-      >
-        {config.label}
-      </span>
-    );
-  }
-);
+  return (
+    <Badge
+      ref={ref as any}
+      component="span"
+      variant="light"
+      size={mantineSizeMap[size]}
+      radius="xl"
+      className={cn(
+        'inline-flex items-center',
+        'rounded-full border',
+        'font-semibold uppercase tracking-[0.08em]',
+        "font-['DM_Sans']",
+        config.color,
+        sizeStyles[size],
+        className
+      )}
+      styles={{
+        root: {
+          '--badge-bg': 'transparent',
+          '--badge-color': 'inherit',
+          '--badge-bd': 'none',
+          textTransform: 'uppercase',
+        },
+      }}
+      {...(props as any)}
+    >
+      {config.label}
+    </Badge>
+  );
+});
 
 LobbiMembershipBadge.displayName = 'LobbiMembershipBadge';
 

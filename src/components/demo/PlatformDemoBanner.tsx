@@ -1,7 +1,7 @@
 /**
  * PlatformDemoBanner
  *
- * Chakra UI v3 + GSAP demo control banner for the Lobbi platform demo.
+ * Mantine v8 + GSAP demo control banner for the Lobbi platform demo.
  * Sits ABOVE all content (fixed top, pushes content down via padding).
  * Controls sprint phase visibility, user role, dark mode, and org switching.
  */
@@ -16,7 +16,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { Box, Flex, Text, Badge } from "@chakra-ui/react";
+import { Box, Flex, Text, Badge } from "@mantine/core";
 import { motion, AnimatePresence } from "motion/react";
 import gsap from "gsap";
 
@@ -267,7 +267,6 @@ export function PlatformDemoBanner({
   const phaseMenuRef = useRef<HTMLDivElement>(null);
   const roleMenuRef = useRef<HTMLDivElement>(null);
 
-  // Current phase & role info
   const phaseInfo = useMemo(
     () => SPRINT_PHASES.find((p) => p.id === currentPhase) ?? SPRINT_PHASES[0],
     [currentPhase]
@@ -278,7 +277,6 @@ export function PlatformDemoBanner({
     [currentRole]
   );
 
-  // Feature gating
   const isFeatureEnabled = useCallback(
     (sprintId: SprintPhase): boolean => {
       if (currentPhase === "all") return true;
@@ -289,7 +287,6 @@ export function PlatformDemoBanner({
     [currentPhase]
   );
 
-  // Role authorization
   const isRoleAuthorized = useCallback(
     (minLevel: number): boolean => {
       return roleInfo.level >= minLevel;
@@ -297,7 +294,6 @@ export function PlatformDemoBanner({
     [roleInfo]
   );
 
-  // Measure banner height with ResizeObserver
   useEffect(() => {
     if (!bannerRef.current) return;
     const observer = new ResizeObserver((entries) => {
@@ -309,7 +305,6 @@ export function PlatformDemoBanner({
     return () => observer.disconnect();
   }, [isExpanded, isVisible]);
 
-  // GSAP shimmer animation
   useEffect(() => {
     if (!shimmerRef.current || !isVisible) return;
     const tl = gsap.timeline({ repeat: -1, repeatDelay: 4 });
@@ -321,7 +316,6 @@ export function PlatformDemoBanner({
     return () => { tl.kill(); };
   }, [isVisible]);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -336,7 +330,6 @@ export function PlatformDemoBanner({
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // Context value
   const contextValue: DemoContextValue = useMemo(
     () => ({
       currentPhase,
@@ -374,74 +367,80 @@ export function PlatformDemoBanner({
           >
             <Box
               ref={bannerRef}
-              bg="gray.900"
-              color="white"
-              overflow="hidden"
-              position="relative"
-              borderBottom="2px solid"
-              borderColor={phaseInfo.color}
+              bg="var(--mantine-color-dark-9, #111827)"
+              c="white"
+              style={{
+                overflow: "hidden",
+                position: "relative",
+                borderBottom: `2px solid ${phaseInfo.color}`,
+              }}
             >
               {/* Shimmer overlay */}
               <Box
                 ref={shimmerRef}
-                position="absolute"
-                top="0"
-                left="0"
-                width="50%"
-                height="100%"
-                bg="linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)"
-                pointerEvents="none"
-                zIndex={1}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "50%",
+                  height: "100%",
+                  background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
+                  pointerEvents: "none",
+                  zIndex: 1,
+                }}
               />
 
               {/* Main bar */}
               <Flex
-                px={4}
-                py={2}
-                alignItems="center"
-                justifyContent="space-between"
-                position="relative"
-                zIndex={2}
-                gap={3}
-                flexWrap="wrap"
+                px="md"
+                py="xs"
+                align="center"
+                justify="space-between"
+                style={{ position: "relative", zIndex: 2 }}
+                gap="sm"
+                wrap="wrap"
               >
                 {/* Left: Logo + Phase */}
-                <Flex alignItems="center" gap={3} minW="0">
+                <Flex align="center" gap="sm" maw="100%" style={{ minWidth: 0 }}>
                   <Box
-                    w="8px"
-                    h="8px"
-                    borderRadius="full"
-                    bg={phaseInfo.color}
-                    flexShrink={0}
-                    boxShadow={`0 0 8px ${phaseInfo.color}`}
+                    w={8}
+                    h={8}
+                    style={{
+                      borderRadius: "50%",
+                      background: phaseInfo.color,
+                      flexShrink: 0,
+                      boxShadow: `0 0 8px ${phaseInfo.color}`,
+                    }}
                   />
-                  <Text fontSize="xs" fontWeight="bold" color="gray.400" whiteSpace="nowrap">
+                  <Text fz="xs" fw="bold" c="dimmed" style={{ whiteSpace: "nowrap" }}>
                     LOBBI PLATFORM DEMO
                   </Text>
 
                   {/* Phase Dropdown */}
-                  <Box position="relative" ref={phaseMenuRef}>
+                  <Box pos="relative" ref={phaseMenuRef}>
                     <Flex
-                      as="button"
+                      component="button"
                       onClick={() => { setShowPhaseMenu(!showPhaseMenu); setShowRoleMenu(false); }}
-                      alignItems="center"
-                      gap={1.5}
-                      bg="whiteAlpha.100"
-                      px={3}
-                      py={1}
-                      borderRadius="md"
-                      cursor="pointer"
-                      _hover={{ bg: "whiteAlpha.200" }}
-                      transition="all 0.15s"
+                      align="center"
+                      gap={6}
+                      px="sm"
+                      py={4}
+                      style={{
+                        borderRadius: 6,
+                        background: "rgba(255,255,255,0.1)",
+                        cursor: "pointer",
+                        border: "none",
+                        color: "white",
+                        transition: "all 0.15s",
+                      }}
                     >
-                      <Box w="6px" h="6px" borderRadius="full" bg={phaseInfo.color} />
-                      <Text fontSize="xs" fontWeight="semibold" whiteSpace="nowrap">
+                      <Box w={6} h={6} style={{ borderRadius: "50%", background: phaseInfo.color }} />
+                      <Text fz="xs" fw={600} style={{ whiteSpace: "nowrap" }}>
                         {phaseInfo.shortLabel}: {phaseInfo.label.split(": ")[1] || phaseInfo.label}
                       </Text>
                       <ChevronDown size={12} />
                     </Flex>
 
-                    {/* Phase dropdown menu */}
                     <AnimatePresence>
                       {showPhaseMenu && (
                         <motion.div
@@ -458,45 +457,49 @@ export function PlatformDemoBanner({
                           }}
                         >
                           <Box
-                            bg="gray.800"
-                            border="1px solid"
-                            borderColor="gray.600"
-                            borderRadius="lg"
-                            py={1}
-                            minW="280px"
-                            boxShadow="xl"
-                            maxH="400px"
-                            overflowY="auto"
+                            style={{
+                              background: "#1f2937",
+                              border: "1px solid #4b5563",
+                              borderRadius: 8,
+                              padding: "4px 0",
+                              minWidth: 280,
+                              boxShadow: "0 20px 25px -5px rgba(0,0,0,0.3)",
+                              maxHeight: 400,
+                              overflowY: "auto",
+                            }}
                           >
                             {SPRINT_PHASES.map((phase) => (
                               <Flex
                                 key={phase.id}
-                                as="button"
+                                component="button"
                                 onClick={() => { setCurrentPhase(phase.id); setShowPhaseMenu(false); }}
-                                alignItems="center"
-                                gap={2}
-                                px={3}
-                                py={2}
+                                align="center"
+                                gap="xs"
+                                px="sm"
+                                py="xs"
                                 w="100%"
-                                _hover={{ bg: "whiteAlpha.100" }}
-                                bg={phase.id === currentPhase ? "whiteAlpha.100" : "transparent"}
-                                transition="all 0.1s"
+                                style={{
+                                  background: phase.id === currentPhase ? "rgba(255,255,255,0.1)" : "transparent",
+                                  border: "none",
+                                  color: "white",
+                                  cursor: "pointer",
+                                  transition: "all 0.1s",
+                                }}
                               >
-                                <Box w="8px" h="8px" borderRadius="full" bg={phase.color} flexShrink={0} />
-                                <Box textAlign="left" flex={1} minW="0">
-                                  <Text fontSize="xs" fontWeight="semibold" lineClamp={1}>
+                                <Box w={8} h={8} style={{ borderRadius: "50%", background: phase.color, flexShrink: 0 }} />
+                                <Box style={{ textAlign: "left", flex: 1, minWidth: 0 }}>
+                                  <Text fz="xs" fw={600} lineClamp={1}>
                                     {phase.label}
                                   </Text>
-                                  <Text fontSize="2xs" color="gray.400" lineClamp={1}>
+                                  <Text fz={10} c="dimmed" lineClamp={1}>
                                     {phase.description}
                                   </Text>
                                 </Box>
                                 <Badge
-                                  bg="whiteAlpha.200"
-                                  color="gray.300"
-                                  fontSize="2xs"
-                                  px={1.5}
-                                  borderRadius="md"
+                                  variant="light"
+                                  size="xs"
+                                  radius="md"
+                                  style={{ background: "rgba(255,255,255,0.2)", color: "#d1d5db" }}
                                 >
                                   {phase.componentCount}
                                 </Badge>
@@ -510,36 +513,36 @@ export function PlatformDemoBanner({
                 </Flex>
 
                 {/* Right: Role + Controls */}
-                <Flex alignItems="center" gap={2}>
-                  {/* Component count badge */}
+                <Flex align="center" gap="xs">
                   <Badge
-                    bg="whiteAlpha.100"
-                    color={phaseInfo.color}
-                    fontSize="2xs"
-                    px={2}
-                    py={0.5}
-                    borderRadius="full"
+                    variant="light"
+                    size="xs"
+                    radius="xl"
+                    style={{ background: "rgba(255,255,255,0.1)", color: phaseInfo.color }}
                   >
                     {phaseInfo.componentCount} components
                   </Badge>
 
                   {/* Role Dropdown */}
-                  <Box position="relative" ref={roleMenuRef}>
+                  <Box pos="relative" ref={roleMenuRef}>
                     <Flex
-                      as="button"
+                      component="button"
                       onClick={() => { setShowRoleMenu(!showRoleMenu); setShowPhaseMenu(false); }}
-                      alignItems="center"
-                      gap={1.5}
-                      bg="whiteAlpha.100"
-                      px={2.5}
-                      py={1}
-                      borderRadius="md"
-                      cursor="pointer"
-                      _hover={{ bg: "whiteAlpha.200" }}
-                      transition="all 0.15s"
+                      align="center"
+                      gap={6}
+                      px={10}
+                      py={4}
+                      style={{
+                        borderRadius: 6,
+                        background: "rgba(255,255,255,0.1)",
+                        cursor: "pointer",
+                        border: "none",
+                        color: "white",
+                        transition: "all 0.15s",
+                      }}
                     >
-                      <Box w="6px" h="6px" borderRadius="full" bg={roleInfo.color} />
-                      <Text fontSize="xs" fontWeight="medium">
+                      <Box w={6} h={6} style={{ borderRadius: "50%", background: roleInfo.color }} />
+                      <Text fz="xs" fw={500}>
                         {roleInfo.label}
                       </Text>
                       <ChevronDown size={12} />
@@ -561,33 +564,38 @@ export function PlatformDemoBanner({
                           }}
                         >
                           <Box
-                            bg="gray.800"
-                            border="1px solid"
-                            borderColor="gray.600"
-                            borderRadius="lg"
-                            py={1}
-                            minW="200px"
-                            boxShadow="xl"
+                            style={{
+                              background: "#1f2937",
+                              border: "1px solid #4b5563",
+                              borderRadius: 8,
+                              padding: "4px 0",
+                              minWidth: 200,
+                              boxShadow: "0 20px 25px -5px rgba(0,0,0,0.3)",
+                            }}
                           >
                             {USER_ROLES.map((role) => (
                               <Flex
                                 key={role.id}
-                                as="button"
+                                component="button"
                                 onClick={() => { setCurrentRole(role.id); setShowRoleMenu(false); }}
-                                alignItems="center"
-                                gap={2}
-                                px={3}
-                                py={1.5}
+                                align="center"
+                                gap="xs"
+                                px="sm"
+                                py={6}
                                 w="100%"
-                                _hover={{ bg: "whiteAlpha.100" }}
-                                bg={role.id === currentRole ? "whiteAlpha.100" : "transparent"}
-                                transition="all 0.1s"
+                                style={{
+                                  background: role.id === currentRole ? "rgba(255,255,255,0.1)" : "transparent",
+                                  border: "none",
+                                  color: "white",
+                                  cursor: "pointer",
+                                  transition: "all 0.1s",
+                                }}
                               >
-                                <Box w="6px" h="6px" borderRadius="full" bg={role.color} />
-                                <Text fontSize="xs" fontWeight="medium" flex={1} textAlign="left">
+                                <Box w={6} h={6} style={{ borderRadius: "50%", background: role.color }} />
+                                <Text fz="xs" fw={500} style={{ flex: 1, textAlign: "left" }}>
                                   {role.label}
                                 </Text>
-                                <Text fontSize="2xs" color="gray.500">
+                                <Text fz={10} c="dimmed">
                                   L{role.level}
                                 </Text>
                               </Flex>
@@ -600,54 +608,63 @@ export function PlatformDemoBanner({
 
                   {/* Dark mode toggle */}
                   <Box
-                    as="button"
+                    component="button"
                     onClick={() => setIsDarkMode(!isDarkMode)}
-                    bg="whiteAlpha.100"
-                    p={1.5}
-                    borderRadius="md"
-                    cursor="pointer"
-                    _hover={{ bg: "whiteAlpha.200" }}
-                    transition="all 0.15s"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
+                    p={6}
+                    style={{
+                      borderRadius: 6,
+                      background: "rgba(255,255,255,0.1)",
+                      cursor: "pointer",
+                      border: "none",
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transition: "all 0.15s",
+                    }}
                   >
                     {isDarkMode ? <SunIcon size={14} /> : <MoonIcon size={14} />}
                   </Box>
 
                   {/* Expand/collapse */}
                   <Box
-                    as="button"
+                    component="button"
                     onClick={() => setIsExpanded(!isExpanded)}
-                    bg="whiteAlpha.100"
-                    p={1.5}
-                    borderRadius="md"
-                    cursor="pointer"
-                    _hover={{ bg: "whiteAlpha.200" }}
-                    transition="all 0.15s"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
+                    p={6}
+                    style={{
+                      borderRadius: 6,
+                      background: "rgba(255,255,255,0.1)",
+                      cursor: "pointer",
+                      border: "none",
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transition: "all 0.15s",
+                    }}
                   >
                     {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </Box>
 
                   {/* Close */}
                   <Box
-                    as="button"
+                    component="button"
                     onClick={() => setIsVisible(false)}
-                    bg="whiteAlpha.100"
-                    p={1.5}
-                    borderRadius="md"
-                    cursor="pointer"
-                    _hover={{ bg: "red.600" }}
-                    transition="all 0.15s"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    fontSize="xs"
+                    p={6}
+                    style={{
+                      borderRadius: 6,
+                      background: "rgba(255,255,255,0.1)",
+                      cursor: "pointer",
+                      border: "none",
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 12,
+                      transition: "all 0.15s",
+                    }}
                   >
-                    ✕
+                    &#x2715;
                   </Box>
                 </Flex>
               </Flex>
@@ -662,19 +679,20 @@ export function PlatformDemoBanner({
                     transition={{ duration: 0.25 }}
                     style={{ overflow: "hidden" }}
                   >
-                    <Box px={4} pb={3} borderTop="1px solid" borderColor="whiteAlpha.100">
+                    <Box px="md" pb="sm" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                       {/* Sprint progress bar */}
-                      <Flex gap={1} mt={2} mb={2}>
+                      <Flex gap={4} mt="xs" mb="xs">
                         {SPRINT_PHASES.slice(1).map((phase) => (
                           <Box
                             key={phase.id}
-                            flex={phase.componentCount}
-                            h="4px"
-                            bg={isFeatureEnabled(phase.id) ? phase.color : "whiteAlpha.100"}
-                            borderRadius="full"
-                            transition="all 0.3s"
-                            cursor="pointer"
-                            _hover={{ transform: "scaleY(2)" }}
+                            style={{
+                              flex: phase.componentCount,
+                              height: 4,
+                              background: isFeatureEnabled(phase.id) ? phase.color : "rgba(255,255,255,0.1)",
+                              borderRadius: 9999,
+                              transition: "all 0.3s",
+                              cursor: "pointer",
+                            }}
                             onClick={() => setCurrentPhase(phase.id)}
                             title={`${phase.label} (${phase.componentCount} components)`}
                           />
@@ -682,68 +700,74 @@ export function PlatformDemoBanner({
                       </Flex>
 
                       {/* Phase info */}
-                      <Flex gap={4} flexWrap="wrap" mt={2}>
-                        <Box flex={1} minW="200px">
-                          <Text fontSize="2xs" color="gray.500" mb={1}>
+                      <Flex gap="md" wrap="wrap" mt="xs">
+                        <Box style={{ flex: 1, minWidth: 200 }}>
+                          <Text fz={10} c="dimmed" mb={4}>
                             CURRENT PHASE
                           </Text>
-                          <Flex alignItems="center" gap={2}>
-                            <Box w="10px" h="10px" borderRadius="full" bg={phaseInfo.color} />
-                            <Text fontSize="sm" fontWeight="bold">
+                          <Flex align="center" gap="xs">
+                            <Box w={10} h={10} style={{ borderRadius: "50%", background: phaseInfo.color }} />
+                            <Text fz="sm" fw="bold">
                               {phaseInfo.label}
                             </Text>
                           </Flex>
-                          <Text fontSize="xs" color="gray.400" mt={0.5}>
-                            {phaseInfo.description} • Components {phaseInfo.componentRange}
+                          <Text fz="xs" c="dimmed" mt={2}>
+                            {phaseInfo.description} &bull; Components {phaseInfo.componentRange}
                           </Text>
                         </Box>
 
-                        <Box flex={1} minW="200px">
-                          <Text fontSize="2xs" color="gray.500" mb={1}>
+                        <Box style={{ flex: 1, minWidth: 200 }}>
+                          <Text fz={10} c="dimmed" mb={4}>
                             ROLE PERMISSIONS
                           </Text>
-                          <Flex alignItems="center" gap={2}>
-                            <Box w="10px" h="10px" borderRadius="full" bg={roleInfo.color} />
-                            <Text fontSize="sm" fontWeight="bold">
+                          <Flex align="center" gap="xs">
+                            <Box w={10} h={10} style={{ borderRadius: "50%", background: roleInfo.color }} />
+                            <Text fz="sm" fw="bold">
                               {roleInfo.label}
                             </Text>
-                            <Badge fontSize="2xs" bg="whiteAlpha.200" color="gray.300">
+                            <Badge
+                              variant="light"
+                              size="xs"
+                              style={{ background: "rgba(255,255,255,0.2)", color: "#d1d5db" }}
+                            >
                               Level {roleInfo.level}
                             </Badge>
                           </Flex>
-                          <Text fontSize="xs" color="gray.400" mt={0.5}>
+                          <Text fz="xs" c="dimmed" mt={2}>
                             Access: {roleInfo.level >= 5 ? "Full admin" : roleInfo.level >= 3 ? "Management" : "Member"}
                           </Text>
                         </Box>
 
                         {/* Sprint grid */}
                         <Box w="100%">
-                          <Text fontSize="2xs" color="gray.500" mb={1}>
+                          <Text fz={10} c="dimmed" mb={4}>
                             ALL SPRINTS
                           </Text>
-                          <Flex gap={1} flexWrap="wrap">
+                          <Flex gap={4} wrap="wrap">
                             {SPRINT_PHASES.slice(1).map((phase) => (
                               <Flex
                                 key={phase.id}
-                                as="button"
+                                component="button"
                                 onClick={() => setCurrentPhase(phase.id)}
-                                alignItems="center"
-                                gap={1}
-                                px={2}
-                                py={0.5}
-                                borderRadius="md"
-                                bg={phase.id === currentPhase ? "whiteAlpha.200" : "whiteAlpha.50"}
-                                border="1px solid"
-                                borderColor={phase.id === currentPhase ? phase.color : "transparent"}
-                                _hover={{ bg: "whiteAlpha.200" }}
-                                transition="all 0.15s"
-                                opacity={isFeatureEnabled(phase.id) ? 1 : 0.4}
+                                align="center"
+                                gap={4}
+                                px="xs"
+                                py={2}
+                                style={{
+                                  borderRadius: 6,
+                                  background: phase.id === currentPhase ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.05)",
+                                  border: phase.id === currentPhase ? `1px solid ${phase.color}` : "1px solid transparent",
+                                  cursor: "pointer",
+                                  color: "white",
+                                  transition: "all 0.15s",
+                                  opacity: isFeatureEnabled(phase.id) ? 1 : 0.4,
+                                }}
                               >
-                                <Box w="4px" h="4px" borderRadius="full" bg={phase.color} />
-                                <Text fontSize="2xs" fontWeight="medium">
+                                <Box w={4} h={4} style={{ borderRadius: "50%", background: phase.color }} />
+                                <Text fz={10} fw={500}>
                                   {phase.shortLabel}
                                 </Text>
-                                <Text fontSize="2xs" color="gray.500">
+                                <Text fz={10} c="dimmed">
                                   {phase.componentCount}
                                 </Text>
                               </Flex>
@@ -757,7 +781,7 @@ export function PlatformDemoBanner({
               </AnimatePresence>
 
               {/* Phase color accent line */}
-              <Box h="2px" bg={phaseInfo.color} transition="background 0.3s" />
+              <Box h={2} style={{ background: phaseInfo.color, transition: "background 0.3s" }} />
             </Box>
           </motion.div>
         )}
@@ -772,30 +796,30 @@ export function PlatformDemoBanner({
             exit={{ scale: 0, opacity: 0 }}
             style={{
               position: "fixed",
-              top: "12px",
-              right: "12px",
+              top: 12,
+              right: 12,
               zIndex: 10000,
             }}
           >
             <Box
-              as="button"
+              component="button"
               onClick={() => setIsVisible(true)}
-              bg="gray.900"
-              color="white"
-              px={3}
-              py={1.5}
-              borderRadius="full"
-              boxShadow="lg"
-              cursor="pointer"
-              _hover={{ bg: "gray.800" }}
-              display="flex"
-              alignItems="center"
-              gap={2}
-              border="1px solid"
-              borderColor={phaseInfo.color}
+              px="sm"
+              py={6}
+              style={{
+                background: "#111827",
+                color: "white",
+                borderRadius: 9999,
+                boxShadow: "0 10px 15px -3px rgba(0,0,0,0.3)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                border: `1px solid ${phaseInfo.color}`,
+              }}
             >
-              <Box w="6px" h="6px" borderRadius="full" bg={phaseInfo.color} />
-              <Text fontSize="xs" fontWeight="semibold">
+              <Box w={6} h={6} style={{ borderRadius: "50%", background: phaseInfo.color }} />
+              <Text fz="xs" fw={600}>
                 Demo
               </Text>
             </Box>
@@ -803,11 +827,11 @@ export function PlatformDemoBanner({
         )}
       </AnimatePresence>
 
-      {/* Content wrapper - pushes content below banner */}
+      {/* Content wrapper */}
       <Box
-        pt={isVisible ? `${bannerHeight}px` : "0px"}
-        transition="padding-top 0.3s ease"
-        minH="100vh"
+        pt={isVisible ? bannerHeight : 0}
+        mih="100vh"
+        style={{ transition: "padding-top 0.3s ease" }}
       >
         {children}
       </Box>

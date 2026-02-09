@@ -6,7 +6,7 @@
  */
 
 
-import { Box } from "@chakra-ui/react";
+import { Box } from "@mantine/core";
 import { PlatformDemoBanner } from "./PlatformDemoBanner";
 import { PhaseRouter } from "./PhaseRouter";
 
@@ -24,7 +24,7 @@ export function DemoPlatformPage({
       defaultPhase={defaultPhase as any}
       defaultRole={defaultRole}
     >
-      <Box bg="white" minH="100vh">
+      <Box bg="white" mih="100vh">
         <PhaseRouter />
       </Box>
     </PlatformDemoBanner>

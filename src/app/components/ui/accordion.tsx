@@ -1,23 +1,43 @@
 "use client";
 
-import * as React from "react";
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronDownIcon } from "lucide-react";
-
+import {
+  Accordion as MantineAccordion,
+  type AccordionProps as MantineAccordionProps,
+  type AccordionItemProps as MantineAccordionItemProps,
+  type AccordionControlProps as MantineAccordionControlProps,
+  type AccordionPanelProps as MantineAccordionPanelProps,
+} from "@mantine/core";
 import { cn } from "./utils";
 
-function Accordion({
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Root>) {
-  return <AccordionPrimitive.Root data-slot="accordion" {...props} />;
+interface AccordionProps extends Omit<MantineAccordionProps, "classNames"> {
+  className?: string;
 }
 
-function AccordionItem({
-  className,
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
+function Accordion({ className, ...props }: AccordionProps) {
   return (
-    <AccordionPrimitive.Item
+    <MantineAccordion
+      data-slot="accordion"
+      variant="separated"
+      classNames={{
+        root: cn(className),
+        item: "border-b last:border-b-0 border-none",
+        control: "px-0 hover:bg-transparent",
+        chevron: "text-muted-foreground",
+        content: "px-0 pt-0 pb-4",
+        label: "text-sm font-medium",
+      }}
+      {...props}
+    />
+  );
+}
+
+interface AccordionItemProps extends Omit<MantineAccordionItemProps, "classNames"> {
+  className?: string;
+}
+
+function AccordionItem({ className, ...props }: AccordionItemProps) {
+  return (
+    <MantineAccordion.Item
       data-slot="accordion-item"
       className={cn("border-b last:border-b-0", className)}
       {...props}
@@ -25,41 +45,34 @@ function AccordionItem({
   );
 }
 
-function AccordionTrigger({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
+interface AccordionTriggerProps extends Omit<MantineAccordionControlProps, "classNames"> {
+  className?: string;
+}
+
+function AccordionTrigger({ className, ...props }: AccordionTriggerProps) {
   return (
-    <AccordionPrimitive.Header className="flex">
-      <AccordionPrimitive.Trigger
-        data-slot="accordion-trigger"
-        className={cn(
-          "focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200" />
-      </AccordionPrimitive.Trigger>
-    </AccordionPrimitive.Header>
+    <MantineAccordion.Control
+      data-slot="accordion-trigger"
+      className={cn(
+        "flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all hover:underline",
+        className
+      )}
+      {...props}
+    />
   );
 }
 
-function AccordionContent({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+interface AccordionContentProps extends Omit<MantineAccordionPanelProps, "classNames"> {
+  className?: string;
+}
+
+function AccordionContent({ className, ...props }: AccordionContentProps) {
   return (
-    <AccordionPrimitive.Content
+    <MantineAccordion.Panel
       data-slot="accordion-content"
-      className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm"
+      className={cn("text-sm", className)}
       {...props}
-    >
-      <div className={cn("pt-0 pb-4", className)}>{children}</div>
-    </AccordionPrimitive.Content>
+    />
   );
 }
 

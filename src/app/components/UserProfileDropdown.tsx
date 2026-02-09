@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/notifications';
 import type { Account, Organization } from '../data/themes';
 
 interface UserProfileDropdownProps {

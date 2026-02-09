@@ -3,7 +3,7 @@
  * Returns button, input, card, avatar, badge, tooltip styles.
  */
 import { useMemo } from 'react'
-import { useCurrentOrg } from '../theme/ThemeProvider.v3'
+import { useCurrentOrg } from '../mantine-theme/MantineThemeProvider'
 import type { OrgComponents } from '../theme/types/theme.types'
 import { getOrgTheme } from '../theme/orgThemeRegistry'
 

@@ -3,7 +3,7 @@
  * Returns motion durations, easings, and personality multipliers.
  */
 import { useMemo } from 'react'
-import { useCurrentOrg } from '../theme/ThemeProvider.v3'
+import { useCurrentOrg } from '../mantine-theme/MantineThemeProvider'
 import type { Motion, OrgMotionPersonality } from '../theme/types/theme.types'
 import { getOrgTheme } from '../theme/orgThemeRegistry'
 

@@ -1,27 +1,66 @@
 "use client";
 
 import * as React from "react";
-import { OTPInput, OTPInputContext } from "input-otp";
+import { PinInput } from "@mantine/core";
 import { MinusIcon } from "lucide-react";
-
 import { cn } from "./utils";
 
 function InputOTP({
   className,
   containerClassName,
+  length = 6,
+  value,
+  onChange,
+  disabled,
+  type = "number",
+  mask,
+  placeholder = "",
   ...props
-}: React.ComponentProps<typeof OTPInput> & {
+}: {
+  className?: string;
   containerClassName?: string;
+  length?: number;
+  value?: string;
+  onChange?: (value: string) => void;
+  disabled?: boolean;
+  type?: "number" | "text";
+  mask?: boolean;
+  placeholder?: string;
+  maxLength?: number;
+  render?: any;
+  children?: React.ReactNode;
 }) {
+  if (props.children) {
+    return (
+      <div
+        data-slot="input-otp"
+        className={cn(
+          "flex items-center gap-2 has-disabled:opacity-50",
+          containerClassName
+        )}
+      >
+        {props.children}
+      </div>
+    );
+  }
+
   return (
-    <OTPInput
+    <PinInput
       data-slot="input-otp"
-      containerClassName={cn(
-        "flex items-center gap-2 has-disabled:opacity-50",
-        containerClassName,
-      )}
-      className={cn("disabled:cursor-not-allowed", className)}
-      {...props}
+      length={length}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      type={type === "number" ? "number" : "alphanumeric"}
+      mask={mask}
+      placeholder={placeholder}
+      classNames={{
+        root: cn("flex items-center gap-2", containerClassName),
+        input: cn(
+          "border-input h-9 w-9 rounded-md border text-center text-sm bg-input-background transition-all outline-none focus:border-ring focus:ring-ring/50 focus:ring-[3px]",
+          className
+        ),
+      }}
     />
   );
 }
@@ -39,20 +78,23 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
 function InputOTPSlot({
   index,
   className,
+  char,
+  isActive,
+  hasFakeCaret,
   ...props
 }: React.ComponentProps<"div"> & {
   index: number;
+  char?: string;
+  isActive?: boolean;
+  hasFakeCaret?: boolean;
 }) {
-  const inputOTPContext = React.useContext(OTPInputContext);
-  const { char, hasFakeCaret, isActive } = inputOTPContext?.slots[index] ?? {};
-
   return (
     <div
       data-slot="input-otp-slot"
       data-active={isActive}
       className={cn(
-        "data-[active=true]:border-ring data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:ring-destructive/20 dark:data-[active=true]:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive dark:bg-input/30 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]",
-        className,
+        "data-[active=true]:border-ring data-[active=true]:ring-ring/50 border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm bg-input-background transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md data-[active=true]:z-10 data-[active=true]:ring-[3px]",
+        className
       )}
       {...props}
     >

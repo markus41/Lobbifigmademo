@@ -12,7 +12,7 @@
 
 import { useState, type CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { toast } from 'sonner';
+import { toast } from '@/lib/notifications';
 import type { Organization, Account } from '../../data/themes';
 import { EventBuilder } from '@/components/lobbi/wizards';
 

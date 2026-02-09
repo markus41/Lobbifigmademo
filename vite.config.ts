@@ -7,16 +7,11 @@ export default defineConfig({
   base: '/Lobbifigmademo/',
   plugins: [
     tailwindcss(),
-    react({
-      jsxImportSource: '@emotion/react',
-    }),
+    react(),
   ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-  },
-  optimizeDeps: {
-    include: ['@chakra-ui/react', '@emotion/react'],
   },
 })
