@@ -481,6 +481,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                 {/* Email (Read-only) */}
                 <div>
                   <label
+                    htmlFor="login-email"
                     className="block text-xs uppercase tracking-[0.15em] mb-2 font-medium opacity-70"
                     style={{ color: colors.primary }}
                   >
@@ -490,11 +491,15 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     <Mail
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all opacity-40"
                       style={{ color: colors.primary }}
+                      aria-hidden="true"
                     />
                     <input
+                      id="login-email"
                       type="email"
                       value={account.email}
                       readOnly
+                      aria-readonly="true"
+                      aria-label="Your email address"
                       className={`w-full pl-10 pr-4 py-3.5 border-2 text-sm outline-none cursor-not-allowed transition-all shadow-[0_2px_4px_rgba(0,0,0,0.04)] ${inputClasses}`}
                       style={{
                         background: `rgba(${theme.primaryRgb}, 0.03)`,
@@ -509,6 +514,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                 {/* Password */}
                 <div>
                   <label
+                    htmlFor="login-password"
                     className="block text-xs uppercase tracking-[0.15em] mb-2 font-medium opacity-70"
                     style={{ color: colors.primary }}
                   >
@@ -518,13 +524,17 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     <Lock
                       className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all opacity-40"
                       style={{ color: colors.primary }}
+                      aria-hidden="true"
                     />
                     <input
+                      id="login-password"
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       required
+                      autoComplete="current-password"
+                      aria-label="Your password"
                       className={`w-full pl-10 pr-12 py-3.5 bg-white border-2 text-sm transition-all outline-none placeholder:text-gray-300 focus:scale-[1.01] shadow-[0_2px_4px_rgba(0,0,0,0.04)] ${inputClasses}`}
                       style={{
                         borderColor: `rgba(${theme.primaryRgb}, 0.2)`,
@@ -543,10 +553,11 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                       className="absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-100 opacity-50"
                       style={{ color: colors.primary }}
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPassword ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
                     </button>
                   </div>
                 </div>

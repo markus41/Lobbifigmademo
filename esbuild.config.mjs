@@ -44,7 +44,7 @@ const aliasPlugin = {
 }
 
 /**
- * Plugin to update HTML with correct script path
+ * Plugin to update HTML with correct script path and inject CSS
  */
 const htmlPlugin = {
   name: 'html',
@@ -53,8 +53,20 @@ const htmlPlugin = {
       const indexPath = path.join(__dirname, 'dist', 'index.html');
       if (fs.existsSync(indexPath)) {
         let html = fs.readFileSync(indexPath, 'utf8');
+        
+        // Use base path only in production for GitHub Pages
+        const basePath = isProduction ? '/Lobbifigmademo/' : '/';
+        
         // Update script src to include base path
-        html = html.replace('src="main.js"', 'src="/Lobbifigmademo/main.js"');
+        html = html.replace('src="main.js"', `src="${basePath}main.js"`);
+        
+        // Inject CSS link in head if main.css exists
+        if (fs.existsSync(path.join(__dirname, 'dist', 'main.css'))) {
+          html = html.replace(
+            '</head>',
+            `  <link rel="stylesheet" href="${basePath}main.css">\n  </head>`
+          );
+        }
         fs.writeFileSync(indexPath, html);
       }
     });
@@ -110,7 +122,7 @@ export const buildOptions = {
   jsx: 'automatic',
   jsxDev: isDev,
   jsxImportSource: '@emotion/react',
-  publicPath: '/Lobbifigmademo/',
+  publicPath: isProduction ? '/Lobbifigmademo/' : '/',
   assetNames: 'assets/[name]-[hash]',
 };
 
