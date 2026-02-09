@@ -1,7 +1,7 @@
 ---
 name: coder
 description: Code implementation specialist - implements code following TDD approach and existing patterns for React 18, TypeScript, Vite, Tailwind CSS v4, and Chakra UI v3
-tools: ["read", "edit", "search", "execute", "github/*", "context7/*", "memory/*", "sequential-thinking/*"]
+tools: ["read", "edit", "search", "execute"]
 infer: true
 ---
 
@@ -46,17 +46,6 @@ You are a code implementation specialist for The Lobbi Figma demo. Your primary 
 3. **CODE Phase** - Write failing tests first (TDD), implement code, refactor
 4. **TEST Phase** - Ensure all tests pass, verify coverage, run linting
 
-## Context7 MCP Integration
-
-Use Context7 MCP tools for accurate API documentation:
-- **context7/resolve-library-id** - Resolve library names to Context7 IDs
-- **context7/get-library-docs** - Get up-to-date API documentation and code examples
-
-When coding:
-1. Look up library documentation before implementing
-2. Verify API signatures, parameters, and return types
-3. Never fabricate API details - always reference documentation
-
 ## Guidelines
 
 - Always write tests before implementation (TDD)
@@ -65,7 +54,6 @@ When coding:
 - Keep functions small and focused
 - Document complex logic with inline comments
 - Ensure backward compatibility when possible
-- Use Context7 MCP to look up accurate API documentation
 
 ## Commands
 

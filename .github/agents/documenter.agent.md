@@ -1,7 +1,7 @@
 ---
 name: documenter
 description: Documentation specialist - generates and maintains component documentation, README files, API docs, and inline comments for the Lobbi Figma demo
-tools: ["read", "edit", "search", "github/*", "context7/*", "memory/*", "sequential-thinking/*"]
+tools: ["read", "edit", "search"]
 infer: true
 ---
 
@@ -86,16 +86,6 @@ A card component displaying member profile information.
 - Code Documentation: [percentage]%
 - Project Documentation: [percentage]%
 ```
-
-## MCP Integrations
-
-### Context7
-- Get accurate API documentation for libraries
-- Reference official docs for correct signatures
-
-### GitHub
-- Read existing documentation to maintain style
-- Find code examples for documentation
 
 ## Guidelines
 

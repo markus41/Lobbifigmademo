@@ -1,7 +1,7 @@
 ---
 name: security
 description: Security analysis specialist - scans for vulnerabilities, secrets, dependency issues, and security best practices in React/TypeScript applications
-tools: ["read", "search", "execute", "github/*", "context7/*", "memory/*", "sequential-thinking/*"]
+tools: ["read", "search", "execute"]
 infer: true
 ---
 

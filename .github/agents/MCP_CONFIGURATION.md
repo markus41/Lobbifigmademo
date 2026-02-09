@@ -1,10 +1,26 @@
 # MCP Configuration for Agents
 
-This document describes how MCP servers are integrated with the custom agents.
+> **Note:** This document describes MCP (Model Context Protocol) integrations that were planned but are **not currently supported** by GitHub Copilot agents. The agents in this repository use only the standard GitHub Copilot agent tools.
 
-## Available MCP Tools
+## Standard GitHub Copilot Agent Tools
 
-### GitHub MCP (`github/*`)
+GitHub Copilot agents currently support the following standard tools:
+
+| Tool | Purpose |
+|------|---------|
+| `read` | Read files from the repository |
+| `edit` | Edit files in the repository |
+| `search` | Search code and files |
+| `execute` | Execute commands |
+| `web` | Perform web searches |
+| `todo` | Manage todo items |
+
+All agents in this repository have been configured to use only these standard tools.
+
+## Previously Planned MCP Integrations (Not Available)
+
+The following MCP servers were originally planned but are not supported:
+### GitHub MCP (`github/*`) - Not Available
 
 Repository access for code analysis and PR workflows.
 
@@ -15,8 +31,7 @@ Repository access for code analysis and PR workflows.
 | `github/get_pull_request` | Get PR details and diff |
 | `github/list_issues` | List and search issues |
 | `github/list_pull_requests` | List PRs with filters |
-
-### Context7 MCP (`context7/*`)
+### Context7 MCP (`context7/*`) - Not Available
 
 Accurate, up-to-date library documentation lookup.
 
@@ -29,8 +44,7 @@ Accurate, up-to-date library documentation lookup.
 1. Always resolve library IDs first
 2. Get documentation for accurate API signatures
 3. Never fabricate API details - always look up documentation
-
-### Memory MCP (`memory/*`)
+### Memory MCP (`memory/*`) - Not Available
 
 Persistent knowledge across sessions.
 
@@ -39,38 +53,34 @@ Persistent knowledge across sessions.
 | `memory/save` | Save patterns and learnings |
 | `memory/retrieve` | Retrieve saved knowledge |
 | `memory/search` | Search past knowledge |
-
-### Sequential Thinking MCP (`sequential-thinking/*`)
+### Sequential Thinking MCP (`sequential-thinking/*`) - Not Available
 
 Enhanced reasoning for complex problems.
 
 | Tool | Purpose |
 |------|---------|
 | `sequential-thinking/think` | Structured step-by-step reasoning |
+## Agent Tool Configuration
 
-## Agent-MCP Matrix
+All agents in this repository now use only standard GitHub Copilot tools:
 
-| Agent | GitHub | Context7 | Memory | Seq. Thinking |
-|-------|--------|----------|--------|---------------|
-| UI Design | - | - | - | - |
-| Design System | - | - | - | - |
-| Animations | - | - | - | - |
-| React Components | Y | - | - | - |
-| Charts & Viz | - | - | - | - |
-| Coder | Y | Y | Y | Y |
-| Debugging | - | - | - | - |
-| Testing | - | - | - | - |
-| Planner | Y | Y | Y | Y |
-| Analyst | Y | Y | Y | Y |
-| Researcher | Y | Y | Y | Y |
-| Reviewer | Y | Y | Y | Y |
-| Security | Y | Y | Y | Y |
-| Documenter | Y | Y | Y | Y |
+| Agent | Tools |
+|-------|-------|
+| UI Design | read, edit, search, execute, web |
+| Design System | read, search, edit, execute |
+| Animations | read, edit, search, execute, todo |
+| React Components | read, edit, search, execute, todo |
+| Charts & Viz | read, edit, search, execute, todo |
+| Coder | read, edit, search, execute |
+| Debugging | read, search, edit, execute |
+| Testing | read, search, edit, execute |
+| Planner | read, search, edit |
+| Analyst | read, search, edit |
+| Researcher | read, search, web |
+| Reviewer | read, search |
+| Security | read, search, execute |
+| Documenter | read, edit, search |
 
-## Best Practices
+## Migration Notes
 
-1. Always resolve library IDs before getting documentation
-2. Verify API details from official documentation - never fabricate
-3. Save valuable knowledge to memory for future sessions
-4. Use sequential thinking for complex multi-step analysis
-5. Search memory before creating new knowledge entries
+Previous versions of these agents referenced MCP tools (github/*, context7/*, memory/*, sequential-thinking/*) which are not supported by GitHub Copilot agents. These references have been removed and agents now function with standard tools only.

@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: Code review specialist - reviews code for quality, security, performance, accessibility, and best practices in React/TypeScript applications
-tools: ["read", "search", "github/*", "context7/*", "memory/*", "sequential-thinking/*"]
+tools: ["read", "search"]
 infer: true
 ---
 
@@ -70,16 +70,6 @@ You are a code review specialist for The Lobbi Figma demo project. Your primary 
 ### Recommendations
 - [Recommendation 1]
 ```
-
-## MCP Integrations
-
-### Context7
-- Verify API usage against official documentation
-- Check for deprecated APIs
-
-### GitHub
-- Get full PR context and diff
-- Compare with similar code for consistency
 
 ## Guidelines
 
