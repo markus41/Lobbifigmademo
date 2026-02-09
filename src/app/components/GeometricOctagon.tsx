@@ -5,301 +5,72 @@ interface GeometricOctagonProps {
 }
 
 export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonProps) {
-  // Octagon path generator (8 sides)
-  const createOctagonPath = (centerX: number, centerY: number, size: number, rotation: number = 0) => {
-    const points = [];
-    const angleStep = (Math.PI * 2) / 8;
-    
-    for (let i = 0; i < 8; i++) {
-      const angle = i * angleStep + rotation;
-      const x = centerX + size * Math.cos(angle);
-      const y = centerY + size * Math.sin(angle);
-      points.push(`${x},${y}`);
-    }
-    
-    return `M${points[0]} ` + points.slice(1).map(p => `L${p}`).join(' ') + ' Z';
+  const oct = (cx: number, cy: number, r: number, rot = 0) => {
+    const pts = Array.from({ length: 8 }, (_, i) => {
+      const a = (i * Math.PI * 2) / 8 + rot;
+      return `${cx + r * Math.cos(a)},${cy + r * Math.sin(a)}`;
+    });
+    return `M${pts[0]} ${pts.slice(1).map(p => `L${p}`).join(' ')} Z`;
   };
 
-  // Square path generator
-  const createSquarePath = (centerX: number, centerY: number, size: number) => {
-    const half = size / 2;
-    return `M${centerX - half},${centerY - half} L${centerX + half},${centerY - half} L${centerX + half},${centerY + half} L${centerX - half},${centerY + half} Z`;
-  };
+  const ease = [0.16, 1, 0.3, 1] as const;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-[1]">
-      <svg 
-        className="absolute w-full h-full" 
-        viewBox="0 0 1200 800"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <defs>
-          <linearGradient id="octGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={primaryColor} stopOpacity="1" />
-            <stop offset="100%" stopColor={primaryColor} stopOpacity="0.6" />
-          </linearGradient>
-        </defs>
-
-        {/* MAIN OCTAGON - Traced animation that fades out */}
+      <svg className="absolute w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+        {/* Outer ring - draws then fades to ghost */}
         <motion.path
-          d={createOctagonPath(600, 400, 280, Math.PI / 16)}
-          fill="none"
-          stroke={primaryColor}
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={{ 
-            pathLength: 0, 
-            opacity: 1,
-          }}
-          animate={{ 
-            pathLength: 1, 
-            opacity: [1, 1, 1, 0.3],
-          }}
-          transition={{
-            pathLength: {
-              duration: 2.2,
-              ease: [0.16, 1, 0.3, 1],
-            },
-            opacity: {
-              duration: 4,
-              times: [0, 0.5, 0.8, 1],
-              ease: [0.16, 1, 0.3, 1],
-            }
-          }}
-        />
-
-        {/* SECONDARY OCTAGON - Smaller, traced */}
-        <motion.path
-          d={createOctagonPath(600, 400, 220, 0)}
-          fill="none"
-          stroke={primaryColor}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={{ 
-            pathLength: 0, 
-            opacity: 1,
-          }}
-          animate={{ 
-            pathLength: 1, 
-            opacity: [1, 1, 1, 0.25],
-          }}
-          transition={{
-            pathLength: {
-              duration: 2.2,
-              delay: 0.2,
-              ease: [0.16, 1, 0.3, 1],
-            },
-            opacity: {
-              duration: 4,
-              delay: 0.2,
-              times: [0, 0.5, 0.8, 1],
-              ease: [0.16, 1, 0.3, 1],
-            }
-          }}
-        />
-
-        {/* TERTIARY OCTAGON - Even smaller, traced */}
-        <motion.path
-          d={createOctagonPath(600, 400, 340, -Math.PI / 16)}
-          fill="none"
-          stroke={primaryColor}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={{ 
-            pathLength: 0, 
-            opacity: 1,
-          }}
-          animate={{ 
-            pathLength: 1, 
-            opacity: [1, 1, 1, 0.2],
-          }}
-          transition={{
-            pathLength: {
-              duration: 2.2,
-              delay: 0.4,
-              ease: [0.16, 1, 0.3, 1],
-            },
-            opacity: {
-              duration: 4,
-              delay: 0.4,
-              times: [0, 0.5, 0.8, 1],
-              ease: [0.16, 1, 0.3, 1],
-            }
-          }}
-        />
-
-        {/* THREE ROTATING SQUARES IN CENTER */}
-        
-        {/* Square 1: Counterclockwise, largest */}
-        <motion.path
-          d={createSquarePath(600, 400, 120)}
-          fill="none"
-          stroke={primaryColor}
-          strokeWidth="2"
-          opacity="0.35"
-          initial={{ rotate: 0 }}
-          animate={{ rotate: -360 }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-          style={{ transformOrigin: '600px 400px' }}
-        />
-
-        {/* Square 2: Clockwise, medium */}
-        <motion.path
-          d={createSquarePath(600, 400, 80)}
-          fill="none"
-          stroke={primaryColor}
-          strokeWidth="2"
-          opacity="0.45"
-          initial={{ rotate: 45 }}
-          animate={{ rotate: 405 }}
-          transition={{
-            duration: 24,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-          style={{ transformOrigin: '600px 400px' }}
-        />
-
-        {/* Square 3: Counterclockwise, smallest */}
-        <motion.path
-          d={createSquarePath(600, 400, 40)}
-          fill="none"
-          stroke={primaryColor}
-          strokeWidth="2"
-          opacity="0.55"
-          initial={{ rotate: 0 }}
-          animate={{ rotate: -360 }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-          style={{ transformOrigin: '600px 400px' }}
-        />
-
-        {/* Geometric connection lines - diagonal cross */}
-        <motion.line
-          x1="520" y1="320" x2="680" y2="480"
-          stroke={primaryColor}
-          strokeWidth="1"
-          strokeDasharray="6 6"
+          d={oct(600, 400, 300, Math.PI / 16)}
+          fill="none" stroke={primaryColor} strokeWidth="1"
           initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.25 }}
-          transition={{
-            duration: 1.8,
-            delay: 1.8,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-        />
-        <motion.line
-          x1="680" y1="320" x2="520" y2="480"
-          stroke={primaryColor}
-          strokeWidth="1"
-          strokeDasharray="6 6"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.25 }}
-          transition={{
-            duration: 1.8,
-            delay: 2,
-            ease: [0.16, 1, 0.3, 1],
-          }}
+          animate={{ pathLength: 1, opacity: [0, 0.4, 0.4, 0.12] }}
+          transition={{ pathLength: { duration: 2.5, ease }, opacity: { duration: 4, times: [0, 0.3, 0.7, 1] } }}
         />
 
-        {/* Vertical and horizontal lines */}
-        <motion.line
-          x1="600" y1="280" x2="600" y2="520"
-          stroke={primaryColor}
-          strokeWidth="1"
-          strokeDasharray="6 6"
+        {/* Middle ring */}
+        <motion.path
+          d={oct(600, 400, 230, 0)}
+          fill="none" stroke={primaryColor} strokeWidth="0.8"
           initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.25 }}
-          transition={{
-            duration: 1.8,
-            delay: 2.2,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-        />
-        <motion.line
-          x1="480" y1="400" x2="720" y2="400"
-          stroke={primaryColor}
-          strokeWidth="1"
-          strokeDasharray="6 6"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.25 }}
-          transition={{
-            duration: 1.8,
-            delay: 2.4,
-            ease: [0.16, 1, 0.3, 1],
-          }}
+          animate={{ pathLength: 1, opacity: [0, 0.3, 0.3, 0.1] }}
+          transition={{ pathLength: { duration: 2.2, delay: 0.3, ease }, opacity: { duration: 3.8, delay: 0.3, times: [0, 0.3, 0.7, 1] } }}
         />
 
-        {/* Corner geometric markers - Art Deco style */}
+        {/* Inner ring */}
+        <motion.path
+          d={oct(600, 400, 160, Math.PI / 16)}
+          fill="none" stroke={primaryColor} strokeWidth="0.6"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: [0, 0.25, 0.25, 0.08] }}
+          transition={{ pathLength: { duration: 2, delay: 0.6, ease }, opacity: { duration: 3.6, delay: 0.6, times: [0, 0.3, 0.7, 1] } }}
+        />
+
+        {/* Center crosshair - very subtle */}
         {[
-          { x: 200, y: 150 },
-          { x: 1000, y: 150 },
-          { x: 200, y: 650 },
-          { x: 1000, y: 650 },
-        ].map((corner, index) => (
-          <motion.g
-            key={`corner-${index}`}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 0.25, scale: 1 }}
-            transition={{
-              duration: 0.8,
-              delay: 3 + (index * 0.15),
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          >
-            {/* Diamond shape */}
-            <path
-              d={`M${corner.x},${corner.y - 12} L${corner.x + 12},${corner.y} L${corner.x},${corner.y + 12} L${corner.x - 12},${corner.y} Z`}
-              fill="none"
-              stroke={primaryColor}
-              strokeWidth="0.8"
-            />
-            {/* Inner diamond */}
-            <path
-              d={`M${corner.x},${corner.y - 6} L${corner.x + 6},${corner.y} L${corner.x},${corner.y + 6} L${corner.x - 6},${corner.y} Z`}
-              fill="none"
-              stroke={primaryColor}
-              strokeWidth="0.5"
-            />
-          </motion.g>
+          { x1: 600, y1: 340, x2: 600, y2: 460 },
+          { x1: 540, y1: 400, x2: 660, y2: 400 },
+        ].map((l, i) => (
+          <motion.line key={i} {...l}
+            stroke={primaryColor} strokeWidth="0.5" strokeDasharray="4 8"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 0.12 }}
+            transition={{ duration: 1.5, delay: 1.8 + i * 0.2, ease }}
+          />
         ))}
 
-        {/* Octagon vertex dots */}
-        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
-          const angle = (i * Math.PI * 2) / 8 + Math.PI / 16;
-          const x = 600 + 280 * Math.cos(angle);
-          const y = 400 + 280 * Math.sin(angle);
-          
-          return (
-            <motion.circle
-              key={`vertex-${i}`}
-              cx={x}
-              cy={y}
-              r="3"
-              fill={primaryColor}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ 
-                scale: 1, 
-                opacity: 0.4,
-              }}
-              transition={{
-                duration: 0.5,
-                delay: 2.5 + (i * 0.1),
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            />
-          );
-        })}
+        {/* Corner accents */}
+        {[
+          { x: 180, y: 130 }, { x: 1020, y: 130 },
+          { x: 180, y: 670 }, { x: 1020, y: 670 },
+        ].map((c, i) => (
+          <motion.g key={i}
+            initial={{ opacity: 0 }} animate={{ opacity: 0.15 }}
+            transition={{ duration: 0.6, delay: 2.5 + i * 0.1 }}
+          >
+            <path d={`M${c.x},${c.y - 8} L${c.x + 8},${c.y} L${c.x},${c.y + 8} L${c.x - 8},${c.y} Z`}
+              fill="none" stroke={primaryColor} strokeWidth="0.5" />
+          </motion.g>
+        ))}
       </svg>
     </div>
   );

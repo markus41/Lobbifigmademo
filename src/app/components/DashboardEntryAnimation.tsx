@@ -9,135 +9,79 @@ interface DashboardEntryAnimationProps {
   account: Account;
 }
 
-export function DashboardEntryAnimation({
-  onCompleted,
-  organization,
-  account
-}: DashboardEntryAnimationProps) {
+export function DashboardEntryAnimation({ onCompleted, organization, account }: DashboardEntryAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const welcomeRef = useRef<HTMLParagraphElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
   const orgRef = useRef<HTMLParagraphElement>(null);
-  const octagonRef = useRef<SVGSVGElement>(null);
+
+  const t = organization.theme;
 
   useEffect(() => {
-    if (!containerRef.current || !welcomeRef.current || !nameRef.current || !orgRef.current) return;
+    if (!containerRef.current || !nameRef.current || !orgRef.current) return;
 
     const nameSplit = new SplitText(nameRef.current, { type: 'chars' });
+    const tl = gsap.timeline({ onComplete: onCompleted });
 
-    const tl = gsap.timeline({
-      onComplete: onCompleted,
-    });
-
-    // Phase 1: Welcome text fades in with letter spacing reveal
-    tl.fromTo(
-      welcomeRef.current,
-      { opacity: 0, letterSpacing: '0.6em' },
-      { opacity: 1, letterSpacing: '0.3em', duration: 0.8, ease: 'power2.out' },
+    // Phase 1: Name characters cascade in
+    tl.fromTo(nameSplit.chars,
+      { opacity: 0, y: 20, scale: 0.95 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.035, ease: 'back.out(1.2)' },
+      0.2
     );
 
-    // Phase 2: Name characters wave in
-    tl.fromTo(
-      nameSplit.chars,
-      { opacity: 0, y: 20, rotateY: -40 },
-      {
-        opacity: 1,
-        y: 0,
-        rotateY: 0,
-        duration: 0.5,
-        stagger: 0.04,
-        ease: 'back.out(1.4)',
-      },
-      '-=0.3',
-    );
-
-    // Phase 3: Org name fades in
-    tl.fromTo(
-      orgRef.current,
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
-      '-=0.2',
-    );
-
-    // Phase 4: Octagon path dissolves
-    if (octagonRef.current) {
-      const path = octagonRef.current.querySelector('path');
-      if (path) {
-        tl.fromTo(
-          path,
-          { strokeDashoffset: 0, opacity: 0.2 },
-          { strokeDashoffset: 600, opacity: 0, duration: 1.5, ease: 'power2.inOut' },
-          '-=0.8',
-        );
-      }
+    // Phase 2: Accent line + org name
+    if (lineRef.current) {
+      tl.fromTo(lineRef.current, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'power3.inOut' }, '-=0.3');
     }
+    tl.fromTo(orgRef.current, { opacity: 0, y: 8 }, { opacity: 0.5, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.2');
 
-    // Phase 5: Everything scales up and fades out
-    tl.to(
-      containerRef.current,
-      {
-        opacity: 0,
-        scale: 1.05,
-        duration: 1,
-        ease: 'power2.inOut',
-      },
-      '+=0.3',
-    );
+    // Phase 3: Hold then dissolve
+    tl.to({}, { duration: 0.5 });
+    tl.to(containerRef.current, { opacity: 0, scale: 1.02, filter: 'blur(8px)', duration: 0.7, ease: 'power2.inOut' });
 
-    return () => {
-      tl.kill();
-      nameSplit.revert();
-    };
-  }, [onCompleted]);
+    return () => { tl.kill(); nameSplit.revert(); };
+  }, [onCompleted, organization, account]);
 
   return (
     <motion.div
       ref={containerRef}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#FAF6E9]"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+      style={{ background: `var(--theme-bg-primary, ${t.bgPrimary || '#FAF6E9'})` }}
     >
-      {/* Welcome Message - GSAP timeline sequence */}
-      <div className="text-center" style={{ perspective: '600px' }}>
-        <p
-          ref={welcomeRef}
-          className="text-sm uppercase tracking-[0.3em] mb-4 font-medium opacity-0"
-          style={{
-            color: `rgba(${organization.theme.primaryRgb}, 0.6)`,
-            fontFamily: 'DM Sans, sans-serif',
-          }}
-        >
-          Welcome Back
-        </p>
+      {/* Soft glow */}
+      <div className="absolute pointer-events-none" style={{
+        width: '45vmin', height: '45vmin',
+        background: `radial-gradient(circle, rgba(${t.primaryRgb}, 0.06) 0%, transparent 65%)`,
+        top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+        filter: 'blur(30px)',
+      }} />
 
-        <h1
-          ref={nameRef}
-          className="text-5xl mb-3 font-normal text-[#2C2A25]"
+      <div className="text-center relative z-10" style={{ perspective: '600px' }}>
+        <h1 ref={nameRef}
+          className="text-5xl sm:text-6xl mb-4 font-normal"
           style={{
-            fontFamily: 'Cormorant Garamond, Georgia, serif',
-          }}
-        >
+            fontFamily: `var(--theme-font-display, 'Playfair Display', Georgia, serif)`,
+            color: `var(--theme-text-primary, #1A1A2E)`,
+          }}>
           {account.first} {account.last}
         </h1>
 
-        <p
-          ref={orgRef}
-          className="text-sm"
-          style={{ color: '#8A8578', opacity: 0 }}
-        >
+        <div ref={lineRef}
+          className="w-14 h-px mx-auto mb-4 origin-center"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${t.primary}, transparent)`,
+            transform: 'scaleX(0)',
+          }} />
+
+        <p ref={orgRef}
+          className="text-sm tracking-wide opacity-0"
+          style={{
+            color: `var(--theme-text-muted, #7A7A8A)`,
+            fontFamily: `var(--theme-font-body, 'DM Sans', sans-serif)`,
+          }}>
           {organization.name}
         </p>
-      </div>
-
-      {/* Dissolving octagon geometry hint - GSAP controlled */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <svg ref={octagonRef} width="400" height="400" viewBox="0 0 400 400" style={{ opacity: 0.15 }}>
-          <path
-            d="M200,60 L270,110 L270,190 L200,240 L130,190 L130,110 Z"
-            fill="none"
-            stroke={organization.theme.primary}
-            strokeWidth="0.5"
-            strokeDasharray="600"
-          />
-        </svg>
       </div>
     </motion.div>
   );

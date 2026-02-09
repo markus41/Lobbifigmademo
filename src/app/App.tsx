@@ -182,13 +182,13 @@ export default function App() {
   return (
     <PlatformDemoBanner defaultPhase="all" defaultRole="org-admin">
     <div className="relative w-full h-screen overflow-hidden bg-[#FAF6E9]">
-      {/* Cinematic Background - Only for non-dashboard stages */}
-      {stage !== 'dashboard' && (
+      {/* Cinematic Background - Only for login flow stages */}
+      {(stage === 'landing' || stage === 'email' || stage === 'orgLogin') && (
         <CinematicBackground primaryRgb={currentRgb} stage={stage} />
       )}
 
-      {/* Geometric Octagon Animation - Pre-dashboard stages */}
-      {(stage === 'landing' || stage === 'email' || stage === 'orgLogin') && (
+      {/* Geometric Octagon - Landing only */}
+      {stage === 'landing' && (
         <GeometricOctagon primaryColor={selectedOrg?.theme.primary || '#D4AF37'} />
       )}
 
@@ -230,10 +230,10 @@ export default function App() {
       <AnimatePresence mode="wait">
         {stage === 'dashboard' && showDashboard && selectedAccount && selectedOrg && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.98, filter: 'blur(6px)' }}
+            initial={{ opacity: 0, scale: 0.99, filter: 'blur(4px)' }}
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, scale: 0.96, filter: 'blur(4px)' }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            exit={{ opacity: 0, scale: 0.98, filter: 'blur(6px)' }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-60 flex flex-col bg-gray-50"
           >
             {/* Main Layout */}

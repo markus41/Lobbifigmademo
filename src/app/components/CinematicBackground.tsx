@@ -1,5 +1,4 @@
 import { motion } from 'motion/react';
-import { ParticlesCanvas } from './ParticlesCanvas';
 
 interface CinematicBackgroundProps {
   primaryRgb?: string;
@@ -7,109 +6,71 @@ interface CinematicBackgroundProps {
 }
 
 export function CinematicBackground({ primaryRgb = '212,175,55', stage = 'logo' }: CinematicBackgroundProps) {
-  // Boost intensity for stages without their own background elements
-  const isBareStage = stage === 'email' || stage === 'orgLogin';
-  const boost = isBareStage ? 1.5 : 1;
+  const boost = (stage === 'email' || stage === 'orgLogin') ? 1.4 : 1;
 
   return (
     <>
-      {/* Base Light Background */}
-      <div className="fixed inset-0 bg-[#FAF6E9] z-0" />
+      {/* Base */}
+      <div className="fixed inset-0 z-0" style={{
+        background: `linear-gradient(180deg, #FDFAF0 0%, #FAF6E9 40%, #F5F0E0 100%)`,
+      }} />
 
-      {/* Animated Radial Gradients */}
+      {/* Primary orb - slow breathing */}
       <motion.div
-        className="fixed inset-0 z-0"
+        className="fixed inset-0 z-0 pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 2.5, delay: 0.3 }}
+        transition={{ duration: 2 }}
       >
-        {/* Primary ambient glow */}
-        <div
-          className="absolute inset-0"
+        <motion.div
+          className="absolute"
           style={{
-            background: `radial-gradient(ellipse 60% 50% at 50% 45%, rgba(${primaryRgb}, ${0.12 * boost}) 0%, transparent 70%)`,
+            width: '60vmax', height: '60vmax',
+            top: '35%', left: '50%',
+            transform: 'translate(-50%,-50%)',
+            background: `radial-gradient(ellipse at center, rgba(${primaryRgb}, ${0.1 * boost}) 0%, transparent 65%)`,
+            filter: 'blur(40px)',
           }}
-        />
-
-        {/* Secondary glow */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(circle at 30% 70%, rgba(${primaryRgb}, ${0.07 * boost}) 0%, transparent 50%)`,
-          }}
-        />
-
-        {/* Tertiary accent */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `radial-gradient(circle at 70% 30%, rgba(${primaryRgb}, ${0.07 * boost}) 0%, transparent 40%)`,
-          }}
+          animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
         />
       </motion.div>
 
-      {/* Warm center glow for depth */}
+      {/* Secondary accent orbs */}
       <motion.div
         className="fixed inset-0 z-0 pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 3, delay: 0.5 }}
       >
-        <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] rounded-full"
+        <motion.div
+          className="absolute"
           style={{
-            background: `radial-gradient(ellipse, rgba(${primaryRgb}, ${0.08 * boost}) 0%, transparent 60%)`,
-            filter: 'blur(60px)',
+            width: '35vmax', height: '35vmax',
+            top: '25%', left: '20%',
+            background: `radial-gradient(circle, rgba(${primaryRgb}, ${0.05 * boost}) 0%, transparent 60%)`,
+            filter: 'blur(50px)',
           }}
+          animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute"
+          style={{
+            width: '30vmax', height: '30vmax',
+            top: '55%', right: '15%',
+            background: `radial-gradient(circle, rgba(${primaryRgb}, ${0.04 * boost}) 0%, transparent 55%)`,
+            filter: 'blur(50px)',
+          }}
+          animate={{ x: [0, -25, 0], y: [0, 15, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
         />
       </motion.div>
 
-      {/* Vignette */}
-      <div
-        className="fixed inset-0 z-[2] pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, rgba(237, 232, 221, 0.4) 80%, rgba(237, 232, 221, 0.6) 100%)',
-        }}
-      />
-
-      {/* Paper texture */}
-      <motion.div
-        className="fixed inset-0 z-[3] pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          backgroundSize: '150px',
-          mixBlendMode: 'multiply',
-        }}
-        animate={{
-          backgroundPosition: ['0px 0px', '-2px -2px', '2px 1px', '0px 0px'],
-        }}
-        transition={{
-          duration: 0.8,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-      />
-
-      {/* Particles */}
-      <ParticlesCanvas color={primaryRgb} intensity={isBareStage ? 0.6 : 0.5} />
-
-      {/* Light Rays */}
-      <motion.div
-        className="fixed inset-0 z-[1] pointer-events-none opacity-[0.05]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.05 }}
-        transition={{ duration: 4, delay: 1 }}
-        style={{
-          background: `conic-gradient(from 0deg at 50% 50%,
-            transparent 0deg,
-            rgba(${primaryRgb}, 0.12) 45deg,
-            transparent 90deg,
-            transparent 180deg,
-            rgba(${primaryRgb}, 0.12) 225deg,
-            transparent 270deg,
-            transparent 360deg)`,
-        }}
-      />
+      {/* Subtle vignette */}
+      <div className="fixed inset-0 z-[2] pointer-events-none" style={{
+        background: 'radial-gradient(ellipse 75% 65% at 50% 50%, transparent 45%, rgba(240,236,224,0.5) 100%)',
+      }} />
     </>
   );
 }

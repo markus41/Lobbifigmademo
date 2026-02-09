@@ -2229,13 +2229,15 @@ export function applyTheme(org: Organization, animate: boolean = true): void {
   const root = document.documentElement;
   const theme = org.theme;
 
+  // Sync data-org attribute for Chakra v3 conditions
+  root.setAttribute('data-org', org.id);
+
   // Add morphing class for smooth transitions
   if (animate) {
     root.classList.add('theme-morphing');
-    // Remove the class after transition completes
     setTimeout(() => {
       root.classList.remove('theme-morphing');
-    }, 850); // Slightly longer than the 800ms transition
+    }, 850);
   }
 
   // Primary colors

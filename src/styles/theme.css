@@ -225,6 +225,29 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Org-dynamic theme tokens (set by JS on org switch) */
+  --color-org-primary: var(--theme-primary, #D4AF37);
+  --color-org-primary-light: var(--theme-primary-light, #F4D03F);
+  --color-org-primary-pale: var(--theme-primary-pale, #F5E6A3);
+  --color-org-primary-dark: var(--theme-primary-dark, #8B7330);
+  --color-org-secondary: var(--theme-secondary, #1A1A2E);
+  --color-org-accent: var(--theme-accent, #C9A227);
+  --color-org-bg: var(--theme-bg-primary, #FAF6E9);
+  --color-org-bg-card: var(--theme-bg-card, #FFFFFF);
+  --color-org-bg-muted: var(--theme-bg-muted, #F0EBD8);
+  --color-org-bg-surface: var(--theme-bg-surface, #FFFDF7);
+  --color-org-text: var(--theme-text-primary, #1A1A2E);
+  --color-org-text-secondary: var(--theme-text-secondary, #4A4A5A);
+  --color-org-text-muted: var(--theme-text-muted, #7A7A8A);
+  --color-org-text-accent: var(--theme-text-accent, #D4AF37);
+  --color-org-border: var(--theme-border, #E5DCC3);
+  --color-org-border-light: var(--theme-border-light, #F0EBD8);
+  --color-org-border-focus: var(--theme-border-focus, #D4AF37);
+
+  --font-display: var(--theme-font-display, 'Playfair Display', Georgia, serif);
+  --font-body: var(--theme-font-body, 'DM Sans', 'Inter', system-ui, sans-serif);
+  --font-mono: var(--theme-font-mono, 'JetBrains Mono', 'Fira Code', monospace);
 }
 
 @layer base {
