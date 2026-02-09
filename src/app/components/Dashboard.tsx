@@ -444,26 +444,33 @@ function KpiCardComponent({
     <motion.div
       className="rounded-2xl p-6 relative overflow-hidden cursor-pointer"
       style={{
-        border: `1px solid ${borderColor}`,
-        background: `linear-gradient(145deg, ${bgCard} 0%, rgba(${primaryRgb}, 0.02) 100%)`,
-        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -1px rgba(0,0,0,0.04)',
+        border: `1px solid rgba(${primaryRgb}, 0.1)`,
+        background: `linear-gradient(160deg, ${bgCard} 0%, rgba(${primaryRgb}, 0.03) 100%)`,
+        boxShadow: `0 1px 3px rgba(0,0,0,0.04), 0 4px 12px -2px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)`,
       }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{
-        y: -4,
-        boxShadow: `0 12px 28px -8px rgba(0,0,0,0.12), 0 4px 8px -2px rgba(0,0,0,0.06), 0 0 0 1px rgba(${primaryRgb}, 0.08)`,
+        y: -6,
+        boxShadow: `0 20px 40px -12px rgba(0,0,0,0.12), 0 8px 16px -4px rgba(0,0,0,0.06), 0 0 0 1px rgba(${primaryRgb}, 0.12)`,
+        transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
       }}
-      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       onClick={() => setShowHistory(!showHistory)}
     >
+      {/* Accent top bar */}
+      <div className="absolute top-0 left-0 right-0 h-[2px]" style={{
+        background: `linear-gradient(90deg, transparent, rgba(${primaryRgb}, 0.3), transparent)`,
+      }} />
+
       {/* Header: Icon + Trend */}
       <div className="flex items-start justify-between mb-4">
         <div
-          className="w-10 h-10 rounded-[10px] flex items-center justify-center"
+          className="w-11 h-11 rounded-xl flex items-center justify-center"
           style={{
-            background: `rgba(${primaryRgb}, 0.08)`,
+            background: `linear-gradient(135deg, rgba(${primaryRgb}, 0.1) 0%, rgba(${primaryRgb}, 0.05) 100%)`,
             color: primaryColor,
+            boxShadow: `0 2px 8px rgba(${primaryRgb}, 0.08)`,
           }}
         >
           {card.icon}
@@ -617,20 +624,25 @@ function Card({
 }) {
   return (
     <motion.div
-      className="rounded-2xl p-6"
+      className="rounded-2xl p-6 relative overflow-hidden"
       style={{
-        border: `1px solid ${borderColor}`,
-        background: `linear-gradient(165deg, ${bgCard} 0%, rgba(${primaryRgb}, 0.015) 100%)`,
-        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.8)',
+        border: `1px solid rgba(${primaryRgb}, 0.1)`,
+        background: `linear-gradient(170deg, ${bgCard} 0%, rgba(${primaryRgb}, 0.02) 100%)`,
+        boxShadow: `0 1px 3px rgba(0,0,0,0.03), 0 4px 12px -2px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.85)`,
         ...style,
       }}
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{
-        boxShadow: `0 8px 16px -4px rgba(0,0,0,0.08), 0 4px 8px -2px rgba(0,0,0,0.04), 0 0 0 1px rgba(${primaryRgb}, 0.08)`,
+        boxShadow: `0 16px 32px -8px rgba(0,0,0,0.1), 0 6px 12px -3px rgba(0,0,0,0.04), 0 0 0 1px rgba(${primaryRgb}, 0.1)`,
+        transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
       }}
     >
+      {/* Subtle top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px" style={{
+        background: `linear-gradient(90deg, transparent 15%, rgba(${primaryRgb}, 0.15) 50%, transparent 85%)`,
+      }} />
       {children}
     </motion.div>
   );
@@ -823,23 +835,26 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
             />
             <div className="grid grid-cols-2 gap-3">
               {QUICK_ACTIONS.map((action) => (
-                <button
-                  key={action.id}
-                  className="p-4 rounded-[10px] text-left cursor-pointer transition-all duration-150"
-                  style={{
-                    border: `1px solid ${borderColor}`,
-                    background: bgCard,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = primaryColor;
-                    e.currentTarget.style.background = `rgba(${primaryRgb}, 0.04)`;
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = borderColor;
-                    e.currentTarget.style.background = bgCard;
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
+                  <button
+                    key={action.id}
+                    className="p-4 rounded-xl text-left cursor-pointer transition-all duration-200"
+                    style={{
+                      border: `1px solid rgba(${primaryRgb}, 0.08)`,
+                      background: bgCard,
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = `rgba(${primaryRgb}, 0.25)`;
+                      e.currentTarget.style.background = `rgba(${primaryRgb}, 0.04)`;
+                      e.currentTarget.style.boxShadow = `0 4px 12px rgba(${primaryRgb}, 0.08), 0 2px 4px rgba(0,0,0,0.04)`;
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = `rgba(${primaryRgb}, 0.08)`;
+                      e.currentTarget.style.background = bgCard;
+                      e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.03)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
                   onClick={() => {
                     if (onQuickAction) {
                       onQuickAction(action.id);
@@ -865,9 +880,9 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
                   }}
                 >
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5"
+                    className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
                     style={{
-                      background: `rgba(${primaryRgb}, 0.08)`,
+                      background: `linear-gradient(135deg, rgba(${primaryRgb}, 0.12), rgba(${primaryRgb}, 0.05))`,
                       color: primaryColor,
                     }}
                   >
@@ -991,9 +1006,9 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
                   }}
                 >
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                    className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                     style={{
-                      background: `rgba(${primaryRgb}, 0.08)`,
+                      background: `linear-gradient(135deg, rgba(${primaryRgb}, 0.1), rgba(${primaryRgb}, 0.04))`,
                       color: primaryColor,
                     }}
                   >
@@ -1041,19 +1056,20 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
               return (
                 <div
                   key={event.id}
-                  className="p-4 rounded-[10px] cursor-pointer transition-all duration-200"
+                  className="p-5 rounded-xl cursor-pointer transition-all duration-250"
                   style={{
-                    border: `1px solid ${borderColor}`,
-                    background: bgCard,
+                    border: `1px solid rgba(${primaryRgb}, 0.08)`,
+                    background: `linear-gradient(160deg, ${bgCard} 0%, rgba(${primaryRgb}, 0.02) 100%)`,
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = `rgba(${primaryRgb}, 0.3)`;
-                    (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 12px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04)';
-                    (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)';
+                    (e.currentTarget as HTMLElement).style.borderColor = `rgba(${primaryRgb}, 0.2)`;
+                    (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 20px -4px rgba(${primaryRgb}, 0.1), 0 4px 8px -2px rgba(0,0,0,0.04)`;
+                    (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)';
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = borderColor;
-                    (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+                    (e.currentTarget as HTMLElement).style.borderColor = `rgba(${primaryRgb}, 0.08)`;
+                    (e.currentTarget as HTMLElement).style.boxShadow = '0 1px 2px rgba(0,0,0,0.03)';
                     (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
                   }}
                 >
@@ -1110,11 +1126,12 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
             ].map((pos, i) => (
               <div
                 key={i}
-                className="shrink-0 p-4 rounded-[10px] min-w-[180px] transition-all duration-200"
+                className="shrink-0 p-5 rounded-xl min-w-[190px] transition-all duration-250"
                 style={{
-                  border: `1.5px solid ${pos.active ? primaryColor : borderColor}`,
-                  background: pos.active ? `rgba(${primaryRgb}, 0.04)` : 'transparent',
-                  opacity: pos.active ? 1 : 0.55,
+                  border: `1.5px solid ${pos.active ? primaryColor : `rgba(${primaryRgb}, 0.1)`}`,
+                  background: pos.active ? `linear-gradient(145deg, rgba(${primaryRgb}, 0.06), rgba(${primaryRgb}, 0.02))` : bgCard,
+                  boxShadow: pos.active ? `0 4px 12px rgba(${primaryRgb}, 0.08)` : '0 1px 2px rgba(0,0,0,0.03)',
+                  opacity: pos.active ? 1 : 0.6,
                 }}
               >
                 <p className="text-sm font-semibold mb-1 tracking-[-0.01em]" style={{

@@ -376,7 +376,7 @@ export function PlatformDemoBanner({
               ref={bannerRef}
               bg="gray.900"
               color="white"
-              overflow="hidden"
+              overflow="visible"
               position="relative"
               borderBottom="2px solid"
               borderColor={phaseInfo.color}

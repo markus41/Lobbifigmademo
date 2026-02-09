@@ -9,112 +9,103 @@ interface DashboardEntryAnimationProps {
   account: Account;
 }
 
-export function DashboardEntryAnimation({
-  onCompleted,
-  organization,
-  account
-}: DashboardEntryAnimationProps) {
+export function DashboardEntryAnimation({ onCompleted, organization, account }: DashboardEntryAnimationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const welcomeRef = useRef<HTMLParagraphElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const orgRef = useRef<HTMLParagraphElement>(null);
-  const octagonRef = useRef<SVGSVGElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+
+  const t = organization.theme;
 
   useEffect(() => {
     if (!containerRef.current || !welcomeRef.current || !nameRef.current || !orgRef.current) return;
 
     const nameSplit = new SplitText(nameRef.current, { type: 'chars' });
+    const tl = gsap.timeline({ onComplete: onCompleted });
 
-    const tl = gsap.timeline({
-      onComplete: onCompleted,
-    });
-
-    // Phase 1: Welcome text fades in with letter spacing reveal
-    tl.fromTo(
-      welcomeRef.current,
-      { opacity: 0, letterSpacing: '0.6em' },
-      { opacity: 1, letterSpacing: '0.3em', duration: 0.8, ease: 'power2.out' },
+    // Phase 1: Welcome text breathes in
+    tl.fromTo(welcomeRef.current,
+      { opacity: 0, letterSpacing: '0.5em', y: 8 },
+      { opacity: 0.7, letterSpacing: '0.3em', y: 0, duration: 1, ease: 'power3.out' }
     );
 
-    // Phase 2: Name characters wave in
-    tl.fromTo(
-      nameSplit.chars,
-      { opacity: 0, y: 20, rotateY: -40 },
-      {
-        opacity: 1,
-        y: 0,
-        rotateY: 0,
-        duration: 0.5,
-        stagger: 0.04,
-        ease: 'back.out(1.4)',
-      },
-      '-=0.3',
-    );
-
-    // Phase 3: Org name fades in
-    tl.fromTo(
-      orgRef.current,
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
-      '-=0.2',
-    );
-
-    // Phase 4: Octagon path dissolves
-    if (octagonRef.current) {
-      const path = octagonRef.current.querySelector('path');
-      if (path) {
-        tl.fromTo(
-          path,
-          { strokeDashoffset: 0, opacity: 0.2 },
-          { strokeDashoffset: 600, opacity: 0, duration: 1.5, ease: 'power2.inOut' },
-          '-=0.8',
-        );
-      }
+    // Phase 2: Accent line expands
+    if (lineRef.current) {
+      tl.fromTo(lineRef.current,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.8, ease: 'power3.inOut' },
+        '-=0.4'
+      );
     }
 
-    // Phase 5: Everything scales up and fades out
-    tl.to(
-      containerRef.current,
-      {
-        opacity: 0,
-        scale: 1.05,
-        duration: 1,
-        ease: 'power2.inOut',
-      },
-      '+=0.3',
+    // Phase 3: Name characters cascade in with depth
+    tl.fromTo(nameSplit.chars,
+      { opacity: 0, y: 30, rotateY: -30, scale: 0.9 },
+      { opacity: 1, y: 0, rotateY: 0, scale: 1, duration: 0.7, stagger: 0.04, ease: 'back.out(1.2)' },
+      '-=0.5'
     );
 
-    return () => {
-      tl.kill();
-      nameSplit.revert();
-    };
-  }, [onCompleted]);
+    // Phase 4: Org name fades up
+    tl.fromTo(orgRef.current,
+      { opacity: 0, y: 12 },
+      { opacity: 0.6, y: 0, duration: 0.7, ease: 'power2.out' },
+      '-=0.3'
+    );
+
+    // Phase 5: Hold then exit
+    tl.to({}, { duration: 0.6 });
+    tl.to(containerRef.current, {
+      opacity: 0, scale: 1.03, filter: 'blur(6px)',
+      duration: 0.8, ease: 'power2.inOut',
+    });
+
+    return () => { tl.kill(); nameSplit.revert(); };
+  }, [onCompleted, organization, account]);
 
   return (
     <motion.div
       ref={containerRef}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-      style={{ background: `var(--theme-bg-primary, #FAF6E9)` }}
+      style={{ background: `var(--theme-bg-primary, ${t.bgPrimary || '#FAF6E9'})` }}
     >
-      {/* Welcome Message - GSAP timeline sequence */}
-      <div className="text-center" style={{ perspective: '600px' }}>
+      {/* Ambient glow */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          width: '50vmin', height: '50vmin',
+          background: `radial-gradient(circle, rgba(${t.primaryRgb}, 0.08) 0%, transparent 70%)`,
+          top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+        }}
+      />
+
+      <div className="text-center relative z-10" style={{ perspective: '600px' }}>
         <p
           ref={welcomeRef}
-          className="text-sm uppercase tracking-[0.3em] mb-4 font-medium opacity-0"
+          className="text-xs uppercase tracking-[0.3em] mb-6 font-medium opacity-0"
           style={{
-            color: `rgba(${organization.theme.primaryRgb}, 0.6)`,
-            fontFamily: 'DM Sans, sans-serif',
+            color: `rgba(${t.primaryRgb}, 0.5)`,
+            fontFamily: `var(--theme-font-body, 'DM Sans', sans-serif)`,
           }}
         >
           Welcome Back
         </p>
 
+        <div
+          ref={lineRef}
+          className="w-16 h-px mx-auto mb-6 origin-center"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${t.primary}, transparent)`,
+            transform: 'scaleX(0)',
+          }}
+        />
+
         <h1
           ref={nameRef}
-          className="text-5xl mb-3 font-normal"
+          className="text-5xl sm:text-6xl mb-4 font-normal"
           style={{
-            fontFamily: `var(--theme-font-display, 'Cormorant Garamond', Georgia, serif)`,
-            color: `var(--theme-text-primary, #2C2A25)`,
+            fontFamily: `var(--theme-font-display, 'Playfair Display', Georgia, serif)`,
+            color: `var(--theme-text-primary, #1A1A2E)`,
           }}
         >
           {account.first} {account.last}
@@ -122,24 +113,14 @@ export function DashboardEntryAnimation({
 
         <p
           ref={orgRef}
-          className="text-sm"
-          style={{ color: `var(--theme-text-muted, #8A8578)`, opacity: 0, fontFamily: `var(--theme-font-body, 'DM Sans', sans-serif)` }}
+          className="text-sm tracking-wide opacity-0"
+          style={{
+            color: `var(--theme-text-muted, #7A7A8A)`,
+            fontFamily: `var(--theme-font-body, 'DM Sans', sans-serif)`,
+          }}
         >
           {organization.name}
         </p>
-      </div>
-
-      {/* Dissolving octagon geometry hint - GSAP controlled */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <svg ref={octagonRef} width="400" height="400" viewBox="0 0 400 400" style={{ opacity: 0.15 }}>
-          <path
-            d="M200,60 L270,110 L270,190 L200,240 L130,190 L130,110 Z"
-            fill="none"
-            stroke={organization.theme.primary}
-            strokeWidth="0.5"
-            strokeDasharray="600"
-          />
-        </svg>
       </div>
     </motion.div>
   );

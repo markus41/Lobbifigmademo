@@ -3,17 +3,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { Organization, Account } from '@/app/data/themes';
-// GeometricOctagon available for org-themed login backgrounds
-// import { GeometricOctagon } from './GeometricOctagon';
 import {
   getOrgColors,
   getOrgFonts,
-  getMotionVariants,
   getCardEntranceVariants,
   getCardClasses,
   getButtonClasses,
   getInputClasses,
-  getAnimationClasses,
 } from '../utils/themeMapper';
 
 interface OrgLoginProps {
@@ -24,7 +20,6 @@ interface OrgLoginProps {
 
 type LoginMethod = 'password' | 'magic-link' | 'social';
 
-// Social login icons
 const GoogleIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24">
     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -33,39 +28,27 @@ const GoogleIcon = ({ className }: { className?: string }) => (
     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
   </svg>
 );
-
 const MicrosoftIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24">
-    <path fill="#F25022" d="M1 1h10v10H1z"/>
-    <path fill="#00A4EF" d="M1 13h10v10H1z"/>
-    <path fill="#7FBA00" d="M13 1h10v10H13z"/>
-    <path fill="#FFB900" d="M13 13h10v10H13z"/>
+    <path fill="#F25022" d="M1 1h10v10H1z"/><path fill="#00A4EF" d="M1 13h10v10H1z"/>
+    <path fill="#7FBA00" d="M13 1h10v10H13z"/><path fill="#FFB900" d="M13 13h10v10H13z"/>
   </svg>
 );
-
 const LinkedInIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="#0A66C2">
     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
   </svg>
 );
-
 const AppleIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
   </svg>
 );
-
 const MagicWandIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M15 4V2" />
-    <path d="M15 16v-2" />
-    <path d="M8 9h2" />
-    <path d="M20 9h2" />
-    <path d="M17.8 11.8L19 13" />
-    <path d="M15 9h.01" />
-    <path d="M17.8 6.2L19 5" />
-    <path d="M3 21l9-9" />
-    <path d="M12.2 6.2L11 5" />
+    <path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/>
+    <path d="M17.8 11.8L19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2L19 5"/>
+    <path d="M3 21l9-9"/><path d="M12.2 6.2L11 5"/>
   </svg>
 );
 
@@ -76,474 +59,210 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
   const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
 
-  // Theme-aware values derived from organization
   const theme = organization.theme;
   const colors = useMemo(() => getOrgColors(organization), [organization]);
   const fonts = useMemo(() => getOrgFonts(organization), [organization]);
-  void useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
-  const cardEntranceVariants = useMemo(() => getCardEntranceVariants(theme.animationStyle), [theme.animationStyle]);
-
-  // CSS utility classes based on theme
+  const cardEntrance = useMemo(() => getCardEntranceVariants(theme.animationStyle), [theme.animationStyle]);
   const cardClasses = useMemo(() => getCardClasses(theme), [theme]);
   const buttonClasses = useMemo(() => getButtonClasses(theme), [theme]);
   const inputClasses = useMemo(() => getInputClasses(theme), [theme]);
-  const animationClasses = useMemo(() => getAnimationClasses(theme), [theme]);
 
-  // Animation timing based on theme
-  const animationDurations = useMemo(() => {
-    switch (theme.animationStyle) {
-      case 'elegant':
-        return { base: 1.2, delay: 0.4 };
-      case 'smooth':
-        return { base: 0.9, delay: 0.3 };
-      case 'energetic':
-        return { base: 0.5, delay: 0.15 };
-      case 'dramatic':
-        return { base: 1.0, delay: 0.35 };
-      case 'subtle':
-        return { base: 0.7, delay: 0.25 };
-      default:
-        return { base: 0.9, delay: 0.3 };
-    }
-  }, [theme.animationStyle]);
-
-  // Theme-derived easing
-  const easing = useMemo((): [number, number, number, number] => {
-    switch (theme.animationStyle) {
-      case 'elegant':
-        return [0.22, 1, 0.36, 1];
-      case 'smooth':
-        return [0.4, 0, 0.2, 1];
-      case 'energetic':
-        return [0.34, 1.56, 0.64, 1];
-      case 'dramatic':
-        return [0.6, 0.01, 0, 0.9];
-      case 'subtle':
-        return [0.4, 0, 1, 1];
-      default:
-        return [0.4, 0, 0.2, 1];
-    }
-  }, [theme.animationStyle]);
-
-  // Generate card background based on theme colors
-  const cardBg = useMemo(() => {
-    return `linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(${theme.primaryRgb},0.08) 100%)`;
-  }, [theme.primaryRgb]);
-
-  // Generate accent pattern based on theme
-  const accentPattern = useMemo(() => {
-    switch (theme.backgroundPattern) {
-      case 'artDeco':
-        return `repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(${theme.primaryRgb},0.03) 10px, rgba(${theme.primaryRgb},0.03) 20px)`;
-      case 'geometric':
-        return `repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(${theme.primaryRgb},0.04) 8px, rgba(${theme.primaryRgb},0.04) 16px)`;
-      case 'waves':
-        return `radial-gradient(circle at 80% 20%, rgba(${theme.primaryRgb},0.04) 0%, transparent 50%)`;
-      case 'leaves':
-        return `repeating-linear-gradient(135deg, transparent, transparent 12px, rgba(${theme.primaryRgb},0.03) 12px, rgba(${theme.primaryRgb},0.03) 24px)`;
-      case 'hexagons':
-        return `radial-gradient(circle at 20% 50%, rgba(${theme.primaryRgb},0.03) 0%, transparent 50%)`;
-      case 'particles':
-        return `repeating-radial-gradient(circle at 50% 50%, transparent, transparent 8px, rgba(${theme.primaryRgb},0.02) 8px, rgba(${theme.primaryRgb},0.02) 16px)`;
-      case 'minimal':
-      default:
-        return 'none';
-    }
-  }, [theme.backgroundPattern, theme.primaryRgb]);
-
-  // Border width based on border style
-  const borderWidth = theme.borderStyle === 'double' ? '3px' : '2px';
-
-  // Logo shape from theme (use theme.logoShape)
+  const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
+  const dur = theme.animationStyle === 'energetic' ? 0.5 : theme.animationStyle === 'elegant' ? 1.1 : 0.8;
   const logoShape = theme.logoShape;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoggingIn(true);
-    setTimeout(() => {
-      onLogin();
-    }, 800);
-  };
+  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setIsLoggingIn(true); setTimeout(onLogin, 800); };
+  const handleMagicLinkSubmit = (e: React.FormEvent) => { e.preventDefault(); setIsLoggingIn(true); setTimeout(() => { setMagicLinkSent(true); setIsLoggingIn(false); }, 1200); };
+  const handleSocialLogin = (_p: string) => { setIsLoggingIn(true); setTimeout(onLogin, 1000); };
+  const handleMagicLinkContinue = () => { setIsLoggingIn(true); setTimeout(onLogin, 500); };
 
-  const handleMagicLinkSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoggingIn(true);
-    setTimeout(() => {
-      setMagicLinkSent(true);
-      setIsLoggingIn(false);
-    }, 1200);
-  };
+  const inputStyle = (rgbVal: string) => ({
+    background: `rgba(${rgbVal}, 0.03)`,
+    borderColor: `rgba(${rgbVal}, 0.18)`,
+    color: colors.textPrimary,
+    fontFamily: fonts.body,
+  });
 
-  const handleSocialLogin = (_provider: string) => {
-    setIsLoggingIn(true);
-    // Simulate social login
-    setTimeout(() => {
-      onLogin();
-    }, 1000);
-  };
-
-  const handleMagicLinkContinue = () => {
-    // In demo mode, just proceed
-    setIsLoggingIn(true);
-    setTimeout(() => {
-      onLogin();
-    }, 500);
-  };
+  const focusHandlers = (rgbVal: string) => ({
+    onFocus: (e: React.FocusEvent<HTMLInputElement>) => {
+      e.target.style.borderColor = `rgba(${rgbVal}, 0.5)`;
+      e.target.style.boxShadow = `0 0 0 4px rgba(${rgbVal}, 0.08), 0 4px 16px rgba(0,0,0,0.06)`;
+    },
+    onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
+      e.target.style.borderColor = `rgba(${rgbVal}, 0.18)`;
+      e.target.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
+    },
+  });
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: animationDurations.base, ease: easing }}
-      className="fixed inset-0 z-20 flex items-center justify-center p-4"
+      transition={{ duration: dur, ease }}
+      className="fixed inset-0 z-20 flex items-center justify-center p-6"
     >
-      {/* Org-specific ambient background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full blur-[120px]"
-          style={{
-            background: `radial-gradient(circle, rgba(${theme.primaryRgb}, 0.12), transparent 70%)`,
-          }}
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.8, 1, 0.8],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-        />
-      </div>
-
-      {/* Floating org-colored particles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 25 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: `${2 + Math.random() * 3}px`,
-              height: `${2 + Math.random() * 3}px`,
-              background: colors.primary,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -40 - Math.random() * 60],
-              opacity: [0, 0.6, 0],
-              scale: [0, 1, 0],
-            }}
-            transition={{
-              duration: 4 + Math.random() * 3,
-              repeat: Infinity,
-              delay: Math.random() * 3,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          />
-        ))}
-      </div>
-
+      {/* Ambient glow */}
       <motion.div
-        className="w-full max-w-[420px] px-4 relative"
-        initial={cardEntranceVariants.initial}
-        animate={cardEntranceVariants.animate}
-        exit={{ y: -30, scale: 0.95, opacity: 0 }}
-        transition={{ duration: animationDurations.base, ease: easing }}
-      >
-        {/* Ornamental corners - theme-aware */}
-        <div className="absolute -top-4 -left-4 w-12 h-12 border-l border-t rounded-tl-2xl"
-          style={{
-            borderColor: colors.primary,
-            opacity: 0.3,
-            borderStyle: theme.borderStyle,
-          }}
-        />
-        <div className="absolute -top-4 -right-4 w-12 h-12 border-r border-t rounded-tr-2xl"
-          style={{
-            borderColor: colors.primary,
-            opacity: 0.3,
-            borderStyle: theme.borderStyle,
-          }}
-        />
-        <div className="absolute -bottom-4 -left-4 w-12 h-12 border-l border-b rounded-bl-2xl"
-          style={{
-            borderColor: colors.primary,
-            opacity: 0.3,
-            borderStyle: theme.borderStyle,
-          }}
-        />
-        <div className="absolute -bottom-4 -right-4 w-12 h-12 border-r border-b rounded-br-2xl"
-          style={{
-            borderColor: colors.primary,
-            opacity: 0.3,
-            borderStyle: theme.borderStyle,
-          }}
-        />
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[500px] rounded-full blur-[140px] pointer-events-none"
+        style={{ background: `radial-gradient(circle, rgba(${theme.primaryRgb}, 0.1), transparent 70%)` }}
+        animate={{ scale: [1, 1.06, 1], opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+      />
 
-        {/* Card with theme-aware styling */}
+      {/* Card */}
+      <motion.div
+        className="w-full max-w-md relative"
+        initial={cardEntrance.initial}
+        animate={cardEntrance.animate}
+        exit={{ y: -20, scale: 0.96, opacity: 0 }}
+        transition={{ duration: dur, ease }}
+      >
         <div
-          className={`relative px-6 sm:px-8 md:px-10 py-8 sm:py-10 rounded-3xl overflow-hidden ${cardClasses}`}
+          className={`relative px-8 sm:px-10 py-10 sm:py-12 rounded-3xl overflow-hidden ${cardClasses}`}
           style={{
-            background: cardBg,
-            backdropFilter: 'blur(32px)',
-            WebkitBackdropFilter: 'blur(32px)',
-            borderColor: `rgba(${theme.primaryRgb}, 0.25)`,
-            borderStyle: theme.borderStyle,
-            borderWidth: borderWidth,
-            boxShadow: `
-              0 40px 80px -20px rgba(0,0,0,0.15),
-              0 20px 40px -10px rgba(0,0,0,0.08),
-              0 0 0 1px rgba(${theme.primaryRgb}, 0.1),
-              inset 0 2px 0 rgba(255,255,255,0.95),
-              inset 0 0 100px rgba(${theme.primaryRgb}, 0.04)
-            `,
+            background: `linear-gradient(170deg, rgba(255,255,255,0.97) 0%, rgba(${theme.primaryRgb},0.06) 100%)`,
+            backdropFilter: 'blur(40px)',
+            border: `1.5px solid rgba(${theme.primaryRgb}, 0.2)`,
+            boxShadow: `0 32px 64px -16px rgba(0,0,0,0.12), 0 0 0 1px rgba(${theme.primaryRgb}, 0.08), inset 0 1px 0 rgba(255,255,255,0.9)`,
           }}
         >
-          {/* Theme-aware pattern overlay */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: accentPattern,
-              opacity: 1,
-            }}
-          />
-
-          {/* Animated top accent bar */}
-          <motion.div 
-            className="absolute top-0 left-0 right-0 h-1"
-            style={{
-              background: `linear-gradient(90deg, transparent, ${colors.primary}, transparent)`,
-            }}
-            animate={{
-              opacity: [0.3, 0.6, 0.3],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: [0.22, 1, 0.36, 1],
-            }}
+          {/* Top accent */}
+          <motion.div
+            className="absolute top-0 left-0 right-0 h-[2px]"
+            style={{ background: `linear-gradient(90deg, transparent 10%, ${colors.primary} 50%, transparent 90%)` }}
+            animate={{ opacity: [0.4, 0.7, 0.4] }}
+            transition={{ duration: 3, repeat: Infinity, ease }}
           />
 
           {/* Header */}
-          <div className="text-center mb-6 relative z-10">
-            {/* Org Logo with theme-aware shape */}
+          <div className="text-center mb-8 relative z-10">
+            {/* Logo */}
             <motion.div
               layoutId="org-logo"
-              className={`inline-flex items-center justify-center w-18 h-18 mx-auto mb-5 rounded-2xl relative overflow-hidden ${animationClasses}`}
+              className="inline-flex items-center justify-center w-20 h-20 mx-auto mb-6 relative overflow-hidden"
               style={{
                 background: theme.gradientBtn,
-                borderRadius: logoShape === 'diamond' ? '16px' :
-                             logoShape === 'hexagon' ? '10px' :
-                             logoShape === 'crown' ? '20px 20px 6px 6px' :
-                             logoShape === 'octagon' ? '8px' : '50%',
+                borderRadius: logoShape === 'diamond' ? '16px' : logoShape === 'hexagon' ? '12px' : logoShape === 'crown' ? '20px 20px 8px 8px' : '50%',
                 transform: logoShape === 'diamond' ? 'rotate(45deg)' : 'none',
-                boxShadow: `0 8px 24px -4px rgba(${theme.primaryRgb}, 0.4), inset 0 2px 12px rgba(0,0,0,0.2)`,
+                boxShadow: `0 12px 32px -4px rgba(${theme.primaryRgb}, 0.35)`,
               }}
-              initial={{ scale: 0, rotate: logoShape === 'diamond' ? -15 : 0 }}
-              animate={{
-                scale: 1,
-                rotate: logoShape === 'diamond' ? 45 : 0
-              }}
-              transition={{
-                duration: animationDurations.base * 0.7,
-                delay: animationDurations.delay * 0.5,
-                type: 'spring',
-                stiffness: theme.animationStyle === 'energetic' ? 200 : 160,
-              }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1, rotate: logoShape === 'diamond' ? 45 : 0 }}
+              transition={{ type: 'spring', stiffness: 160, delay: 0.2 }}
             >
-              <div
-                className="absolute inset-0 rounded-[inherit] shadow-[inset_0_2px_16px_rgba(0,0,0,0.3)]"
-              />
-
-              <span
-                className="relative z-10 text-2xl font-bold"
-                style={{
-                  fontFamily: fonts.display,
-                  fontWeight: 500,
-                  fontStyle: 'italic',
-                  color: theme.textInverse,
-                  transform: logoShape === 'diamond' ? 'rotate(-45deg)' : 'none',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.25)',
-                }}
-              >
+              <span className="relative z-10 text-3xl" style={{
+                fontFamily: fonts.display, fontWeight: 500, fontStyle: 'italic',
+                color: theme.textInverse,
+                transform: logoShape === 'diamond' ? 'rotate(-45deg)' : 'none',
+              }}>
                 {organization.logoLetter}
               </span>
-
-              <div
-                className="absolute inset-0 rounded-[inherit] bg-gradient-to-br from-white/35 to-transparent"
-              />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
             </motion.div>
 
             <motion.h2
               className="text-2xl mb-2 tracking-tight"
-              style={{
-                fontFamily: fonts.display,
-                fontWeight: fonts.weightHeading,
-                color: colors.textPrimary,
-                textShadow: '0 1px 2px rgba(0,0,0,0.04)',
-              }}
-              initial={{ opacity: 0, y: 10 }}
+              style={{ fontFamily: fonts.display, fontWeight: fonts.weightHeading, color: colors.textPrimary }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: animationDurations.delay, duration: animationDurations.base * 0.7, ease: easing }}
+              transition={{ delay: 0.35, duration: 0.6, ease }}
             >
               {organization.name}
             </motion.h2>
 
             <motion.p
-              className="text-sm italic mb-4 opacity-85"
-              style={{
-                fontFamily: fonts.display,
-                color: colors.primary,
-              }}
+              className="text-sm italic opacity-80"
+              style={{ fontFamily: fonts.display, color: colors.primary }}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.85 }}
-              transition={{ delay: animationDurations.delay + 0.1, duration: animationDurations.base * 0.7, ease: easing }}
+              animate={{ opacity: 0.8 }}
+              transition={{ delay: 0.45, duration: 0.5 }}
             >
-              "{organization.motto}"
+              {'"'}{organization.motto}{'"'}
             </motion.p>
 
             <motion.div
-              className="w-16 h-px mx-auto mb-3 relative"
-              style={{
-                background: `linear-gradient(90deg, transparent, ${colors.primary}, transparent)`,
-              }}
+              className="w-12 h-px mx-auto mt-5"
+              style={{ background: `linear-gradient(90deg, transparent, ${colors.primary}, transparent)` }}
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ delay: animationDurations.delay + 0.2, duration: animationDurations.base * 0.7, ease: easing }}
-            >
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45"
-                style={{
-                  background: colors.primary,
-                  boxShadow: theme.hasGlowEffects ? `0 0 12px ${colors.primary}` : 'none',
-                }}
-              />
-            </motion.div>
-
-            <motion.p
-              className="text-sm"
-              style={{ color: colors.textMuted, fontFamily: fonts.body }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: animationDurations.delay + 0.3, duration: animationDurations.base * 0.5, ease: easing }}
-            >
-              Sign in to continue
-            </motion.p>
+              transition={{ delay: 0.55, duration: 0.6, ease }}
+            />
           </div>
 
           {/* Login Method Tabs */}
           <motion.div
-            className="flex gap-1 mb-5 p-1 bg-gray-100 rounded-lg relative z-10"
+            className="flex gap-1 mb-7 p-1 rounded-xl relative z-10"
+            style={{ background: `rgba(${theme.primaryRgb}, 0.05)` }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
           >
-            {[
+            {([
               { id: 'password', label: 'Password' },
               { id: 'social', label: 'SSO' },
               { id: 'magic-link', label: 'Magic Link' },
-            ].map((method) => (
+            ] as const).map((m) => (
               <button
-                key={method.id}
+                key={m.id}
                 type="button"
-                onClick={() => {
-                  setLoginMethod(method.id as LoginMethod);
-                  setMagicLinkSent(false);
-                }}
-                className={`flex-1 py-2 px-3 rounded-md text-xs font-medium transition-all ${
-                  loginMethod === method.id
-                    ? 'text-white shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
+                onClick={() => { setLoginMethod(m.id); setMagicLinkSent(false); }}
+                className="flex-1 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer"
                 style={{
-                  background: loginMethod === method.id ? theme.gradientBtn : 'transparent',
+                  background: loginMethod === m.id ? theme.gradientBtn : 'transparent',
+                  color: loginMethod === m.id ? theme.textInverse : colors.textSecondary,
+                  boxShadow: loginMethod === m.id ? `0 2px 8px rgba(${theme.primaryRgb}, 0.25)` : 'none',
                 }}
               >
-                {method.label}
+                {m.label}
               </button>
             ))}
           </motion.div>
 
-          {/* Password Login Form */}
+          {/* Forms */}
           <AnimatePresence mode="wait">
             {loginMethod === 'password' && (
               <motion.form
-                key="password-form"
+                key="pw"
                 onSubmit={handleSubmit}
-                className="space-y-4 relative z-10"
-                initial={{ opacity: 0, x: -10 }}
+                className="flex flex-col gap-5 relative z-10"
+                initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
+                exit={{ opacity: 0, x: 8 }}
                 transition={{ duration: 0.15 }}
               >
-                {/* Email (Read-only) */}
+                {/* Email */}
                 <div>
-                  <label
-                    className="block text-xs uppercase tracking-[0.15em] mb-2 font-medium opacity-70"
-                    style={{ color: colors.primary }}
-                  >
+                  <label className="block text-[11px] uppercase tracking-[0.15em] mb-2 font-semibold" style={{ color: `rgba(${theme.primaryRgb}, 0.6)` }}>
                     Email Address
                   </label>
-                  <div className="relative group">
-                    <Mail
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all opacity-40"
-                      style={{ color: colors.primary }}
-                    />
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-35" style={{ color: colors.primary }} />
                     <input
-                      type="email"
-                      value={account.email}
-                      readOnly
-                      className={`w-full pl-10 pr-4 py-3.5 border-2 text-sm outline-none cursor-not-allowed transition-all shadow-[0_2px_4px_rgba(0,0,0,0.04)] ${inputClasses}`}
-                      style={{
-                        background: `rgba(${theme.primaryRgb}, 0.03)`,
-                        borderColor: `rgba(${theme.primaryRgb}, 0.15)`,
-                        color: colors.textPrimary,
-                        fontFamily: fonts.body,
-                      }}
+                      type="email" value={account.email} readOnly
+                      className={`w-full pl-11 pr-4 py-4 border-[1.5px] text-sm outline-none cursor-not-allowed transition-all rounded-xl shadow-sm ${inputClasses}`}
+                      style={inputStyle(theme.primaryRgb)}
                     />
                   </div>
                 </div>
 
                 {/* Password */}
                 <div>
-                  <label
-                    className="block text-xs uppercase tracking-[0.15em] mb-2 font-medium opacity-70"
-                    style={{ color: colors.primary }}
-                  >
+                  <label className="block text-[11px] uppercase tracking-[0.15em] mb-2 font-semibold" style={{ color: `rgba(${theme.primaryRgb}, 0.6)` }}>
                     Password
                   </label>
-                  <div className="relative group">
-                    <Lock
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all opacity-40"
-                      style={{ color: colors.primary }}
-                    />
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-35" style={{ color: colors.primary }} />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
-                      required
-                      className={`w-full pl-10 pr-12 py-3.5 bg-white border-2 text-sm transition-all outline-none placeholder:text-gray-300 focus:scale-[1.01] shadow-[0_2px_4px_rgba(0,0,0,0.04)] ${inputClasses}`}
-                      style={{
-                        borderColor: `rgba(${theme.primaryRgb}, 0.2)`,
-                        color: colors.textPrimary,
-                        fontFamily: fonts.body,
-                      }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = `rgba(${theme.primaryRgb}, 0.5)`;
-                        e.target.style.boxShadow = `0 0 0 4px rgba(${theme.primaryRgb}, 0.1), 0 4px 12px rgba(0,0,0,0.08)`;
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = `rgba(${theme.primaryRgb}, 0.2)`;
-                        e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.04)';
-                      }}
+                      value={password} onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password" required
+                      className={`w-full pl-11 pr-12 py-4 border-[1.5px] text-sm outline-none transition-all rounded-xl shadow-sm ${inputClasses}`}
+                      style={inputStyle(theme.primaryRgb)}
+                      {...focusHandlers(theme.primaryRgb)}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-100 opacity-50"
+                    <button type="button" onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 opacity-40 hover:opacity-80 transition-opacity cursor-pointer"
                       style={{ color: colors.primary }}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -551,271 +270,120 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                   </div>
                 </div>
 
-                {/* Remember & Forgot */}
+                {/* Remember / Forgot */}
                 <div className="flex items-center justify-between text-xs">
-                  <label className="flex items-center gap-2 cursor-pointer group">
-                    <div className="relative">
-                      <input
-                        type="checkbox"
-                        className="peer w-4 h-4 cursor-pointer appearance-none border rounded transition-all"
-                        style={{
-                          borderColor: `rgba(${theme.primaryRgb}, 0.3)`,
-                        }}
-                      />
-                      <svg
-                        className="absolute inset-0 w-4 h-4 pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity"
-                        style={{ color: colors.primary }}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </div>
-                    <span className="transition-colors" style={{ color: colors.textMuted }}>Remember me</span>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" className="w-4 h-4 rounded accent-current cursor-pointer" style={{ accentColor: colors.primary }} />
+                    <span style={{ color: colors.textMuted }}>Remember me</span>
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => toast.success(`A password reset link will be sent to ${account.email}. Check your inbox shortly.`)}
-                    className="transition-opacity hover:opacity-100 opacity-70"
+                  <button type="button"
+                    onClick={() => toast.success(`Password reset link sent to ${account.email}`)}
+                    className="font-medium hover:underline cursor-pointer"
                     style={{ color: colors.primary }}
                   >
                     Forgot password?
                   </button>
                 </div>
 
-                {/* Submit Button */}
+                {/* Submit */}
                 <motion.button
-                  type="submit"
-                  disabled={isLoggingIn || !password}
-                  className={`relative w-full py-3.5 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed group mt-6 text-white ${buttonClasses}`}
+                  type="submit" disabled={isLoggingIn || !password}
+                  className={`relative w-full py-4 text-sm font-bold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-40 disabled:cursor-not-allowed text-white mt-2 cursor-pointer ${buttonClasses}`}
                   style={{
                     background: theme.gradientBtn,
-                    boxShadow: `0 6px 20px rgba(${theme.primaryRgb}, 0.25), 0 2px 4px rgba(0,0,0,0.06)`,
+                    boxShadow: `0 8px 24px rgba(${theme.primaryRgb}, 0.25)`,
                   }}
-                  whileHover={!isLoggingIn && password ? {
-                    y: -2,
-                    boxShadow: `0 12px 32px rgba(${theme.primaryRgb}, 0.4), 0 4px 8px rgba(0,0,0,0.1)`,
-                    transition: { duration: 0.2 }
-                  } : {}}
-                  whileTap={!isLoggingIn && password ? {
-                    y: 0,
-                    scale: 0.98,
-                    transition: { duration: 0.1 }
-                  } : {}}
+                  whileHover={!isLoggingIn && password ? { y: -2, boxShadow: `0 14px 36px rgba(${theme.primaryRgb}, 0.35)` } : {}}
+                  whileTap={!isLoggingIn && password ? { y: 0, scale: 0.98 } : {}}
                 >
                   {isLoggingIn ? (
-                    <div className="flex items-center justify-center gap-3">
-                      <motion.div
-                        className="w-4 h-4 border-2 border-current border-t-transparent rounded-full"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-                      />
+                    <span className="flex items-center justify-center gap-3">
+                      <motion.span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full"
+                        animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }} />
                       Entering...
-                    </div>
-                  ) : (
-                    'Enter The Lobbi'
-                  )}
-
-                  {/* Shimmer effect */}
+                    </span>
+                  ) : 'Enter The Lobbi'}
                   {!isLoggingIn && password && (
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent"
-                      animate={{ x: ['-200%', '200%'] }}
-                      transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1, ease: 'linear' }}
-                    />
+                    <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      animate={{ x: ['-200%', '200%'] }} transition={{ duration: 3, repeat: Infinity, repeatDelay: 1.5, ease: 'linear' }} />
                   )}
                 </motion.button>
               </motion.form>
             )}
 
-            {/* Magic Link Form */}
             {loginMethod === 'magic-link' && (
-              <motion.div
-                key="magic-link-form"
-                className="space-y-6 relative z-10"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                transition={{ duration: 0.15 }}
-              >
+              <motion.div key="ml" className="flex flex-col gap-5 relative z-10"
+                initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} transition={{ duration: 0.15 }}>
                 {!magicLinkSent ? (
-                  <form onSubmit={handleMagicLinkSubmit} className="space-y-6">
-                    {/* Magic link icon */}
-                    <div className="text-center mb-4">
-                      <div
-                        className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
-                        style={{ background: `rgba(${theme.primaryRgb}, 0.1)` }}
-                      >
+                  <form onSubmit={handleMagicLinkSubmit} className="flex flex-col gap-5">
+                    <div className="text-center mb-2">
+                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
+                        style={{ background: `rgba(${theme.primaryRgb}, 0.08)` }}>
                         <MagicWandIcon className="w-8 h-8" style={{ color: colors.primary }} />
                       </div>
-                      <p className="text-sm text-gray-600">
-                        We'll send a magic link to your email for passwordless sign in
+                      <p className="text-sm" style={{ color: colors.textSecondary }}>
+                        {"We'll send a magic link to your email for passwordless sign in"}
                       </p>
                     </div>
-
-                    {/* Email (Read-only) */}
-                    <div>
-                      <label
-                        className="block text-xs uppercase tracking-[0.2em] mb-3 font-medium opacity-70"
-                        style={{ color: colors.primary }}
-                      >
-                        Email Address
-                      </label>
-                      <div className="relative group">
-                        <Mail
-                          className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] transition-all opacity-40"
-                          style={{ color: colors.primary }}
-                        />
-                        <input
-                          type="email"
-                          value={account.email}
-                          readOnly
-                          className={`w-full pl-12 pr-5 py-4 border-2 text-[15px] outline-none cursor-not-allowed transition-all ${inputClasses}`}
-                          style={{
-                            background: `rgba(${theme.primaryRgb}, 0.03)`,
-                            borderColor: `rgba(${theme.primaryRgb}, 0.15)`,
-                            color: colors.textPrimary,
-                            fontFamily: fonts.body,
-                          }}
-                        />
-                      </div>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-35" style={{ color: colors.primary }} />
+                      <input type="email" value={account.email} readOnly
+                        className={`w-full pl-11 pr-4 py-4 border-[1.5px] text-sm outline-none cursor-not-allowed rounded-xl shadow-sm ${inputClasses}`}
+                        style={inputStyle(theme.primaryRgb)} />
                     </div>
-
-                    {/* Send Magic Link Button */}
-                    <motion.button
-                      type="submit"
-                      disabled={isLoggingIn}
-                      className={`relative w-full py-4 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed text-white ${buttonClasses}`}
-                      style={{
-                        background: theme.gradientBtn,
-                        boxShadow: `0 4px 16px rgba(${theme.primaryRgb}, 0.25)`,
-                      }}
-                      whileHover={{ y: -3 }}
-                      whileTap={{ y: -1 }}
-                    >
-                      {isLoggingIn ? (
-                        <div className="flex items-center justify-center gap-3">
-                          <motion.div
-                            className="w-4 h-4 border-2 border-current border-t-transparent rounded-full"
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-                          />
-                          Sending...
-                        </div>
-                      ) : (
-                        'Send Magic Link'
-                      )}
+                    <motion.button type="submit" disabled={isLoggingIn}
+                      className={`w-full py-4 text-sm font-bold tracking-wider uppercase text-white disabled:opacity-40 cursor-pointer ${buttonClasses}`}
+                      style={{ background: theme.gradientBtn, boxShadow: `0 8px 24px rgba(${theme.primaryRgb}, 0.25)` }}
+                      whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+                      {isLoggingIn ? 'Sending...' : 'Send Magic Link'}
                     </motion.button>
                   </form>
                 ) : (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-center py-6"
-                  >
-                    {/* Success icon */}
-                    <motion.div
-                      className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6"
-                      style={{ background: `rgba(${theme.primaryRgb}, 0.1)` }}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 200 }}
-                    >
-                      <svg
-                        className="w-10 h-10"
-                        style={{ color: colors.primary }}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                        <polyline points="22 4 12 14.01 9 11.01" />
+                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-4">
+                    <motion.div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5"
+                      style={{ background: `rgba(${theme.primaryRgb}, 0.08)` }}
+                      initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200 }}>
+                      <svg className="w-8 h-8" style={{ color: colors.primary }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                       </svg>
                     </motion.div>
-
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Check your email!</h3>
-                    <p className="text-sm text-gray-600 mb-6">
-                      We've sent a magic link to <strong>{account.email}</strong>
+                    <h3 className="text-lg font-semibold mb-1" style={{ color: colors.textPrimary }}>Check your email!</h3>
+                    <p className="text-sm mb-6" style={{ color: colors.textSecondary }}>
+                      {"Magic link sent to "}<strong>{account.email}</strong>
                     </p>
-
-                    {/* Demo mode: Continue button */}
-                    <motion.button
-                      type="button"
-                      onClick={handleMagicLinkContinue}
-                      disabled={isLoggingIn}
-                      className={`relative w-full py-4 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 text-white ${buttonClasses}`}
-                      style={{
-                        background: theme.gradientBtn,
-                        boxShadow: `0 4px 16px rgba(${theme.primaryRgb}, 0.25)`,
-                      }}
-                      whileHover={{ y: -3 }}
-                      whileTap={{ y: -1 }}
-                    >
+                    <motion.button onClick={handleMagicLinkContinue} disabled={isLoggingIn}
+                      className={`w-full py-4 text-sm font-bold tracking-wider uppercase text-white disabled:opacity-40 cursor-pointer ${buttonClasses}`}
+                      style={{ background: theme.gradientBtn }} whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                       {isLoggingIn ? 'Entering...' : 'Demo: Continue Anyway'}
                     </motion.button>
-
-                    <p className="text-[10px] text-gray-400 mt-4">
-                      Didn't receive the email? Check spam or try again
-                    </p>
                   </motion.div>
                 )}
               </motion.div>
             )}
 
-            {/* Social Login */}
             {loginMethod === 'social' && (
-              <motion.div
-                key="social-form"
-                className="space-y-4 relative z-10"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                transition={{ duration: 0.15 }}
-              >
-                <p className="text-sm text-gray-600 text-center mb-6">
+              <motion.div key="sso" className="flex flex-col gap-4 relative z-10"
+                initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} transition={{ duration: 0.15 }}>
+                <p className="text-sm text-center mb-2" style={{ color: colors.textSecondary }}>
                   Sign in with your enterprise SSO provider
                 </p>
-
-                {/* Social login buttons */}
-                <div className="space-y-3">
-                  {[
-                    { id: 'google', name: 'Google', icon: GoogleIcon, bg: '#fff', border: '#E5E7EB', text: '#374151' },
-                    { id: 'microsoft', name: 'Microsoft', icon: MicrosoftIcon, bg: '#fff', border: '#E5E7EB', text: '#374151' },
-                    { id: 'linkedin', name: 'LinkedIn', icon: LinkedInIcon, bg: '#0A66C2', border: '#0A66C2', text: '#fff' },
-                    { id: 'apple', name: 'Apple', icon: AppleIcon, bg: '#000', border: '#000', text: '#fff' },
-                  ].map((provider) => (
-                    <motion.button
-                      key={provider.id}
-                      type="button"
-                      onClick={() => handleSocialLogin(provider.id)}
-                      disabled={isLoggingIn}
-                      className="w-full py-3.5 px-4 rounded-xl text-sm font-medium flex items-center justify-center gap-3 border-2 transition-all disabled:opacity-50"
-                      style={{
-                        background: provider.bg,
-                        borderColor: provider.border,
-                        color: provider.text,
-                      }}
-                      whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                      whileTap={{ y: 0 }}
-                    >
-                      <provider.icon className="w-5 h-5" />
-                      Continue with {provider.name}
-                    </motion.button>
-                  ))}
-                </div>
-
-                {/* SAML/OIDC option */}
-                <div className="pt-4 border-t border-gray-200 mt-6">
-                  <button
-                    type="button"
-                    className="w-full py-3 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-                    onClick={() => handleSocialLogin('saml')}
-                  >
+                {[
+                  { id: 'google', name: 'Google', icon: GoogleIcon, bg: '#fff', border: '#E5E7EB', text: '#374151' },
+                  { id: 'microsoft', name: 'Microsoft', icon: MicrosoftIcon, bg: '#fff', border: '#E5E7EB', text: '#374151' },
+                  { id: 'linkedin', name: 'LinkedIn', icon: LinkedInIcon, bg: '#0A66C2', border: '#0A66C2', text: '#fff' },
+                  { id: 'apple', name: 'Apple', icon: AppleIcon, bg: '#000', border: '#000', text: '#fff' },
+                ].map((p) => (
+                  <motion.button key={p.id} type="button" onClick={() => handleSocialLogin(p.id)} disabled={isLoggingIn}
+                    className="w-full py-3.5 px-4 rounded-xl text-sm font-medium flex items-center justify-center gap-3 border-[1.5px] transition-all disabled:opacity-40 cursor-pointer"
+                    style={{ background: p.bg, borderColor: p.border, color: p.text }}
+                    whileHover={{ y: -2, boxShadow: '0 6px 16px rgba(0,0,0,0.08)' }} whileTap={{ y: 0 }}>
+                    <p.icon className="w-5 h-5" />
+                    Continue with {p.name}
+                  </motion.button>
+                ))}
+                <div className="pt-3 border-t mt-2" style={{ borderColor: `rgba(${theme.primaryRgb}, 0.1)` }}>
+                  <button type="button" onClick={() => handleSocialLogin('saml')}
+                    className="w-full py-3 text-sm font-medium transition-colors cursor-pointer" style={{ color: colors.textSecondary }}>
                     Sign in with SAML / OIDC
                   </button>
                 </div>
@@ -823,35 +391,21 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             )}
           </AnimatePresence>
 
-          {/* Powered by The Lobbi */}
-          <motion.div
-            className="mt-6 pt-4 border-t text-center"
-            style={{
-              borderColor: `rgba(${theme.primaryRgb}, 0.1)`,
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: animationDurations.delay + 0.8, duration: animationDurations.base * 0.5, ease: easing }}
-          >
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <span
-                className="text-lg italic"
-                style={{
-                  fontFamily: fonts.display,
-                  background: 'linear-gradient(135deg, #F5E6A3, #D4AF37, #8B7330)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                L
-              </span>
-              <span className="text-[9px] uppercase tracking-widest text-[rgba(212,175,55,0.5)]">
+          {/* Footer */}
+          <motion.div className="mt-8 pt-5 border-t text-center relative z-10"
+            style={{ borderColor: `rgba(${theme.primaryRgb}, 0.08)` }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 0.5 }}>
+            <div className="flex items-center justify-center gap-2 mb-1.5">
+              <span className="text-lg italic" style={{
+                fontFamily: fonts.display,
+                background: 'linear-gradient(135deg, #F5E6A3, #D4AF37, #8B7330)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              }}>L</span>
+              <span className="text-[9px] uppercase tracking-widest" style={{ color: `rgba(${theme.primaryRgb}, 0.4)` }}>
                 Powered by The Lobbi
               </span>
             </div>
-            <p className="text-[10px]" style={{ color: colors.textMuted }}>
-              Demo mode: Any password will work
-            </p>
+            <p className="text-[10px]" style={{ color: colors.textMuted }}>Demo mode: Any password will work</p>
           </motion.div>
         </div>
       </motion.div>
