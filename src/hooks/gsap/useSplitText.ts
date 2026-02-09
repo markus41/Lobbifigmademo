@@ -1,4 +1,5 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
+import { gsap, SplitText } from '../../lib/gsap-config';
 
 type SplitType = 'chars' | 'words' | 'lines';
 
