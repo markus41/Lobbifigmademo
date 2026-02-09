@@ -36,8 +36,8 @@ The development server will start at `http://localhost:5173/Lobbifigmademo/`
 
 - `src/app` - Main application components and routing
 - `src/components` - Reusable UI components
-- `src/theme` - Theme system and customization
-- `src/styles` - Global styles and Tailwind configuration
+- `src/theme` - Chakra UI v3 theme system with Panda CSS
+- `src/styles` - Global styles and fonts
 
 ## Demo Organizations
 
@@ -53,11 +53,15 @@ This project is configured to deploy to GitHub Pages automatically via GitHub Ac
 
 ## Technology Stack
 
-- React 18.3
-- TypeScript
-- Vite 6.3
-- Tailwind CSS 4.1
-- Motion (Framer Motion)
-- Radix UI Components
-- Material-UI Icons
+- **React 18.3** - UI framework
+- **TypeScript 5.5** - Type safety
+- **esbuild** - Fast, minimal bundler (replaced Vite)
+- **Chakra UI v3** - Primary UI component library with Panda CSS
+- **Emotion** - CSS-in-JS for Chakra UI
+- **Motion** - Component animations
+- **GSAP** - Complex animations and timelines
+- **Lucide React** - Icon library
+- **Recharts** - Data visualization and charts
+- **React Hook Form** - Form management
+- **Sonner** - Toast notifications
   

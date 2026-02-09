@@ -297,7 +297,7 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
       {/* Refined Description - GSAP SplitText word-by-word */}
       <p
         ref={descriptionRef}
-        className="text-[15px] text-center max-w-[520px] mb-14 leading-[1.8]"
+        className="text-[16px] text-center max-w-[580px] mb-8 leading-[1.9] px-4"
         style={{
           color: colors.textSecondary,
           fontFamily: fonts.body,
@@ -307,6 +307,42 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
         Refined member management for associations and nonprofits who understand
         that excellence lies in the details.
       </p>
+
+      {/* Feature highlights - subtle enhancement */}
+      <motion.div
+        className="flex flex-wrap items-center justify-center gap-8 mb-14 px-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: animationDurations.base * 0.8, delay: animationDurations.delay + 1.5 }}
+      >
+        {['Premium Experience', 'White-Label Ready', 'Trusted by Leaders'].map((feature, i) => (
+          <motion.div
+            key={feature}
+            className="flex items-center gap-2"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ 
+              duration: 0.4, 
+              delay: animationDurations.delay + 1.5 + (i * 0.1),
+              ease: easing 
+            }}
+          >
+            <div 
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ background: colors.primary }}
+            />
+            <span
+              className="text-[11px] uppercase tracking-[0.2em] font-medium"
+              style={{
+                color: colors.textMuted,
+                fontFamily: fonts.body,
+              }}
+            >
+              {feature}
+            </span>
+          </motion.div>
+        ))}
+      </motion.div>
 
       {/* Minimal Elegant Button - GSAP entrance + Framer gestures */}
       <motion.button
@@ -320,6 +356,7 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
         }}
         whileHover={motionVariants.hover}
         whileTap={motionVariants.tap}
+        aria-label="Enter your member portal"
       >
         {/* Border frame with animated glow */}
         <div
@@ -373,10 +410,39 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
             animate={{ x: [0, 4, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <ArrowRight className="w-4 h-4" strokeWidth={2} />
+            <ArrowRight className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
           </motion.div>
         </span>
       </motion.button>
+
+      {/* Secondary action - Demo/Learn more */}
+      <motion.div
+        className="mt-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: animationDurations.base, delay: animationDurations.delay + 1.8 }}
+      >
+        <button
+          onClick={() => {
+            // Scroll to demo section or show modal (for now, just a visual enhancement)
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+          }}
+          className="text-[11px] uppercase tracking-[0.25em] font-medium transition-all duration-300 hover:tracking-[0.3em]"
+          style={{
+            color: colors.textMuted,
+            fontFamily: fonts.body,
+          }}
+          aria-label="Learn more about The Lobbi"
+        >
+          Learn More
+          <span 
+            className="inline-block ml-2 transition-transform duration-300 hover:translate-x-1"
+            aria-hidden="true"
+          >
+            →
+          </span>
+        </button>
+      </motion.div>
 
       {/* Subtle Footer - Theme-aware */}
       <motion.div
