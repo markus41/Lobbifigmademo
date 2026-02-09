@@ -119,15 +119,8 @@ Lobbifigmademo/
     │   │   │   ├── SettingsPage.tsx
     │   │   │   └── WizardsPage.tsx
     │   │   │
-    │   │   ├── ui/            # shadcn/ui-style Radix primitives
-    │   │   │   ├── button.tsx
-    │   │   │   ├── card.tsx
-    │   │   │   ├── dialog.tsx
-    │   │   │   ├── dropdown-menu.tsx
-    │   │   │   ├── input.tsx
-    │   │   │   ├── select.tsx
-    │   │   │   ├── table.tsx
-    │   │   │   ├── tabs.tsx
+    │   │   ├── ui/            # [REMOVED] Previously shadcn/ui components
+    │   │   │   # Now using Chakra UI v3 components exclusively
     │   │   │   ├── sheet.tsx
     │   │   │   ├── sidebar.tsx
     │   │   │   └── ... (60+ components)
@@ -496,18 +489,17 @@ Used via `@chakra-ui/react`:
 - `Avatar`
 - `Spinner`, `Skeleton`
 
-### shadcn/ui-style Radix Primitives
+### Chakra UI v3 Components
 
-Located in `src/app/components/ui/`:
+**Primary UI Framework** (as of Feb 2025 refactoring)
 
-60+ components including:
-- `accordion`, `alert`, `alert-dialog`
-- `avatar`, `badge`, `breadcrumb`
-- `button`, `calendar`, `card`
-- `carousel`, `chart`, `checkbox`
-- `collapsible`, `command`, `context-menu`
-- `dialog`, `drawer`, `dropdown-menu`
-- `form`, `hover-card`, `input`
+All UI components are built using Chakra UI v3 primitives with custom recipes:
+- Component recipes in `src/theme/recipes/` (button, checkbox, switch, etc.)
+- Slot recipes in `src/theme/slot-recipes/` (card, dialog, form, table, etc.)
+- Semantic tokens for org-specific theming
+- Deep nesting format for multi-tenant support
+
+**Note**: Previously used shadcn/ui (Radix-based) components were removed in favor of Chakra-only architecture.
 - `label`, `menubar`, `navigation-menu`
 - `pagination`, `popover`, `progress`
 - `radio-group`, `resizable`, `scroll-area`
@@ -535,35 +527,24 @@ cd the-lobbi
 ### Step 2: Install Dependencies
 
 ```bash
-# Core UI
+# Core UI - Chakra UI v3 only
 npm install @chakra-ui/react @emotion/react
 
-# Radix primitives (for shadcn-style components)
-npm install @radix-ui/react-accordion @radix-ui/react-alert-dialog \
-  @radix-ui/react-avatar @radix-ui/react-checkbox @radix-ui/react-collapsible \
-  @radix-ui/react-context-menu @radix-ui/react-dialog @radix-ui/react-dropdown-menu \
-  @radix-ui/react-hover-card @radix-ui/react-label @radix-ui/react-menubar \
-  @radix-ui/react-navigation-menu @radix-ui/react-popover @radix-ui/react-progress \
-  @radix-ui/react-radio-group @radix-ui/react-scroll-area @radix-ui/react-select \
-  @radix-ui/react-separator @radix-ui/react-slider @radix-ui/react-slot \
-  @radix-ui/react-switch @radix-ui/react-tabs @radix-ui/react-toast \
-  @radix-ui/react-toggle @radix-ui/react-toggle-group @radix-ui/react-tooltip
-
 # Animation
-npm install framer-motion gsap
+npm install motion gsap
 
-# Styling
-npm install tailwindcss @tailwindcss/vite tw-animate-css
-npm install class-variance-authority clsx tailwind-merge
+# Styling utilities
+npm install tailwindcss @tailwindcss/vite
+npm install clsx tailwind-merge  # For cn() utility
 
 # Utilities
 npm install lucide-react recharts date-fns
-npm install react-hook-form @hookform/resolvers zod
-npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
-
-# Optional
-npm install embla-carousel-react react-day-picker input-otp sonner vaul
+npm install react-hook-form
+npm install react-dnd react-dnd-html5-backend
+npm install sonner  # Toast notifications
 ```
+
+**Note**: As of Feb 2025, Radix UI dependencies and shadcn/ui components have been removed in favor of Chakra UI v3 exclusively.
 
 ### Step 3: Configure Vite
 
@@ -586,19 +567,23 @@ export default defineConfig({
 })
 ```
 
-### Step 4: Set Up Theme System
+### Step 4: Set Up Chakra UI v3 Theme System
 
-1. Create `src/theme/ThemeProvider.v3.tsx` with Chakra provider + org context
-2. Create `src/app/data/themes.ts` with organization definitions
-3. Create `src/styles/theme.css` with CSS custom properties
-4. Create hooks: `useOrgColors`, `useOrgGradients`, `useOrgMotion`
+1. Create `src/theme/system.ts` with `createSystem(defineConfig(...))`
+2. Define semantic tokens in `src/theme/tokens/semantic.ts`
+3. Create recipes in `src/theme/recipes/` and `src/theme/slot-recipes/`
+4. Create `src/theme/ThemeProvider.v3.tsx` with Chakra provider + org context
+5. Create hooks: `useOrgColors`, `useOrgGradients`, `useOrgMotion`
+
+See `CHAKRA_V3_REFACTOR_SUMMARY.md` for complete theme architecture.
 
 ### Step 5: Build Component Library
 
-1. Copy shadcn/ui components to `src/app/components/ui/`
-2. Create layout components: `Sidebar`, `TopNav`, `Dashboard`
-3. Create page components: `RegistryPage`, `EventsPavilionPage`, etc.
-4. Create animation components: `GeometricOctagon`, `ParticlesCanvas`
+1. Use Chakra UI v3 primitives (`Box`, `Flex`, `Stack`, `Button`, etc.)
+2. Create custom components with Chakra recipes
+3. Create layout components: `Sidebar`, `TopNav`, `Dashboard`
+4. Create page components: `RegistryPage`, `EventsPavilionPage`, etc.
+5. Create animation components: `GeometricOctagon`, `ParticlesCanvas`
 
 ### Step 6: Implement Stage Navigation
 

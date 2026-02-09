@@ -56,8 +56,10 @@ This project is configured to deploy to GitHub Pages automatically via GitHub Ac
 - React 18.3
 - TypeScript
 - Vite 6.3
-- Tailwind CSS 4.1
-- Motion (Framer Motion)
-- Radix UI Components
-- Material-UI Icons
+- **Chakra UI v3** - Primary UI component library
+- Tailwind CSS 4.1 - Layout utilities
+- Motion (Framer Motion) - Animations
+- GSAP - Complex animations
+- Lucide React - Icons
+- Recharts - Data visualization
   
