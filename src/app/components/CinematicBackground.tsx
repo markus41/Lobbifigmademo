@@ -14,7 +14,7 @@ export function CinematicBackground({ primaryRgb = '212,175,55', stage = 'logo' 
   return (
     <>
       {/* Base Light Background */}
-      <div className="fixed inset-0 bg-[#FAF6E9] z-0" />
+      <div className="fixed inset-0 bg-gradient-to-b from-[#FCF8EF] via-[#F7F1E3] to-[#EFE6D4] z-0" />
 
       {/* Animated Radial Gradients */}
       <motion.div
@@ -47,6 +47,18 @@ export function CinematicBackground({ primaryRgb = '212,175,55', stage = 'logo' 
           }}
         />
       </motion.div>
+
+      {/* Slow aurora sweep for cinematic depth */}
+      <motion.div
+        className="fixed inset-0 z-0 pointer-events-none"
+        style={{
+          background: `linear-gradient(120deg, rgba(${primaryRgb}, ${0.09 * boost}) 0%, rgba(${primaryRgb}, 0) 45%, rgba(${primaryRgb}, ${0.07 * boost}) 70%, rgba(${primaryRgb}, 0) 100%)`,
+          backgroundSize: '200% 200%',
+          mixBlendMode: 'multiply',
+        }}
+        animate={{ backgroundPosition: ['0% 45%', '100% 55%', '0% 45%'] }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+      />
 
       {/* Warm center glow for depth */}
       <motion.div

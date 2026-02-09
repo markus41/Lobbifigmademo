@@ -13,9 +13,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-md font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
     
     const variants = {
-      primary: 'bg-gold-primary text-white hover:bg-gold-dark hover:shadow-[0_0_20px_-5px_rgba(212,175,55,0.4)] active:scale-[0.98]',
-      secondary: 'bg-white border border-gray-200 text-gray-800 hover:bg-gray-50 active:scale-[0.98]',
-      ghost: 'text-gray-600 hover:bg-gray-100 active:scale-[0.98]'
+      primary: 'bg-gold-primary text-white shadow-[0_14px_30px_-18px_rgba(0,0,0,0.45)] hover:bg-gold-dark hover:shadow-[0_22px_40px_-22px_rgba(0,0,0,0.55)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]',
+      secondary: 'bg-white/85 border border-gray-200 text-gray-800 shadow-[0_8px_18px_-14px_rgba(0,0,0,0.2)] hover:bg-white hover:-translate-y-0.5 active:scale-[0.98]',
+      ghost: 'text-gray-600 hover:bg-gray-100/80 active:scale-[0.98]'
     };
     
     const sizes = {

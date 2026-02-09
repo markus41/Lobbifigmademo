@@ -476,6 +476,10 @@ html.dyslexic [class*="card"] {
   border: 2px solid var(--dyslexic-border) !important;
 }
 
+html.dyslexic [data-slot="card"] {
+  background-image: none !important;
+}
+
 /* Improved focus indicators */
 html.dyslexic *:focus-visible {
   outline: 3px solid var(--dyslexic-accent) !important;
@@ -786,6 +790,10 @@ html.dark.dyslexic [class*="Card"],
 html.dark.dyslexic [class*="card"] {
   background-color: var(--dyslexic-bg-surface) !important;
   border: 2px solid var(--dyslexic-border) !important;
+}
+
+html.dark.dyslexic [data-slot="card"] {
+  background-image: none !important;
 }
 
 /* Large, visible scrollbars */
