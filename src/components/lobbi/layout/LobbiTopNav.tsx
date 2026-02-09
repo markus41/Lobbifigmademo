@@ -78,7 +78,7 @@ export function LobbiTopNav({
   notificationCount = 0,
   userName = 'Guest',
   userRole = 'Member',
-  userInitials = 'G',
+  userInitials: _userInitials = 'G',
   userAvatarUrl,
   showSearch = true,
   searchPlaceholder = 'Search members, events...',

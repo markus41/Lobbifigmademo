@@ -18,7 +18,7 @@ import {
   useMemo,
 } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Check, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LobbiButton } from '../core/LobbiButton';
 

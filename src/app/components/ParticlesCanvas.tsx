@@ -102,8 +102,7 @@ export function ParticlesCanvas({ color = '212,175,55', intensity = 1 }: Particl
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: 1 }}
+      className="fixed inset-0 pointer-events-none z-[1]"
     />
   );
 }

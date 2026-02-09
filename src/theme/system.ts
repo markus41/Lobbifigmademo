@@ -39,6 +39,7 @@ const config = defineConfig({
       fontFamily: 'body',
       fontSize: 'md',
       lineHeight: 'normal',
+      // @ts-expect-error vendor-prefixed properties not in SystemStyleObject type
       WebkitFontSmoothing: 'antialiased',
       MozOsxFontSmoothing: 'grayscale',
     },

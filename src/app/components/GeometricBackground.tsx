@@ -5,7 +5,7 @@ interface GeometricBackgroundProps {
   primaryRgb?: string;
 }
 
-export function GeometricBackground({ stage, primaryRgb = '212,175,55' }: GeometricBackgroundProps) {
+export function GeometricBackground({ stage, primaryRgb: _primaryRgb = '212,175,55' }: GeometricBackgroundProps) {
   const shouldFade = stage === 'landing' || stage === 'email';
   const shouldHide = stage === 'orgLogin' || stage === 'welcome' || stage === 'dashboardEntry' || stage === 'dashboard';
 
@@ -15,11 +15,8 @@ export function GeometricBackground({ stage, primaryRgb = '212,175,55' }: Geomet
   // Slow rotations by 40%, use exponential easing, add continuous micro-motion
   return (
     <motion.div
-      className="absolute inset-0 flex items-center justify-center pointer-events-none"
-      style={{ 
-        paddingTop: '15vh',
-        paddingBottom: '15vh',
-      }}
+      className="absolute inset-0 flex items-center justify-center pointer-events-none pt-[15vh] pb-[15vh]"
+      style={{}}
       initial={{ opacity: 1 }}
       animate={{ opacity: shouldFade ? 0.12 : 1 }}
       // Elite: Quintic easing instead of cubic

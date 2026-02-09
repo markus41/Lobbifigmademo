@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import { motion } from 'motion/react';
-import { 
+import {
   Home, Users, Calendar, Wallet, Mail, GraduationCap,
-  Building2, MessageSquare, Globe, BarChart3, Shield, 
-  FileText, Settings, Zap, Bell, ChevronLeft, Menu, X
+  Building2, MessageSquare, Globe, BarChart3, Shield,
+  FileText, Settings, Zap, Bell, ChevronLeft, Menu
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Organization, Account } from '@/app/data/themes';
@@ -75,7 +74,7 @@ export function Sidebar({ currentPage, onNavigate, isCollapsed, onToggleCollapse
       animate={{ width: isCollapsed ? 72 : 240 }}
     >
       {/* Logo Section */}
-      <div className="h-16 flex items-center justify-between px-4 border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+      <div className="h-16 flex items-center justify-between px-4 border-b border-[rgba(255,255,255,0.06)]">
         {!isCollapsed && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -100,8 +99,8 @@ export function Sidebar({ currentPage, onNavigate, isCollapsed, onToggleCollapse
             </div>
             <div className="flex flex-col min-w-0">
               <div 
-                className="text-[13px] font-semibold text-[#F0ECE2] truncate"
-                style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', letterSpacing: '0.02em' }}
+                className="text-[13px] font-semibold text-[#F0ECE2] truncate tracking-[0.02em]"
+                style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
               >
                 {organization.short}
               </div>
@@ -134,7 +133,7 @@ export function Sidebar({ currentPage, onNavigate, isCollapsed, onToggleCollapse
 
       {/* Powered by The Lobbi */}
       {!isCollapsed && (
-        <div className="px-4 py-3 border-b" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+        <div className="px-4 py-3 border-b border-[rgba(255,255,255,0.06)]">
           <div className="flex items-center gap-1.5">
             <span 
               className="text-[11px] italic"
@@ -216,7 +215,7 @@ export function Sidebar({ currentPage, onNavigate, isCollapsed, onToggleCollapse
       </div>
 
       {/* User Section */}
-      <div className="p-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+      <div className="p-4 border-t border-[rgba(255,255,255,0.06)]">
         {!isCollapsed && (
           <div className="flex items-center gap-3 mb-3">
             <div 
@@ -257,7 +256,8 @@ interface TopNavProps {
   account: Account;
 }
 
-export function TopNav({ onMenuClick, onBellhopClick, organization, account }: TopNavProps) {
+export function TopNav({ onMenuClick, onBellhopClick, organization: _organization, account: _account }: TopNavProps) {
+  void _organization; void _account;
   return (
     <motion.header
       className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-6"

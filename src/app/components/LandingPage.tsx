@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
+import { gsap, SplitText } from '../../lib/gsap-config';
 import type { Organization } from '../data/themes';
 import { ORGANIZATIONS } from '../data/themes';
 import {
@@ -61,7 +62,7 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
   }, [theme.animationStyle]);
 
   // Easing based on animation style
-  const easing = useMemo(() => {
+  const easing = useMemo((): [number, number, number, number] => {
     switch (theme.animationStyle) {
       case 'elegant':
         return [0.22, 1, 0.36, 1];
@@ -78,10 +79,85 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
     }
   }, [theme.animationStyle]);
 
+  // GSAP: SplitText for tagline (word-by-word fade-in)
+  const taglineRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (!taglineRef.current) return;
+    const split = new SplitText(taglineRef.current, { type: 'words' });
+    const tween = gsap.fromTo(
+      split.words,
+      { opacity: 0, y: 8 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        delay: animationDurations.delay + 1.1,
+        ease: 'power2.out',
+      },
+    );
+    return () => {
+      tween.kill();
+      split.revert();
+    };
+  }, [animationDurations.delay]);
+
+  // GSAP: SplitText for description (word-by-word)
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (!descriptionRef.current) return;
+    const split = new SplitText(descriptionRef.current, { type: 'words' });
+    const tween = gsap.fromTo(
+      split.words,
+      { opacity: 0, y: 6 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.4,
+        stagger: 0.04,
+        delay: animationDurations.delay + 1.3,
+        ease: 'power2.out',
+      },
+    );
+    return () => {
+      tween.kill();
+      split.revert();
+    };
+  }, [animationDurations.delay]);
+
+  // GSAP: CTA button scale + glow entrance after text
+  const ctaRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!ctaRef.current) return;
+    const tl = gsap.timeline({ delay: animationDurations.delay + 1.6 });
+    tl.fromTo(
+      ctaRef.current,
+      { scale: 0.9, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.7)' },
+    );
+    tl.to(
+      ctaRef.current,
+      {
+        boxShadow: `0 0 20px rgba(${colors.primaryRgb}, 0.3), 0 0 40px rgba(${colors.primaryRgb}, 0.1)`,
+        duration: 0.8,
+        ease: 'power2.inOut',
+      },
+      '-=0.2',
+    );
+    tl.to(ctaRef.current, {
+      boxShadow: `0 0 0px rgba(${colors.primaryRgb}, 0)`,
+      duration: 1.2,
+      ease: 'power2.out',
+    });
+    return () => { tl.kill(); };
+  }, [animationDurations.delay, colors.primaryRgb]);
+
   return (
     <motion.div
-      className="fixed inset-0 z-10 flex flex-col items-center justify-center px-4"
-      style={{ background: colors.bgPrimary }}
+      className="fixed inset-0 z-10 flex flex-col items-center justify-center px-4 overflow-hidden"
+      style={{ 
+        background: `linear-gradient(180deg, ${colors.bgPrimary} 0%, rgba(${colors.primaryRgb}, 0.03) 100%)`,
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -147,13 +223,12 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
         transition={{ duration: animationDurations.base, delay: animationDurations.delay * 0.6 }}
       >
         <h1
-          className={`flex ${animationClasses}`}
+          className={`flex text-6xl tracking-[0.45em] ${animationClasses}`}
           style={{
             fontFamily: fonts.display,
-            fontSize: '48px',
             fontWeight: fonts.weightHeading,
             color: colors.textPrimary,
-            letterSpacing: '0.45em',
+            textShadow: `0 4px 24px rgba(${colors.primaryRgb}, 0.15)`,
           }}
         >
           {'THE LOBBI'.split('').map((char, i) => (
@@ -165,6 +240,9 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
                 duration: animationDurations.base * 0.7,
                 delay: animationDurations.delay + (i * animationDurations.letter),
                 ease: easing,
+              }}
+              style={{
+                display: 'inline-block',
               }}
             >
               {char === ' ' ? '\u00A0\u00A0' : char}
@@ -203,54 +281,62 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
         />
       </motion.div>
 
-      {/* Tagline - Theme-aware */}
-      <motion.p
-        className="text-[12px] uppercase mb-16"
+      {/* Tagline - GSAP SplitText word-by-word */}
+      <p
+        ref={taglineRef}
+        className="text-[12px] uppercase mb-16 tracking-[0.35em] font-semibold"
         style={{
           color: colors.primaryDark,
-          letterSpacing: '0.35em',
           fontFamily: fonts.body,
-          fontWeight: 600,
+          visibility: 'visible',
         }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: animationDurations.base, delay: animationDurations.delay + 1.1 }}
       >
         Technology as Devoted as You Are
-      </motion.p>
+      </p>
 
-      {/* Refined Description - Theme-aware */}
-      <motion.p
+      {/* Refined Description - GSAP SplitText word-by-word */}
+      <p
+        ref={descriptionRef}
         className="text-[15px] text-center max-w-[520px] mb-14 leading-[1.8]"
         style={{
           color: colors.textSecondary,
           fontFamily: fonts.body,
           fontWeight: parseInt(fonts.weightBody),
         }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: animationDurations.base, delay: animationDurations.delay + 1.2 }}
       >
         Refined member management for associations and nonprofits who understand
         that excellence lies in the details.
-      </motion.p>
+      </p>
 
-      {/* Minimal Elegant Button - Theme-aware with animation style */}
+      {/* Minimal Elegant Button - GSAP entrance + Framer gestures */}
       <motion.button
+        ref={ctaRef}
         onClick={onLoginClick}
-        className={`relative px-12 py-4 group ${buttonClasses}`}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: animationDurations.base, delay: animationDurations.delay + 1.4, ease: easing }}
+        className={`relative px-14 py-5 group ${buttonClasses}`}
+        style={{ 
+          opacity: 0,
+          background: `linear-gradient(135deg, rgba(${colors.primaryRgb}, 0.08) 0%, rgba(${colors.primaryRgb}, 0.02) 100%)`,
+          backdropFilter: 'blur(8px)',
+        }}
         whileHover={motionVariants.hover}
         whileTap={motionVariants.tap}
       >
-        {/* Border frame */}
+        {/* Border frame with animated glow */}
         <div
-          className="absolute inset-0 border transition-colors"
+          className="absolute inset-0 border-2 transition-all duration-300"
           style={{
-            borderColor: `rgba(${colors.primaryRgb},0.6)`,
-            borderRadius: theme.buttonStyle === 'pill' ? '9999px' : theme.buttonStyle === 'sharp' ? '0' : '4px',
+            borderColor: `rgba(${colors.primaryRgb}, 0.5)`,
+            borderRadius: theme.buttonStyle === 'pill' ? '9999px' : theme.buttonStyle === 'sharp' ? '0' : '8px',
+            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.1)`,
+          }}
+        />
+        
+        {/* Hover glow effect */}
+        <motion.div
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{
+            background: `radial-gradient(ellipse at center, rgba(${colors.primaryRgb}, 0.15) 0%, transparent 70%)`,
+            borderRadius: theme.buttonStyle === 'pill' ? '9999px' : theme.buttonStyle === 'sharp' ? '0' : '8px',
           }}
         />
 
@@ -274,16 +360,21 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
 
         {/* Text */}
         <span
-          className="relative z-10 flex items-center gap-3 text-[12px] uppercase transition-colors"
+          className="relative z-10 flex items-center gap-4 text-[13px] uppercase transition-colors tracking-[0.35em] font-bold"
           style={{
             color: colors.primary,
-            letterSpacing: '0.3em',
             fontFamily: fonts.body,
-            fontWeight: 600,
+            textShadow: `0 1px 2px rgba(${colors.primaryRgb}, 0.2)`,
           }}
         >
           Enter Your Lobbi
-          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
+          <motion.div
+            className="opacity-60 group-hover:opacity-100 transition-opacity"
+            animate={{ x: [0, 4, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <ArrowRight className="w-4 h-4" strokeWidth={2} />
+          </motion.div>
         </span>
       </motion.button>
 
@@ -302,12 +393,10 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
         </div>
 
         <p
-          className="text-[10px] uppercase"
+          className="text-[10px] uppercase tracking-[0.2em] font-medium"
           style={{
             color: colors.textMuted,
-            letterSpacing: '0.2em',
             fontFamily: fonts.body,
-            fontWeight: 500,
           }}
         >
           Trusted by Discerning Organizations

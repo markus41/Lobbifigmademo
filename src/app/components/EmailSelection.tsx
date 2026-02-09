@@ -102,7 +102,6 @@ function AccountDropdown({
           boxShadow: isOpen
             ? `0 0 0 3px rgba(${primaryRgb}, 0.1), 0 10px 40px -10px rgba(0,0,0,0.1)`
             : 'none',
-          fontFamily: 'DM Sans, sans-serif',
         }}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -126,10 +125,7 @@ function AccountDropdown({
 
             {/* Account Details */}
             <div className="flex-1 min-w-0">
-              <div
-                className="text-[14px] font-medium text-[#2C2A25] truncate"
-                style={{ fontFamily: 'DM Sans, sans-serif' }}
-              >
+              <div className="text-[14px] font-medium text-[#2C2A25] truncate">
                 {selectedAccount.first} {selectedAccount.last}
               </div>
               <div
@@ -171,11 +167,9 @@ function AccountDropdown({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute left-0 right-0 mt-2 bg-white rounded-xl border overflow-hidden z-[100]"
+            className="absolute left-0 right-0 mt-2 bg-white rounded-xl border overflow-hidden z-[100] max-h-[min(50vh,400px)] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.02)]"
             style={{
               borderColor: `rgba(${primaryRgb}, 0.15)`,
-              boxShadow: '0 20px 50px -12px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.02)',
-              maxHeight: 'min(50vh, 400px)',
             }}
           >
             {/* Header */}
@@ -244,10 +238,7 @@ function AccountDropdown({
                     {/* Account Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span
-                          className="text-[14px] font-medium text-[#2C2A25]"
-                          style={{ fontFamily: 'DM Sans, sans-serif' }}
-                        >
+                        <span className="text-[14px] font-medium text-[#2C2A25]">
                           {account.first} {account.last}
                         </span>
                         {account.role && (
@@ -262,10 +253,7 @@ function AccountDropdown({
                           </span>
                         )}
                       </div>
-                      <div
-                        className="text-[12px] mt-0.5 truncate"
-                        style={{ color: '#8A8578' }}
-                      >
+                      <div className="text-[12px] mt-0.5 truncate text-[#8A8578]">
                         {account.email}
                       </div>
                       <div
@@ -302,10 +290,7 @@ function AccountDropdown({
                 background: `rgba(${primaryRgb}, 0.02)`,
               }}
             >
-              <p
-                className="text-[11px] text-center"
-                style={{ color: '#B8B0A0' }}
-              >
+              <p className="text-[11px] text-center text-[#B8B0A0]">
                 Use <kbd className="px-1.5 py-0.5 rounded bg-gray-100 font-mono text-[10px]">↑</kbd>{' '}
                 <kbd className="px-1.5 py-0.5 rounded bg-gray-100 font-mono text-[10px]">↓</kbd> to navigate,{' '}
                 <kbd className="px-1.5 py-0.5 rounded bg-gray-100 font-mono text-[10px]">Enter</kbd> to select
@@ -350,6 +335,53 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
       transition={{ duration: 0.6 }}
       className="fixed inset-0 z-20 flex items-center justify-center p-4"
     >
+      {/* Ambient background glow */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[800px] h-[600px] rounded-full blur-[120px]"
+          style={{
+            background: `radial-gradient(circle, rgba(${previewOrg?.theme.primaryRgb || '212,175,55'}, 0.15), transparent 70%)`,
+          }}
+          animate={{
+            scale: [1, 1.08, 1],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        />
+      </div>
+
+      {/* Floating particles */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: `${2 + Math.random() * 2.5}px`,
+              height: `${2 + Math.random() * 2.5}px`,
+              background: previewOrg?.theme.primary || '#D4AF37',
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30 - Math.random() * 50],
+              opacity: [0, 0.5, 0],
+              scale: [0, 1, 0],
+            }}
+            transition={{
+              duration: 4 + Math.random() * 3,
+              repeat: Infinity,
+              delay: Math.random() * 4,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          />
+        ))}
+      </div>
+
       <motion.div
         className="w-full max-w-[480px] px-4 relative"
         initial={{ y: 30, scale: 0.95 }}
@@ -357,6 +389,12 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
         exit={{ y: -20, scale: 0.95 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
+        {/* Ornamental corners */}
+        <div className="absolute -top-3 -left-1 w-10 h-10 border-l border-t rounded-tl-xl" style={{ borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.25)` : 'rgba(212,175,55,0.2)' }} />
+        <div className="absolute -top-3 -right-1 w-10 h-10 border-r border-t rounded-tr-xl" style={{ borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.25)` : 'rgba(212,175,55,0.2)' }} />
+        <div className="absolute -bottom-3 -left-1 w-10 h-10 border-l border-b rounded-bl-xl" style={{ borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.25)` : 'rgba(212,175,55,0.2)' }} />
+        <div className="absolute -bottom-3 -right-1 w-10 h-10 border-r border-b rounded-br-xl" style={{ borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.25)` : 'rgba(212,175,55,0.2)' }} />
+
         {/* Main Card - Light mode frosted glass */}
         <div
           className="relative p-6 sm:p-8 md:p-10 lg:p-12 rounded-2xl border"
@@ -365,8 +403,9 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             backdropFilter: 'blur(24px)',
             WebkitBackdropFilter: 'blur(24px)',
             borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.2)` : 'rgba(212,175,55,0.15)',
-            boxShadow: '0 25px 60px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.9)',
-            transition: 'border-color 0.5s ease, box-shadow 0.5s ease',
+            boxShadow: previewOrg
+              ? `0 30px 70px rgba(0,0,0,0.12), 0 0 0 1px rgba(${previewOrg.theme.primaryRgb}, 0.08), inset 0 2px 0 rgba(255,255,255,0.9), inset 0 0 120px rgba(${previewOrg.theme.primaryRgb}, 0.03)`
+              : '0 30px 70px rgba(0,0,0,0.12), 0 0 0 1px rgba(212,175,55,0.08), inset 0 2px 0 rgba(255,255,255,0.9), inset 0 0 120px rgba(212,175,55,0.03)',
           }}
         >
           {/* Elite: Recognition shimmer overlay (no spinners) */}
@@ -445,11 +484,9 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             </motion.div>
 
             <motion.h2
-              className="text-[28px] md:text-[32px] mb-3"
+              className="text-[28px] md:text-[32px] mb-3 font-normal text-[#2C2A25]"
               style={{
                 fontFamily: 'Cormorant Garamond, Georgia, serif',
-                fontWeight: 400,
-                color: '#2C2A25',
               }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -459,8 +496,7 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             </motion.h2>
 
             <motion.p
-              className="text-sm"
-              style={{ color: '#8A8578' }}
+              className="text-sm text-[#8A8578]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
@@ -480,12 +516,11 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             {/* Account Dropdown */}
             <div>
               <label
-                className="block text-[11px] uppercase tracking-[0.2em] mb-3 font-medium"
+                className="block text-[11px] uppercase tracking-[0.2em] mb-3 font-medium transition-colors duration-500"
                 style={{
                   color: previewOrg
                     ? `rgba(${previewOrg.theme.primaryRgb}, 0.7)`
                     : 'rgba(212,175,55,0.7)',
-                  transition: 'color 0.5s ease',
                 }}
               >
                 Choose Account
@@ -531,10 +566,7 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
                 <div className="flex-1 min-w-0">
                   <div
                     className="text-[13px] uppercase tracking-[0.1em] mb-1 font-semibold"
-                    style={{
-                      color: previewOrg.theme.primary,
-                      fontFamily: 'DM Sans, sans-serif',
-                    }}
+                    style={{ color: previewOrg.theme.primary }}
                   >
                     {previewOrg.name}
                   </div>
@@ -563,12 +595,11 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             <motion.button
               type="submit"
               disabled={!selectedEmail}
-              className="relative w-full py-4 rounded-xl text-[13px] font-semibold tracking-[0.1em] uppercase overflow-hidden transition-all disabled:opacity-40 disabled:cursor-not-allowed group"
+              className="relative w-full py-4 rounded-xl text-[13px] font-semibold tracking-[0.1em] uppercase overflow-hidden transition-all disabled:opacity-40 disabled:cursor-not-allowed group text-white"
               style={{
                 background: previewOrg
                   ? previewOrg.theme.gradientBtn
                   : 'linear-gradient(135deg, #8B7330, #D4AF37, #F4D03F)',
-                color: '#fff',
                 boxShadow: selectedEmail ? `0 10px 30px -10px rgba(${previewOrg?.theme.primaryRgb || '212,175,55'}, 0.5)` : 'none',
               }}
               whileHover={selectedEmail ? { y: -2, boxShadow: `0 15px 40px -10px rgba(${previewOrg?.theme.primaryRgb || '212,175,55'}, 0.6)` } : {}}
@@ -602,7 +633,7 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
           >
-            <p className="text-xs" style={{ color: '#B8B0A0' }}>
+            <p className="text-xs text-[#B8B0A0]">
               Demo mode: Each account is connected to a unique organization theme
             </p>
           </motion.div>

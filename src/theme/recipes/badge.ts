@@ -8,19 +8,19 @@ import { defineRecipe } from '@chakra-ui/react'
 
 export const badgeRecipe = defineRecipe({
   className: 'lobbi-badge',
-  description: 'Badge component for labels and status indicators',
 
   base: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '1',
-    fontFamily: 'body',
+    fontFamily: 'ui',
     fontWeight: 'medium',
     fontSize: 'xs',
     letterSpacing: 'caps',
     textTransform: 'uppercase',
     whiteSpace: 'nowrap',
     verticalAlign: 'middle',
+    transition: 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
   },
 
   variants: {
@@ -33,6 +33,7 @@ export const badgeRecipe = defineRecipe({
       solid: {
         bg: 'brand.primary',
         color: 'text.onBrand',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06)',
       },
 
       outline: {
@@ -47,6 +48,14 @@ export const badgeRecipe = defineRecipe({
         color: 'text.secondary',
         borderWidth: '1px',
         borderColor: 'border.subtle',
+      },
+
+      glass: {
+        bg: 'glass.bg',
+        color: 'text.primary',
+        borderWidth: '1px',
+        borderColor: 'glass.border',
+        backdropFilter: 'blur(24px)',
       },
     },
 

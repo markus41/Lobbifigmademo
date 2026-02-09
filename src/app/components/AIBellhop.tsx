@@ -147,16 +147,14 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
                   </div>
                   <div>
                     <h2
-                      className="text-xl"
+                      className="text-xl font-semibold text-[#1A1815]"
                       style={{
                         fontFamily: 'Cormorant Garamond, Georgia, serif',
-                        fontWeight: 600,
-                        color: '#1A1815',
                       }}
                     >
                       AI Concierge
                     </h2>
-                    <p className="text-xs" style={{ color: '#8A8578' }}>
+                    <p className="text-xs text-[#8A8578]">
                       Always at your service
                     </p>
                   </div>
@@ -177,10 +175,8 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
                   <button
                     key={suggestion.label}
                     onClick={() => handleSend(suggestion.query)}
-                    className="flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full border transition-all hover:border-[#D4AF37] hover:bg-[#D4AF37]/5"
+                    className="flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full border transition-all hover:border-[#D4AF37] hover:bg-[#D4AF37]/5 border-[#E5E0D5] text-[#5A5247]"
                     style={{
-                      borderColor: '#E5E0D5',
-                      color: '#5A5247',
                       fontFamily: 'DM Sans, sans-serif',
                     }}
                   >
@@ -263,8 +259,7 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me anything..."
-                  className="flex-1 px-4 py-3 bg-[#F7F4EE] border border-transparent rounded-xl text-sm outline-none transition-all"
-                  style={{ color: '#2C2A25' }}
+                  className="flex-1 px-4 py-3 bg-[#F7F4EE] border border-transparent rounded-xl text-sm outline-none transition-all text-[#2C2A25]"
                   onFocus={(e) => {
                     e.target.style.borderColor = 'rgba(212,175,55,0.3)';
                     e.target.style.background = '#fff';
@@ -285,7 +280,7 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
                   <SendIcon className="w-5 h-5" />
                 </button>
               </div>
-              <p className="text-[10px] text-center mt-2" style={{ color: '#B8B0A0' }}>
+              <p className="text-[10px] text-center mt-2 text-[#B8B0A0]">
                 AI responses are simulated for demo purposes
               </p>
             </div>

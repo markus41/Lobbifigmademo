@@ -8,7 +8,6 @@ import { defineRecipe } from '@chakra-ui/react'
 
 export const checkboxRecipe = defineRecipe({
   className: 'lobbi-checkbox',
-  description: 'Checkbox component with luxury styling',
 
   base: {
     display: 'inline-flex',
@@ -20,10 +19,14 @@ export const checkboxRecipe = defineRecipe({
     borderWidth: '2px',
     borderColor: 'border.default',
     bg: 'bg.surface',
-    transition: 'all 0.15s ease',
+    transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
 
     _hover: {
-      borderColor: 'brand.primary/60',
+      borderColor: 'border.accent',
+    },
+
+    _active: {
+      transform: 'scale(0.95)',
     },
 
     _focusVisible: {
@@ -35,6 +38,10 @@ export const checkboxRecipe = defineRecipe({
       bg: 'brand.primary',
       borderColor: 'brand.primary',
       color: 'white',
+
+      _hover: {
+        opacity: 0.9,
+      },
     },
 
     _indeterminate: {
@@ -91,6 +98,7 @@ export const checkboxRecipe = defineRecipe({
         _checked: {
           bg: 'brand.primary',
           borderColor: 'brand.primary',
+          boxShadow: '0 0 0 2px rgba(212, 175, 55, 0.2)',
         },
       },
       outline: {

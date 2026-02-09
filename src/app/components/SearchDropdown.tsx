@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SearchResult {
   id: string;
@@ -14,6 +14,7 @@ interface SearchDropdownProps {
   query: string;
   primaryColor: string;
   primaryRgb: string;
+  onNavigate?: (page: string) => void;
 }
 
 const recentSearches = [
@@ -24,60 +25,100 @@ const recentSearches = [
 ];
 
 const quickLinks = [
-  { label: 'Members', icon: 'users', path: '/members' },
-  { label: 'Events', icon: 'calendar', path: '/events' },
-  { label: 'The Vault', icon: 'folder', path: '/vault' },
-  { label: 'Settings', icon: 'settings', path: '/settings' },
+  { label: 'Members', icon: 'users', navigateTo: 'registry' },
+  { label: 'Events', icon: 'calendar', navigateTo: 'events' },
+  { label: 'The Vault', icon: 'folder', navigateTo: 'vault' },
+  { label: 'Settings', icon: 'settings', navigateTo: 'settings' },
 ];
 
-const sampleResults: SearchResult[] = [
+interface SearchResultWithNav extends SearchResult {
+  navigateTo?: string;
+}
+
+const sampleResults: SearchResultWithNav[] = [
   {
     id: '1',
     type: 'member',
     title: 'Sarah Chen',
     subtitle: 'Premium Member • Joined Jan 2024',
+    navigateTo: 'registry',
   },
   {
     id: '2',
     type: 'member',
     title: 'James Wilson',
     subtitle: 'Professional Member • Joined Feb 2025',
+    navigateTo: 'registry',
   },
   {
     id: '3',
     type: 'event',
     title: 'Annual Gala 2025',
     subtitle: 'February 15, 2025 • 124 registered',
+    navigateTo: 'events',
   },
   {
     id: '4',
     type: 'event',
     title: 'Board Meeting',
     subtitle: 'February 20, 2025 • Private',
+    navigateTo: 'events',
   },
   {
     id: '5',
     type: 'document',
     title: 'Q1 Financial Report',
     subtitle: 'Uploaded 3 hours ago • PDF',
+    navigateTo: 'vault',
   },
   {
     id: '6',
     type: 'document',
     title: 'Member Handbook 2025',
     subtitle: 'Updated Jan 15, 2025 • PDF',
+    navigateTo: 'vault',
   },
   {
     id: '7',
     type: 'page',
     title: 'Dashboard',
     subtitle: 'Overview and analytics',
+    navigateTo: 'dashboard',
   },
   {
     id: '8',
     type: 'page',
     title: 'Registry',
     subtitle: 'Member directory',
+    navigateTo: 'registry',
+  },
+  {
+    id: '9',
+    type: 'page',
+    title: 'Business Center',
+    subtitle: 'Financial management',
+    navigateTo: 'business',
+  },
+  {
+    id: '10',
+    type: 'page',
+    title: 'Events Pavilion',
+    subtitle: 'Event management',
+    navigateTo: 'events',
+  },
+  {
+    id: '11',
+    type: 'page',
+    title: 'The Vault',
+    subtitle: 'Document storage',
+    navigateTo: 'vault',
+  },
+  {
+    id: '12',
+    type: 'page',
+    title: 'Settings',
+    subtitle: 'Account preferences',
+    navigateTo: 'settings',
   },
 ];
 
@@ -140,8 +181,8 @@ const typeIcons: Record<string, React.ReactNode> = {
   ),
 };
 
-export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRgb }: SearchDropdownProps) {
-  const [filteredResults, setFilteredResults] = useState<SearchResult[]>([]);
+export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRgb, onNavigate }: SearchDropdownProps) {
+  const [filteredResults, setFilteredResults] = useState<SearchResultWithNav[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   useEffect(() => {
@@ -159,6 +200,13 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
     }
   }, [query]);
 
+  const handleResultClick = (result: SearchResultWithNav) => {
+    if (result.navigateTo && onNavigate) {
+      onNavigate(result.navigateTo);
+    }
+    onClose();
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -168,8 +216,7 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
       setSelectedIndex((prev) => Math.max(prev - 1, -1));
     } else if (e.key === 'Enter' && selectedIndex >= 0) {
       e.preventDefault();
-      // Handle selection
-      onClose();
+      handleResultClick(filteredResults[selectedIndex]);
     } else if (e.key === 'Escape') {
       onClose();
     }
@@ -202,7 +249,7 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
                         className={`w-full px-4 py-3 flex items-center gap-3 transition-colors ${
                           index === selectedIndex ? 'bg-gray-50' : 'hover:bg-gray-50'
                         }`}
-                        onClick={onClose}
+                        onClick={() => handleResultClick(result)}
                       >
                         <div
                           className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -214,10 +261,10 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
                           {typeIcons[result.type]}
                         </div>
                         <div className="flex-1 min-w-0 text-left">
-                          <p className="text-sm font-medium truncate" style={{ color: '#1A1815' }}>
+                          <p className="text-sm font-medium truncate text-[#1A1815]">
                             {result.title}
                           </p>
-                          <p className="text-xs truncate" style={{ color: '#8A8578' }}>
+                          <p className="text-xs truncate text-[#8A8578]">
                             {result.subtitle}
                           </p>
                         </div>
@@ -236,8 +283,7 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
                 ) : (
                   <div className="p-8 text-center">
                     <div
-                      className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center"
-                      style={{ background: '#F7F4EE' }}
+                      className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center bg-[#F7F4EE]"
                     >
                       <svg
                         className="w-6 h-6"
@@ -250,10 +296,10 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                       </svg>
                     </div>
-                    <p className="text-sm font-medium" style={{ color: '#3D3832' }}>
+                    <p className="text-sm font-medium text-[#3D3832]">
                       No results found
                     </p>
-                    <p className="text-xs mt-1" style={{ color: '#8A8578' }}>
+                    <p className="text-xs mt-1 text-[#8A8578]">
                       Try searching for something else
                     </p>
                   </div>
@@ -264,18 +310,14 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
               <>
                 {/* Recent Searches */}
                 <div className="p-4 border-b border-gray-100">
-                  <p className="text-xs font-medium uppercase tracking-wide mb-3" style={{ color: '#8A8578' }}>
+                  <p className="text-xs font-medium uppercase tracking-wide mb-3 text-[#8A8578]">
                     Recent Searches
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {recentSearches.map((search) => (
                       <button
                         key={search}
-                        className="px-3 py-1.5 text-xs rounded-full border transition-colors hover:bg-gray-50"
-                        style={{
-                          borderColor: '#E5E0D5',
-                          color: '#5A5247',
-                        }}
+                        className="px-3 py-1.5 text-xs rounded-full border transition-colors hover:bg-gray-50 border-[#E5E0D5] text-[#5A5247]"
                       >
                         {search}
                       </button>
@@ -285,7 +327,7 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
 
                 {/* Quick Links */}
                 <div className="p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide mb-3" style={{ color: '#8A8578' }}>
+                  <p className="text-xs font-medium uppercase tracking-wide mb-3 text-[#8A8578]">
                     Quick Links
                   </p>
                   <div className="grid grid-cols-2 gap-2">
@@ -293,6 +335,10 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
                       <button
                         key={link.label}
                         className="flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-50"
+                        onClick={() => {
+                          if (onNavigate) onNavigate(link.navigateTo);
+                          onClose();
+                        }}
                       >
                         <div
                           className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -303,7 +349,7 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
                         >
                           {typeIcons[link.icon]}
                         </div>
-                        <span className="text-sm font-medium" style={{ color: '#3D3832' }}>
+                        <span className="text-sm font-medium text-[#3D3832]">
                           {link.label}
                         </span>
                       </button>
@@ -313,7 +359,7 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
 
                 {/* Keyboard Hints */}
                 <div className="px-4 py-3 border-t border-gray-100 bg-[#FAFAF8] flex items-center justify-between">
-                  <div className="flex items-center gap-4 text-[10px]" style={{ color: '#B8B0A0' }}>
+                  <div className="flex items-center gap-4 text-[10px] text-[#B8B0A0]">
                     <span className="flex items-center gap-1">
                       <kbd className="px-1.5 py-0.5 bg-white border border-gray-200 rounded text-[10px]">↑↓</kbd>
                       Navigate
@@ -327,7 +373,7 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
                       Close
                     </span>
                   </div>
-                  <span className="text-[10px]" style={{ color: '#B8B0A0' }}>
+                  <span className="text-[10px] text-[#B8B0A0]">
                     Powered by AI
                   </span>
                 </div>

@@ -10,8 +10,8 @@
  * - Scheduling and automation
  */
 
-import { useState, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useCallback } from 'react';
+import { motion } from 'motion/react';
 import {
   BarChart3,
   LineChart,
@@ -25,17 +25,11 @@ import {
   FileText,
   Share2,
   Clock,
-  Layers,
-  ArrowUpDown,
   Plus,
   Trash2,
   GripVertical,
-  ChevronDown,
   Check,
   Eye,
-  Settings,
-  Sparkles,
-  RefreshCw,
   TrendingUp,
   Users,
   DollarSign,
@@ -68,7 +62,6 @@ import {
   type WizardStep,
 } from './LobbiWizard';
 import { LobbiButton } from '../core/LobbiButton';
-import { LobbiCard } from '../core/LobbiCard';
 import { LobbiInput } from '../core/LobbiInput';
 
 // =============================================================================
@@ -580,9 +573,7 @@ function MetricsStep({
         description="Define the measures you want to calculate"
       >
         <div className="space-y-3">
-          {config.metrics.map((metric, index) => {
-            const field = dataSource?.fields.find((f) => f.id === metric.fieldId);
-            return (
+          {config.metrics.map((metric, index) => (
               <motion.div
                 key={metric.id}
                 initial={{ opacity: 0, y: -10 }}
@@ -636,8 +627,7 @@ function MetricsStep({
                   <Trash2 className="w-4 h-4" />
                 </button>
               </motion.div>
-            );
-          })}
+          ))}
           <button
             onClick={addMetric}
             className={cn(
@@ -983,7 +973,7 @@ function ChartPreview({ chartType }: { chartType: ChartType }) {
             outerRadius={100}
             dataKey="value"
           >
-            {pieData.map((entry, index) => (
+            {pieData.map((_entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={CHART_COLORS[index % CHART_COLORS.length]}
@@ -1076,7 +1066,6 @@ function ChartPreview({ chartType }: { chartType: ChartType }) {
 
 function PreviewStep({
   config,
-  setConfig,
   onExport,
 }: {
   config: ReportConfig;

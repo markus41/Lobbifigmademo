@@ -9,8 +9,9 @@
  * - Immersive animations throughout
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, type CSSProperties } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'motion/react';
+import { toast } from 'sonner';
 import type { Organization, Account } from '../data/themes';
 
 interface MemberPortalProps {
@@ -55,15 +56,15 @@ interface Notification {
 // PREMIUM ICONS - Enhanced with gradients
 // ============================================================================
 
-const HomeIcon = ({ className, filled }: { className?: string; filled?: boolean }) => (
-  <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
+const HomeIcon = ({ className, filled, style }: { className?: string; filled?: boolean; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
     <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
     {!filled && <polyline points="9 22 9 12 15 12 15 22" />}
   </svg>
 );
 
-const CalendarIcon = ({ className, filled }: { className?: string; filled?: boolean }) => (
-  <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
+const CalendarIcon = ({ className, filled, style }: { className?: string; filled?: boolean; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
     <rect x="3" y="4" width="18" height="18" rx="2" />
     <line x1="16" y1="2" x2="16" y2="6" />
     <line x1="8" y1="2" x2="8" y2="6" />
@@ -71,29 +72,29 @@ const CalendarIcon = ({ className, filled }: { className?: string; filled?: bool
   </svg>
 );
 
-const CreditCardIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+const CreditCardIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <rect x="1" y="4" width="22" height="16" rx="2" />
     <line x1="1" y1="10" x2="23" y2="10" />
   </svg>
 );
 
-const BellIcon = ({ className, filled }: { className?: string; filled?: boolean }) => (
-  <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
+const BellIcon = ({ className, filled, style }: { className?: string; filled?: boolean; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
     <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
     <path d="M13.73 21a2 2 0 01-3.46 0" />
   </svg>
 );
 
-const UserIcon = ({ className, filled }: { className?: string; filled?: boolean }) => (
-  <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
+const UserIcon = ({ className, filled, style }: { className?: string; filled?: boolean; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth={filled ? 0 : 1.5}>
     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
-const FileTextIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+const FileTextIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
     <polyline points="14 2 14 8 20 8" />
     <line x1="16" y1="13" x2="8" y2="13" />
@@ -144,14 +145,14 @@ const GiftIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const StarIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+const StarIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
   </svg>
 );
 
-const TrophyIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+const TrophyIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <path d="M6 9H4a2 2 0 01-2-2V4a2 2 0 012-2h2" />
     <path d="M18 9h2a2 2 0 002-2V4a2 2 0 00-2-2h-2" />
     <path d="M4 22h16" />
@@ -409,11 +410,7 @@ function BottomNav({ activeTab, onTabChange, primaryColor, primaryRgb }: BottomN
                   {/* Badge */}
                   {tab.badge && (
                     <motion.span
-                      className="absolute -top-1 -right-2 min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center text-white shadow-lg"
-                      style={{
-                        background: `linear-gradient(135deg, #EF4444 0%, #DC2626 100%)`,
-                        boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
-                      }}
+                      className="absolute -top-1 -right-2 min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center text-white shadow-lg bg-gradient-to-br from-red-500 to-red-600 shadow-[0_2px_8px_rgba(239,68,68,0.4)]"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: "spring", damping: 15, stiffness: 400 }}
@@ -764,7 +761,7 @@ function EventCard({ event, organization, index }: EventCardProps) {
               whileTap={{ scale: 0.95 }}
               onClick={(e) => {
                 e.stopPropagation();
-                alert(`🎟️ Registration confirmed!\n\nYou're registered for:\n"${event.title}"\n\n📅 ${event.date} at ${event.time}\n📍 ${event.location}\n\nA confirmation email will be sent shortly.`);
+                toast.success(`Registration confirmed! You're registered for "${event.title}" on ${event.date} at ${event.time}.`);
               }}
             >
               Register
@@ -810,8 +807,8 @@ function HomeTab({ organization, account, onQuickLinkClick, onViewAllEvents }: H
             Welcome back,
           </motion.p>
           <motion.h1
-            className="text-3xl font-light tracking-tight"
-            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1F2937' }}
+            className="text-3xl font-light tracking-tight text-gray-800"
+            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -1004,10 +1001,10 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
   const primaryRgb = organization.theme.primaryRgb;
 
   const menuItems = [
-    { id: 'personal', label: 'Personal Information', icon: UserIcon, description: 'Name, email, phone', action: () => alert('👤 Personal Information\n\nEdit your profile details, contact information, and preferences.') },
-    { id: 'membership', label: 'Membership Details', icon: CreditCardIcon, description: 'Plan, billing, renewal', action: () => alert('💳 Membership Details\n\nStatus: Premium Member\nRenewal Date: January 2026\nPayment Method: •••• 4242') },
-    { id: 'documents', label: 'My Documents', icon: FileTextIcon, description: 'Certificates, receipts', action: () => alert('📄 My Documents\n\n• Membership Certificate\n• Tax Receipt 2024\n• Event Confirmations\n• Meeting Minutes') },
-    { id: 'preferences', label: 'Preferences', icon: BellIcon, description: 'Notifications, privacy', action: () => alert('⚙️ Preferences\n\nManage your notification settings, privacy options, and communication preferences.') },
+    { id: 'personal', label: 'Personal Information', icon: UserIcon, description: 'Name, email, phone', action: () => toast.info('Edit your profile details, contact information, and preferences.') },
+    { id: 'membership', label: 'Membership Details', icon: CreditCardIcon, description: 'Plan, billing, renewal', action: () => toast.info('Status: Premium Member | Renewal: January 2026 | Payment: **** 4242') },
+    { id: 'documents', label: 'My Documents', icon: FileTextIcon, description: 'Certificates, receipts', action: () => toast.info('Membership Certificate, Tax Receipt 2024, Event Confirmations, Meeting Minutes') },
+    { id: 'preferences', label: 'Preferences', icon: BellIcon, description: 'Notifications, privacy', action: () => toast.info('Manage your notification settings, privacy options, and communication preferences.') },
   ];
 
   return (
@@ -1033,8 +1030,7 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
           </div>
           {/* Status indicator */}
           <div
-            className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-3 border-white flex items-center justify-center"
-            style={{ borderWidth: 3 }}
+            className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-[3px] border-white flex items-center justify-center"
           >
             <CheckCircleIcon className="w-3.5 h-3.5 text-white" />
           </div>
@@ -1042,8 +1038,8 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
 
         <div className="flex-1">
           <h1
-            className="text-2xl font-light tracking-tight"
-            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1F2937' }}
+            className="text-2xl font-light tracking-tight text-gray-800"
+            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
           >
             {account.name}
           </h1>
@@ -1063,7 +1059,7 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
           { label: 'Events', value: '12', icon: CalendarIcon },
           { label: 'Points', value: '2.4K', icon: StarIcon },
           { label: 'Years', value: '5', icon: TrophyIcon },
-        ].map((stat, index) => (
+        ].map((stat) => (
           <GlassCard key={stat.label} className="rounded-2xl p-4 text-center">
             <stat.icon className="w-5 h-5 mx-auto mb-2" style={{ color: primaryColor }} />
             <p className="text-xl font-bold text-gray-900">{stat.value}</p>
@@ -1137,9 +1133,7 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => {
-          if (confirm('Are you sure you want to sign out?')) {
-            alert('You have been signed out.\n\nReturning to login page...');
-          }
+          toast.success('You have been signed out. Returning to login page...');
         }}
       >
         Sign Out
@@ -1157,7 +1151,7 @@ interface EventsTabProps {
 }
 
 function EventsTab({ organization }: EventsTabProps) {
-  const primaryColor = organization.theme.primary;
+  void organization.theme.primary;
 
   return (
     <div className="space-y-6">
@@ -1180,7 +1174,7 @@ function EventsTab({ organization }: EventsTabProps) {
           }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => alert('📅 Calendar View\n\nSwitching to calendar view to see all events by date.')}
+          onClick={() => toast.info('Switching to calendar view to see all events by date.')}
         >
           <CalendarIcon className="w-4 h-4" />
           Calendar
@@ -1203,7 +1197,7 @@ function EventsTab({ organization }: EventsTabProps) {
             style={index === 0 ? { background: organization.theme.gradientBtn } : undefined}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => alert(`🔍 Filtering: ${filter}\n\nShowing ${filter.toLowerCase()} events.`)}
+            onClick={() => toast.info(`Filtering: showing ${filter.toLowerCase()} events.`)}
           >
             {filter}
           </motion.button>
@@ -1303,11 +1297,11 @@ export function MemberPortal({ organization, account, onSwitchToAdmin }: MemberP
   const handleQuickLinkClick = (id: string) => {
     if (id === 'events') setActiveTab('events');
     else if (id === 'profile') setActiveTab('profile');
-    else if (id === 'payments') alert('💳 Payments\n\nView payment history, upcoming dues, and manage payment methods.');
-    else if (id === 'documents') alert('📄 Documents\n\n2 new documents available:\n• Annual Report 2024\n• Membership Certificate');
-    else if (id === 'messages') alert('💬 Messages\n\n5 unread messages from:\n• Membership Committee\n• Events Team\n• President\'s Office');
-    else if (id === 'rewards') alert('🎁 Rewards\n\nYou have 2,450 points!\n\nRedeem for exclusive member perks and experiences.');
-    else if (id === 'membership') alert('🪪 Digital Card\n\nYour digital membership card with QR code for event check-in.');
+    else if (id === 'payments') toast.info('View payment history, upcoming dues, and manage payment methods.');
+    else if (id === 'documents') toast.info('2 new documents available: Annual Report 2024, Membership Certificate');
+    else if (id === 'messages') toast.info('5 unread messages from: Membership Committee, Events Team, President\'s Office');
+    else if (id === 'rewards') toast.info('You have 2,450 points! Redeem for exclusive member perks and experiences.');
+    else if (id === 'membership') toast.info('Your digital membership card with QR code for event check-in.');
   };
 
   return (

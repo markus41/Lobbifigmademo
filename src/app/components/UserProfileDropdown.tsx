@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'sonner';
 import type { Account, Organization } from '../data/themes';
 
 interface UserProfileDropdownProps {
@@ -17,6 +18,7 @@ const menuItems = [
         <circle cx="12" cy="7" r="4" />
       </svg>
     ),
+    action: () => toast.info('Profile page coming soon!'),
   },
   {
     label: 'Account Settings',
@@ -26,6 +28,7 @@ const menuItems = [
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
       </svg>
     ),
+    action: () => toast.info('Account settings coming soon!'),
   },
   {
     label: 'Billing & Plans',
@@ -35,6 +38,7 @@ const menuItems = [
         <line x1="1" y1="10" x2="23" y2="10" />
       </svg>
     ),
+    action: () => toast.info('Billing & plans coming soon!'),
   },
   {
     label: 'Help & Support',
@@ -45,6 +49,7 @@ const menuItems = [
         <line x1="12" y1="17" x2="12.01" y2="17" />
       </svg>
     ),
+    action: () => toast.info('Help & support coming soon!'),
   },
 ];
 
@@ -80,18 +85,15 @@ export function UserProfileDropdown({ isOpen, onClose, account, organization }: 
                 </div>
                 <div className="flex-1 min-w-0">
                   <p
-                    className="font-semibold truncate"
+                    className="font-semibold truncate text-[#1A1815] text-base"
                     style={{
                       fontFamily: 'Cormorant Garamond, Georgia, serif',
-                      color: '#1A1815',
-                      fontSize: '16px',
                     }}
                   >
                     {account?.first} {account?.last}
                   </p>
                   <p
-                    className="text-xs truncate"
-                    style={{ color: '#8A8578' }}
+                    className="text-xs truncate text-[#8A8578]"
                   >
                     {account?.email}
                   </p>
@@ -117,10 +119,10 @@ export function UserProfileDropdown({ isOpen, onClose, account, organization }: 
                   {organization.logoLetter}
                 </div>
                 <div>
-                  <p className="text-sm font-medium" style={{ color: '#1A1815' }}>
+                  <p className="text-sm font-medium text-[#1A1815]">
                     {organization.name}
                   </p>
-                  <p className="text-[10px]" style={{ color: '#8A8578' }}>
+                  <p className="text-[10px] text-[#8A8578]">
                     Current Organization
                   </p>
                 </div>
@@ -133,9 +135,13 @@ export function UserProfileDropdown({ isOpen, onClose, account, organization }: 
                 <button
                   key={item.label}
                   className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    item.action();
+                    onClose();
+                  }}
                 >
-                  <span style={{ color: '#8A8578' }}>{item.icon}</span>
-                  <span className="text-sm" style={{ color: '#3D3832' }}>
+                  <span className="text-[#8A8578]">{item.icon}</span>
+                  <span className="text-sm text-[#3D3832]">
                     {item.label}
                   </span>
                 </button>
@@ -145,8 +151,11 @@ export function UserProfileDropdown({ isOpen, onClose, account, organization }: 
             {/* Sign Out */}
             <div className="p-3 border-t border-gray-100">
               <button
-                className="w-full py-2.5 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-                style={{ color: '#8A8578' }}
+                className="w-full py-2.5 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-[#8A8578]"
+                onClick={() => {
+                  toast.success('You have been signed out.');
+                  onClose();
+                }}
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

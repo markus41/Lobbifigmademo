@@ -133,35 +133,35 @@ export const semanticTokens = defineSemanticTokens({
     'bg.canvas': {
       value: {
         base: '{colors.cream.50}',
-        _dark: '#0A0A0C',
+        _dark: '{colors.night.900}',
       },
     },
 
     'bg.surface': {
       value: {
         base: '{colors.white}',
-        _dark: '#141416',
+        _dark: '{colors.night.600}',
       },
     },
 
     'bg.subtle': {
       value: {
         base: '{colors.cream.100}',
-        _dark: '#1A1A1C',
+        _dark: '{colors.night.400}',
       },
     },
 
     'bg.muted': {
       value: {
         base: '{colors.cream.200}',
-        _dark: '#202024',
+        _dark: '{colors.night.200}',
       },
     },
 
     'bg.emphasized': {
       value: {
         base: '{colors.cream.300}',
-        _dark: '#2A2A2E',
+        _dark: '{colors.night.50}',
       },
     },
 
@@ -244,21 +244,21 @@ export const semanticTokens = defineSemanticTokens({
     'border.default': {
       value: {
         base: '{colors.cream.300}',
-        _dark: '#2A2A2E',
+        _dark: '{colors.night.50}',
       },
     },
 
     'border.subtle': {
       value: {
         base: '{colors.cream.200}',
-        _dark: '#1E1E22',
+        _dark: '{colors.night.300}',
       },
     },
 
     'border.muted': {
       value: {
         base: '{colors.cream.100}',
-        _dark: '#161618',
+        _dark: '{colors.night.500}',
       },
     },
 
@@ -393,14 +393,14 @@ export const semanticTokens = defineSemanticTokens({
     'input.bg': {
       value: {
         base: '{colors.white}',
-        _dark: '#1A1A1C',
+        _dark: '{colors.night.400}',
       },
     },
 
     'input.border': {
       value: {
         base: '{colors.cream.300}',
-        _dark: '#2A2A2E',
+        _dark: '{colors.night.50}',
       },
     },
 
@@ -422,14 +422,14 @@ export const semanticTokens = defineSemanticTokens({
     'card.bg': {
       value: {
         base: '{colors.white}',
-        _dark: '#141416',
+        _dark: '{colors.night.600}',
       },
     },
 
     'card.border': {
       value: {
         base: '{colors.cream.300}',
-        _dark: '#2A2A2E',
+        _dark: '{colors.night.50}',
       },
     },
 
@@ -481,6 +481,65 @@ export const semanticTokens = defineSemanticTokens({
       value: {
         base: '{colors.brand.primary}/40',
         _dark: '{colors.brand.primary}/40',
+      },
+    },
+
+    // Tooltip (replacing hardcoded dark.500/cream.100 references)
+    'tooltip.bg': {
+      value: {
+        base: '{colors.dark.500}',
+        _dark: '{colors.night.400}',
+      },
+    },
+
+    'tooltip.text': {
+      value: {
+        base: '{colors.cream.100}',
+        _dark: '{colors.cream.200}',
+      },
+    },
+
+    'tooltip.border': {
+      value: {
+        base: '{colors.dark.400}',
+        _dark: '{colors.night.200}',
+      },
+    },
+
+    // Glass morphism
+    'glass.bg': {
+      value: {
+        base: 'rgba(255, 255, 255, 0.7)',
+        _dark: 'rgba(20, 20, 22, 0.75)',
+      },
+    },
+
+    'glass.border': {
+      value: {
+        base: 'rgba(255, 255, 255, 0.4)',
+        _dark: 'rgba(255, 255, 255, 0.08)',
+      },
+    },
+
+    // Interactive overlay
+    'interactive.hover': {
+      value: {
+        base: '{colors.brand.primary}/8',
+        _dark: '{colors.brand.primary}/12',
+      },
+    },
+
+    'interactive.active': {
+      value: {
+        base: '{colors.brand.primary}/15',
+        _dark: '{colors.brand.primary}/20',
+      },
+    },
+
+    'interactive.focus': {
+      value: {
+        base: '{colors.brand.primary}/25',
+        _dark: '{colors.brand.light}/30',
       },
     },
   },

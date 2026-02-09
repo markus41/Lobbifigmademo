@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { gsap, SplitText } from '../../lib/gsap-config';
 import type { Account, Organization } from '../data/themes';
 
 interface DashboardEntryAnimationProps {
@@ -8,89 +9,136 @@ interface DashboardEntryAnimationProps {
   account: Account;
 }
 
-export function DashboardEntryAnimation({ 
-  onCompleted, 
-  organization, 
-  account 
+export function DashboardEntryAnimation({
+  onCompleted,
+  organization,
+  account
 }: DashboardEntryAnimationProps) {
-  
+  const containerRef = useRef<HTMLDivElement>(null);
+  const welcomeRef = useRef<HTMLParagraphElement>(null);
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const orgRef = useRef<HTMLParagraphElement>(null);
+  const octagonRef = useRef<SVGSVGElement>(null);
+
   useEffect(() => {
-    // Elite: Longer dissolve transition for premium feel
-    const timer = setTimeout(onCompleted, 3200);
-    return () => clearTimeout(timer);
+    if (!containerRef.current || !welcomeRef.current || !nameRef.current || !orgRef.current) return;
+
+    const nameSplit = new SplitText(nameRef.current, { type: 'chars' });
+
+    const tl = gsap.timeline({
+      onComplete: onCompleted,
+    });
+
+    // Phase 1: Welcome text fades in with letter spacing reveal
+    tl.fromTo(
+      welcomeRef.current,
+      { opacity: 0, letterSpacing: '0.6em' },
+      { opacity: 1, letterSpacing: '0.3em', duration: 0.8, ease: 'power2.out' },
+    );
+
+    // Phase 2: Name characters wave in
+    tl.fromTo(
+      nameSplit.chars,
+      { opacity: 0, y: 20, rotateY: -40 },
+      {
+        opacity: 1,
+        y: 0,
+        rotateY: 0,
+        duration: 0.5,
+        stagger: 0.04,
+        ease: 'back.out(1.4)',
+      },
+      '-=0.3',
+    );
+
+    // Phase 3: Org name fades in
+    tl.fromTo(
+      orgRef.current,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+      '-=0.2',
+    );
+
+    // Phase 4: Octagon path dissolves
+    if (octagonRef.current) {
+      const path = octagonRef.current.querySelector('path');
+      if (path) {
+        tl.fromTo(
+          path,
+          { strokeDashoffset: 0, opacity: 0.2 },
+          { strokeDashoffset: 600, opacity: 0, duration: 1.5, ease: 'power2.inOut' },
+          '-=0.8',
+        );
+      }
+    }
+
+    // Phase 5: Everything scales up and fades out
+    tl.to(
+      containerRef.current,
+      {
+        opacity: 0,
+        scale: 1.05,
+        duration: 1,
+        ease: 'power2.inOut',
+      },
+      '+=0.3',
+    );
+
+    return () => {
+      tl.kill();
+      nameSplit.revert();
+    };
   }, [onCompleted]);
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-      initial={{ opacity: 1, scale: 1 }}
-      animate={{ opacity: 0, scale: 1.05 }}
-      transition={{
-        duration: 3,
-        ease: [0.22, 1, 0.36, 1],
-        delay: 0.4,
-      }}
-      style={{
-        background: '#FAF6E9',
-      }}
+      ref={containerRef}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#FAF6E9]"
     >
-      {/* Welcome Message */}
-      <motion.div
-        className="text-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <motion.p
-          className="text-sm uppercase tracking-[0.3em] mb-4"
-          style={{ 
+      {/* Welcome Message - GSAP timeline sequence */}
+      <div className="text-center" style={{ perspective: '600px' }}>
+        <p
+          ref={welcomeRef}
+          className="text-sm uppercase tracking-[0.3em] mb-4 font-medium opacity-0"
+          style={{
             color: `rgba(${organization.theme.primaryRgb}, 0.6)`,
             fontFamily: 'DM Sans, sans-serif',
-            fontWeight: 500,
           }}
         >
           Welcome Back
-        </motion.p>
-        
-        <motion.h1
-          className="text-5xl mb-3"
+        </p>
+
+        <h1
+          ref={nameRef}
+          className="text-5xl mb-3 font-normal text-[#2C2A25]"
           style={{
             fontFamily: 'Cormorant Garamond, Georgia, serif',
-            fontWeight: 400,
-            color: '#2C2A25',
           }}
         >
           {account.first} {account.last}
-        </motion.h1>
-        
-        <motion.p
+        </h1>
+
+        <p
+          ref={orgRef}
           className="text-sm"
-          style={{ color: '#8A8578' }}
+          style={{ color: '#8A8578', opacity: 0 }}
         >
           {organization.name}
-        </motion.p>
-      </motion.div>
+        </p>
+      </div>
 
-      {/* Dissolving octagon geometry hint */}
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        initial={{ opacity: 0.15, scale: 1 }}
-        animate={{ opacity: 0, scale: 1.1 }}
-        transition={{ duration: 2.5, delay: 0.5 }}
-      >
-        <svg width="400" height="400" viewBox="0 0 400 400">
-          <motion.path
+      {/* Dissolving octagon geometry hint - GSAP controlled */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <svg ref={octagonRef} width="400" height="400" viewBox="0 0 400 400" style={{ opacity: 0.15 }}>
+          <path
             d="M200,60 L270,110 L270,190 L200,240 L130,190 L130,110 Z"
             fill="none"
             stroke={organization.theme.primary}
             strokeWidth="0.5"
-            initial={{ pathLength: 1, opacity: 0.2 }}
-            animate={{ pathLength: 0, opacity: 0 }}
-            transition={{ duration: 2.2, delay: 0.6 }}
+            strokeDasharray="600"
           />
         </svg>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }

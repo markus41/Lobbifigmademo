@@ -1,8 +1,10 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'sonner';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { Organization, Account } from '@/app/data/themes';
-import { GeometricOctagon } from './GeometricOctagon';
+// GeometricOctagon available for org-themed login backgrounds
+// import { GeometricOctagon } from './GeometricOctagon';
 import {
   getOrgColors,
   getOrgFonts,
@@ -53,8 +55,8 @@ const AppleIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const MagicWandIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const MagicWandIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M15 4V2" />
     <path d="M15 16v-2" />
     <path d="M8 9h2" />
@@ -78,7 +80,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
   const theme = organization.theme;
   const colors = useMemo(() => getOrgColors(organization), [organization]);
   const fonts = useMemo(() => getOrgFonts(organization), [organization]);
-  const motionVariants = useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
+  void useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
   const cardEntranceVariants = useMemo(() => getCardEntranceVariants(theme.animationStyle), [theme.animationStyle]);
 
   // CSS utility classes based on theme
@@ -106,7 +108,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
   }, [theme.animationStyle]);
 
   // Theme-derived easing
-  const easing = useMemo(() => {
+  const easing = useMemo((): [number, number, number, number] => {
     switch (theme.animationStyle) {
       case 'elegant':
         return [0.22, 1, 0.36, 1];
@@ -172,7 +174,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
     }, 1200);
   };
 
-  const handleSocialLogin = (provider: string) => {
+  const handleSocialLogin = (_provider: string) => {
     setIsLoggingIn(true);
     // Simulate social login
     setTimeout(() => {
@@ -282,19 +284,20 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
         {/* Card with theme-aware styling */}
         <div
-          className={`relative px-6 sm:px-8 md:px-10 py-8 sm:py-10 rounded-2xl overflow-hidden ${cardClasses}`}
+          className={`relative px-6 sm:px-8 md:px-10 py-8 sm:py-10 rounded-3xl overflow-hidden ${cardClasses}`}
           style={{
             background: cardBg,
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-            borderColor: `rgba(${theme.primaryRgb}, 0.2)`,
+            backdropFilter: 'blur(32px)',
+            WebkitBackdropFilter: 'blur(32px)',
+            borderColor: `rgba(${theme.primaryRgb}, 0.25)`,
             borderStyle: theme.borderStyle,
             borderWidth: borderWidth,
             boxShadow: `
-              0 30px 70px rgba(0,0,0,0.12),
-              0 0 0 1px rgba(${theme.primaryRgb}, 0.08),
-              inset 0 2px 0 rgba(255,255,255,0.9),
-              inset 0 0 120px rgba(${theme.primaryRgb}, 0.03)
+              0 40px 80px -20px rgba(0,0,0,0.15),
+              0 20px 40px -10px rgba(0,0,0,0.08),
+              0 0 0 1px rgba(${theme.primaryRgb}, 0.1),
+              inset 0 2px 0 rgba(255,255,255,0.95),
+              inset 0 0 100px rgba(${theme.primaryRgb}, 0.04)
             `,
           }}
         >
@@ -327,14 +330,16 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
           <div className="text-center mb-6 relative z-10">
             {/* Org Logo with theme-aware shape */}
             <motion.div
-              className={`inline-flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-xl relative overflow-hidden ${animationClasses}`}
+              layoutId="org-logo"
+              className={`inline-flex items-center justify-center w-18 h-18 mx-auto mb-5 rounded-2xl relative overflow-hidden ${animationClasses}`}
               style={{
                 background: theme.gradientBtn,
-                borderRadius: logoShape === 'diamond' ? '12px' :
-                             logoShape === 'hexagon' ? '8px' :
-                             logoShape === 'crown' ? '16px 16px 4px 4px' :
-                             logoShape === 'octagon' ? '6px' : '50%',
+                borderRadius: logoShape === 'diamond' ? '16px' :
+                             logoShape === 'hexagon' ? '10px' :
+                             logoShape === 'crown' ? '20px 20px 6px 6px' :
+                             logoShape === 'octagon' ? '8px' : '50%',
                 transform: logoShape === 'diamond' ? 'rotate(45deg)' : 'none',
+                boxShadow: `0 8px 24px -4px rgba(${theme.primaryRgb}, 0.4), inset 0 2px 12px rgba(0,0,0,0.2)`,
               }}
               initial={{ scale: 0, rotate: logoShape === 'diamond' ? -15 : 0 }}
               animate={{
@@ -349,42 +354,35 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
               }}
             >
               <div
-                className="absolute inset-0"
-                style={{
-                  boxShadow: 'inset 0 2px 12px rgba(0,0,0,0.25)',
-                  borderRadius: 'inherit',
-                }}
+                className="absolute inset-0 rounded-[inherit] shadow-[inset_0_2px_16px_rgba(0,0,0,0.3)]"
               />
 
               <span
-                className="relative z-10 text-2xl"
+                className="relative z-10 text-2xl font-bold"
                 style={{
                   fontFamily: fonts.display,
-                  fontWeight: 400,
+                  fontWeight: 500,
                   fontStyle: 'italic',
                   color: theme.textInverse,
                   transform: logoShape === 'diamond' ? 'rotate(-45deg)' : 'none',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.25)',
                 }}
               >
                 {organization.logoLetter}
               </span>
 
               <div
-                className="absolute inset-0"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 60%)',
-                  borderRadius: 'inherit',
-                }}
+                className="absolute inset-0 rounded-[inherit] bg-gradient-to-br from-white/35 to-transparent"
               />
             </motion.div>
 
             <motion.h2
-              className="text-2xl mb-2"
+              className="text-2xl mb-2 tracking-tight"
               style={{
                 fontFamily: fonts.display,
                 fontWeight: fonts.weightHeading,
                 color: colors.textPrimary,
-                letterSpacing: '-0.01em',
+                textShadow: '0 1px 2px rgba(0,0,0,0.04)',
               }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -394,11 +392,10 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             </motion.h2>
 
             <motion.p
-              className="text-sm italic mb-4"
+              className="text-sm italic mb-4 opacity-85"
               style={{
                 fontFamily: fonts.display,
                 color: colors.primary,
-                opacity: 0.85,
               }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.85 }}
@@ -445,8 +442,8 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
           >
             {[
               { id: 'password', label: 'Password' },
-              { id: 'magic-link', label: 'Magic Link' },
               { id: 'social', label: 'SSO' },
+              { id: 'magic-link', label: 'Magic Link' },
             ].map((method) => (
               <button
                 key={method.id}
@@ -476,42 +473,34 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                 key="password-form"
                 onSubmit={handleSubmit}
                 className="space-y-4 relative z-10"
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.15 }}
               >
                 {/* Email (Read-only) */}
                 <div>
                   <label
-                    className="block text-xs uppercase tracking-widest mb-2 font-medium"
-                    style={{
-                      color: colors.primary,
-                      opacity: 0.7,
-                      letterSpacing: '0.15em',
-                    }}
+                    className="block text-xs uppercase tracking-[0.15em] mb-2 font-medium opacity-70"
+                    style={{ color: colors.primary }}
                   >
                     Email Address
                   </label>
                   <div className="relative group">
                     <Mail
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all"
-                      style={{
-                        color: colors.primary,
-                        opacity: 0.4,
-                      }}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all opacity-40"
+                      style={{ color: colors.primary }}
                     />
                     <input
                       type="email"
                       value={account.email}
                       readOnly
-                      className={`w-full pl-10 pr-4 py-3.5 border-2 text-sm outline-none cursor-not-allowed transition-all ${inputClasses}`}
+                      className={`w-full pl-10 pr-4 py-3.5 border-2 text-sm outline-none cursor-not-allowed transition-all shadow-[0_2px_4px_rgba(0,0,0,0.04)] ${inputClasses}`}
                       style={{
                         background: `rgba(${theme.primaryRgb}, 0.03)`,
                         borderColor: `rgba(${theme.primaryRgb}, 0.15)`,
                         color: colors.textPrimary,
                         fontFamily: fonts.body,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
                       }}
                     />
                   </div>
@@ -520,22 +509,15 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                 {/* Password */}
                 <div>
                   <label
-                    className="block text-xs uppercase tracking-widest mb-2 font-medium"
-                    style={{
-                      color: colors.primary,
-                      opacity: 0.7,
-                      letterSpacing: '0.15em',
-                    }}
+                    className="block text-xs uppercase tracking-[0.15em] mb-2 font-medium opacity-70"
+                    style={{ color: colors.primary }}
                   >
                     Password
                   </label>
                   <div className="relative group">
                     <Lock
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all"
-                      style={{
-                        color: colors.primary,
-                        opacity: 0.4,
-                      }}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-all opacity-40"
+                      style={{ color: colors.primary }}
                     />
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -543,12 +525,11 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
                       required
-                      className={`w-full pl-10 pr-12 py-3.5 bg-white border-2 text-sm transition-all outline-none placeholder:text-gray-300 focus:scale-[1.01] ${inputClasses}`}
+                      className={`w-full pl-10 pr-12 py-3.5 bg-white border-2 text-sm transition-all outline-none placeholder:text-gray-300 focus:scale-[1.01] shadow-[0_2px_4px_rgba(0,0,0,0.04)] ${inputClasses}`}
                       style={{
                         borderColor: `rgba(${theme.primaryRgb}, 0.2)`,
                         color: colors.textPrimary,
                         fontFamily: fonts.body,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
                       }}
                       onFocus={(e) => {
                         e.target.style.borderColor = `rgba(${theme.primaryRgb}, 0.5)`;
@@ -562,11 +543,8 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-100"
-                      style={{
-                        color: colors.primary,
-                        opacity: 0.5,
-                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-100 opacity-50"
+                      style={{ color: colors.primary }}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -597,16 +575,13 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     </div>
-                    <span style={{ color: colors.textMuted }}>Remember me</span>
+                    <span className="transition-colors" style={{ color: colors.textMuted }}>Remember me</span>
                   </label>
                   <button
                     type="button"
-                    onClick={() => alert(`🔑 Password Reset\n\nA password reset link will be sent to:\n${account.email}\n\nCheck your inbox shortly.`)}
-                    className="transition-opacity hover:opacity-100"
-                    style={{
-                      color: colors.primary,
-                      opacity: 0.7,
-                    }}
+                    onClick={() => toast.success(`A password reset link will be sent to ${account.email}. Check your inbox shortly.`)}
+                    className="transition-opacity hover:opacity-100 opacity-70"
+                    style={{ color: colors.primary }}
                   >
                     Forgot password?
                   </button>
@@ -616,10 +591,9 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                 <motion.button
                   type="submit"
                   disabled={isLoggingIn || !password}
-                  className={`relative w-full py-3.5 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed group mt-6 ${buttonClasses}`}
+                  className={`relative w-full py-3.5 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed group mt-6 text-white ${buttonClasses}`}
                   style={{
                     background: theme.gradientBtn,
-                    color: '#fff',
                     boxShadow: `0 6px 20px rgba(${theme.primaryRgb}, 0.25), 0 2px 4px rgba(0,0,0,0.06)`,
                   }}
                   whileHover={!isLoggingIn && password ? {
@@ -663,10 +637,10 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
               <motion.div
                 key="magic-link-form"
                 className="space-y-6 relative z-10"
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.15 }}
               >
                 {!magicLinkSent ? (
                   <form onSubmit={handleMagicLinkSubmit} className="space-y-6">
@@ -686,22 +660,15 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     {/* Email (Read-only) */}
                     <div>
                       <label
-                        className="block text-xs uppercase tracking-widest mb-3 font-medium"
-                        style={{
-                          color: colors.primary,
-                          opacity: 0.7,
-                          letterSpacing: '0.2em',
-                        }}
+                        className="block text-xs uppercase tracking-[0.2em] mb-3 font-medium opacity-70"
+                        style={{ color: colors.primary }}
                       >
                         Email Address
                       </label>
                       <div className="relative group">
                         <Mail
-                          className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] transition-all"
-                          style={{
-                            color: colors.primary,
-                            opacity: 0.4,
-                          }}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] transition-all opacity-40"
+                          style={{ color: colors.primary }}
                         />
                         <input
                           type="email"
@@ -722,10 +689,9 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     <motion.button
                       type="submit"
                       disabled={isLoggingIn}
-                      className={`relative w-full py-4 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed ${buttonClasses}`}
+                      className={`relative w-full py-4 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed text-white ${buttonClasses}`}
                       style={{
                         background: theme.gradientBtn,
-                        color: '#fff',
                         boxShadow: `0 4px 16px rgba(${theme.primaryRgb}, 0.25)`,
                       }}
                       whileHover={{ y: -3 }}
@@ -782,10 +748,9 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       type="button"
                       onClick={handleMagicLinkContinue}
                       disabled={isLoggingIn}
-                      className={`relative w-full py-4 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 ${buttonClasses}`}
+                      className={`relative w-full py-4 text-sm font-semibold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-50 text-white ${buttonClasses}`}
                       style={{
                         background: theme.gradientBtn,
-                        color: '#fff',
                         boxShadow: `0 4px 16px rgba(${theme.primaryRgb}, 0.25)`,
                       }}
                       whileHover={{ y: -3 }}
@@ -807,10 +772,10 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
               <motion.div
                 key="social-form"
                 className="space-y-4 relative z-10"
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.15 }}
               >
                 <p className="text-sm text-gray-600 text-center mb-6">
                   Sign in with your enterprise SSO provider
@@ -880,7 +845,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
               >
                 L
               </span>
-              <span className="text-[9px] uppercase tracking-widest" style={{ color: 'rgba(212,175,55,0.5)' }}>
+              <span className="text-[9px] uppercase tracking-widest text-[rgba(212,175,55,0.5)]">
                 Powered by The Lobbi
               </span>
             </div>

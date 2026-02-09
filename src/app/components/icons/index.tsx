@@ -49,7 +49,7 @@ export {
   CheckInIcon,
 } from './LobbiIcons';
 
-export type { IconProps } from './LobbiIcons';
+export type { IconProps as LobbiIconProps } from './LobbiIcons';
 
 export { XIcon, SendIcon } from './XIcon';
 
@@ -221,7 +221,6 @@ export {
   Settings as LucideSettings,
   Settings2,
   Sliders,
-  Tool,
   Wrench,
   Cog,
   Filter,
@@ -458,6 +457,7 @@ export function DynamicIcon({
   }
 
   return (
+    // @ts-expect-error - Mixed icon types have slightly different prop signatures
     <IconComponent
       width={size}
       height={size}

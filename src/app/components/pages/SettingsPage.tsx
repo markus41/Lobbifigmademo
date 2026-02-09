@@ -5,8 +5,9 @@
  * Note: Org settings are admin-controlled, not guest-accessible.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { toast } from 'sonner';
 import type { Organization, Account } from '../../data/themes';
 
 interface SettingsPageProps {
@@ -18,42 +19,44 @@ interface SettingsPageProps {
 // ICONS
 // ============================================================================
 
-const UserIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+type IconProps = { className?: string; style?: React.CSSProperties };
+
+const UserIcon = ({ className, style }: IconProps) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
-const BellIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const BellIcon = ({ className, style }: IconProps) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
     <path d="M13.73 21a2 2 0 01-3.46 0" />
   </svg>
 );
 
-const ShieldIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const ShieldIcon = ({ className, style }: IconProps) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
 
-const CreditCardIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const CreditCardIcon = ({ className, style }: IconProps) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <rect x="1" y="4" width="22" height="16" rx="2" />
     <line x1="1" y1="10" x2="23" y2="10" />
   </svg>
 );
 
-const LinkIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const LinkIcon = ({ className, style }: IconProps) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
     <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
   </svg>
 );
 
-const PaletteIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const PaletteIcon = ({ className, style }: IconProps) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <circle cx="12" cy="12" r="10" />
     <circle cx="12" cy="8" r="2" fill="currentColor" />
     <circle cx="8" cy="14" r="2" fill="currentColor" />
@@ -61,14 +64,14 @@ const PaletteIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const KeyIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const KeyIcon = ({ className, style }: IconProps) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
   </svg>
 );
 
-const GlobeIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const GlobeIcon = ({ className, style }: IconProps) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <circle cx="12" cy="12" r="10" />
     <line x1="2" y1="12" x2="22" y2="12" />
     <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
@@ -89,7 +92,7 @@ interface SettingSectionProps {
 
 function SettingSection({ title, description, icon, children, organization }: SettingSectionProps) {
   return (
-    <div className="bg-white rounded-xl border p-6" style={{ borderColor: '#EDE8DD' }}>
+    <div className="bg-white rounded-xl border border-[#EDE8DD] p-6">
       <div className="flex items-start gap-4 mb-6">
         <div
           className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -161,8 +164,7 @@ function InputField({ label, value, onChange, type = 'text', placeholder, organi
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-4 py-2.5 bg-gray-50 border rounded-lg text-sm focus:outline-none transition-all"
-        style={{ borderColor: '#EDE8DD' }}
+        className="w-full px-4 py-2.5 bg-gray-50 border border-[#EDE8DD] rounded-lg text-sm focus:outline-none transition-all"
         onFocus={(e) => {
           e.target.style.borderColor = organization.theme.primary;
           e.target.style.boxShadow = `0 0 0 3px rgba(${organization.theme.primaryRgb}, 0.1)`;
@@ -199,6 +201,23 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
 
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
+  // Apply dark mode to document when toggle changes
+  useEffect(() => {
+    const mode = settings.darkMode ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', mode);
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(mode);
+
+    // Also apply to the body for full coverage
+    if (settings.darkMode) {
+      document.body.style.colorScheme = 'dark';
+      document.body.classList.add('dark');
+    } else {
+      document.body.style.colorScheme = 'light';
+      document.body.classList.remove('dark');
+    }
+  }, [settings.darkMode]);
+
   const handleSaveProfile = () => {
     setSaveStatus('saving');
     // Simulate API call
@@ -213,10 +232,9 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
       {/* Header */}
       <div className="mb-8">
         <h1
-          className="text-3xl font-light mb-2"
+          className="text-3xl font-light mb-2 text-[#2C2A25]"
           style={{
             fontFamily: 'Cormorant Garamond, Georgia, serif',
-            color: '#2C2A25',
           }}
         >
           Settings
@@ -262,7 +280,7 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
               organization={organization}
             />
           </div>
-          <div className="mt-4 pt-4 border-t flex items-center gap-3" style={{ borderColor: '#EDE8DD' }}>
+          <div className="mt-4 pt-4 border-t border-[#EDE8DD] flex items-center gap-3">
             <button
               className="px-6 py-2.5 rounded-lg text-white font-medium text-sm transition-all disabled:opacity-50"
               style={{ background: organization.theme.gradientBtn }}
@@ -294,7 +312,7 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
           icon={<BellIcon className="w-5 h-5" style={{ color: organization.theme.primary }} />}
           organization={organization}
         >
-          <div className="divide-y" style={{ borderColor: '#EDE8DD' }}>
+          <div className="divide-y divide-[#EDE8DD]">
             <Toggle
               label="Email Notifications"
               description="Receive updates via email"
@@ -326,7 +344,7 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
           icon={<ShieldIcon className="w-5 h-5" style={{ color: organization.theme.primary }} />}
           organization={organization}
         >
-          <div className="divide-y" style={{ borderColor: '#EDE8DD' }}>
+          <div className="divide-y divide-[#EDE8DD]">
             <Toggle
               label="Two-Factor Authentication"
               description="Add an extra layer of security"
@@ -335,14 +353,14 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
               organization={organization}
             />
           </div>
-          <div className="mt-4 pt-4 border-t flex gap-3" style={{ borderColor: '#EDE8DD' }}>
+          <div className="mt-4 pt-4 border-t border-[#EDE8DD] flex gap-3">
             <button
               className="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-80"
               style={{
                 border: `1px solid rgba(${organization.theme.primaryRgb}, 0.3)`,
                 color: organization.theme.primary,
               }}
-              onClick={() => alert('Password change feature coming soon!')}
+              onClick={() => toast.info('Password change feature coming soon!')}
             >
               <KeyIcon className="w-4 h-4 inline mr-2" />
               Change Password
@@ -353,7 +371,7 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
                 border: `1px solid rgba(${organization.theme.primaryRgb}, 0.3)`,
                 color: organization.theme.primary,
               }}
-              onClick={() => alert('Active sessions: 1 session (this device)')}
+              onClick={() => toast.info('Active sessions: 1 session (this device)')}
             >
               <GlobeIcon className="w-4 h-4 inline mr-2" />
               Active Sessions
@@ -368,7 +386,7 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
           icon={<PaletteIcon className="w-5 h-5" style={{ color: organization.theme.primary }} />}
           organization={organization}
         >
-          <div className="divide-y" style={{ borderColor: '#EDE8DD' }}>
+          <div className="divide-y divide-[#EDE8DD]">
             <Toggle
               label="Dark Mode"
               description="Use dark color scheme"
@@ -418,10 +436,13 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
                       ? 'text-red-600 hover:bg-red-50'
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
-                  onClick={() => alert(service.connected
-                    ? `${service.name} disconnection requires confirmation`
-                    : `${service.name} connection coming soon!`
-                  )}
+                  onClick={() => {
+                    if (service.connected) {
+                      toast.warning(`${service.name} disconnection requires confirmation`);
+                    } else {
+                      toast.info(`${service.name} connection coming soon!`);
+                    }
+                  }}
                 >
                   {service.connected ? 'Disconnect' : 'Connect'}
                 </button>
@@ -456,12 +477,11 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
           </div>
           <div className="flex gap-3">
             <button
-              className="px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+              className="px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity text-white"
               style={{
                 background: organization.theme.gradientBtn,
-                color: 'white',
               }}
-              onClick={() => alert('Upgrade plans available soon!')}
+              onClick={() => toast.info('Upgrade plans available soon!')}
             >
               Upgrade Plan
             </button>
@@ -471,7 +491,7 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
                 border: `1px solid rgba(${organization.theme.primaryRgb}, 0.3)`,
                 color: organization.theme.primary,
               }}
-              onClick={() => alert('Invoice history: 2 invoices on file')}
+              onClick={() => toast.info('Invoice history: 2 invoices on file')}
             >
               View Invoices
             </button>

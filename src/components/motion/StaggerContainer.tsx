@@ -1,0 +1,65 @@
+/**
+ * StaggerContainer - Container that staggers child animations.
+ * StaggerItem - Child with spring-based entrance animation and blur reveal.
+ */
+import type { ReactNode } from 'react'
+import { motion } from 'motion/react'
+import { Box } from '@chakra-ui/react'
+
+interface StaggerContainerProps {
+  children: ReactNode
+  staggerDelay?: number
+  delayChildren?: number
+}
+
+const MotionDiv = motion.create(Box)
+
+export function StaggerContainer({
+  children,
+  staggerDelay = 0.06,
+  delayChildren = 0.1,
+}: StaggerContainerProps) {
+  return (
+    <MotionDiv
+      initial="initial"
+      animate="animate"
+      variants={{
+        initial: {},
+        animate: {
+          transition: {
+            staggerChildren: staggerDelay,
+            delayChildren,
+          },
+        },
+      }}
+    >
+      {children}
+    </MotionDiv>
+  )
+}
+
+/**
+ * StaggerItem - Child of StaggerContainer with spring entrance animation.
+ */
+export function StaggerItem({ children }: { children: ReactNode }) {
+  return (
+    <MotionDiv
+      variants={{
+        initial: { opacity: 0, y: 16, filter: 'blur(4px)' },
+        animate: {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          transition: {
+            type: 'spring',
+            stiffness: 300,
+            damping: 24,
+            mass: 0.8,
+          },
+        },
+      }}
+    >
+      {children}
+    </MotionDiv>
+  )
+}

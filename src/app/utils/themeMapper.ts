@@ -6,6 +6,7 @@
 // ============================================================================
 
 import type { CSSProperties } from 'react';
+import type { TargetAndTransition } from 'motion/react';
 import type { OrgTheme, Organization } from '../data/themes';
 
 // ============================================================================
@@ -13,11 +14,11 @@ import type { OrgTheme, Organization } from '../data/themes';
 // ============================================================================
 
 export interface MotionVariants {
-  initial: Record<string, unknown>;
-  animate: Record<string, unknown>;
-  exit?: Record<string, unknown>;
-  hover?: Record<string, unknown>;
-  tap?: Record<string, unknown>;
+  initial: TargetAndTransition;
+  animate: TargetAndTransition;
+  exit?: TargetAndTransition;
+  hover?: TargetAndTransition;
+  tap?: TargetAndTransition;
 }
 
 export interface StaggerConfig {
@@ -76,7 +77,7 @@ export function getAccessibleMotionVariants(
 
 const ANIMATION_TIMINGS: Record<OrgTheme['animationStyle'], {
   duration: number;
-  easing: number[];
+  easing: [number, number, number, number];
   springConfig?: { stiffness: number; damping: number };
   stagger: number;
 }> = {
@@ -514,7 +515,7 @@ export function getMotionVariants(animationStyle: OrgTheme['animationStyle']): M
   const timing = ANIMATION_TIMINGS[animationStyle];
 
   const baseTransition = timing.springConfig
-    ? { type: 'spring', ...timing.springConfig }
+    ? { type: 'spring' as const, ...timing.springConfig }
     : { duration: timing.duration, ease: timing.easing };
 
   return {
@@ -537,7 +538,7 @@ export function getMotionVariants(animationStyle: OrgTheme['animationStyle']): M
 /**
  * Get hover variant based on animation style
  */
-function getHoverVariant(animationStyle: OrgTheme['animationStyle']): Record<string, unknown> {
+function getHoverVariant(animationStyle: OrgTheme['animationStyle']): TargetAndTransition {
   switch (animationStyle) {
     case 'elegant':
       return {
@@ -592,7 +593,7 @@ export function getLetterVariants(animationStyle: OrgTheme['animationStyle']): {
   const timing = ANIMATION_TIMINGS[animationStyle];
 
   const baseTransition = timing.springConfig
-    ? { type: 'spring', ...timing.springConfig }
+    ? { type: 'spring' as const, ...timing.springConfig }
     : { duration: timing.duration * 0.3, ease: timing.easing };
 
   return {

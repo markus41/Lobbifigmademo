@@ -20,24 +20,15 @@ import {
   Ticket,
   DollarSign,
   Image,
-  FileText,
-  Tag,
   Mail,
-  Bell,
-  Share2,
   QrCode,
   Video,
   Globe,
   Lock,
-  Unlock,
-  UserPlus,
   Plus,
   Trash2,
-  Check,
   Eye,
   Settings,
-  Sparkles,
-  Link,
   Copy,
   Facebook,
   Twitter,
@@ -752,7 +743,7 @@ function LocationStep({
       >
         <div className="space-y-4">
           <AnimatePresence>
-            {config.agenda.map((item, index) => (
+            {config.agenda.map((item) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: -10 }}
@@ -1536,7 +1527,7 @@ function PreviewStep({
               {config.type !== 'virtual' && config.venue.name && (
                 <p className="text-gray-900">{config.venue.name}</p>
               )}
-              {config.type !== 'online' && config.venue.address && (
+              {config.type !== 'virtual' && config.venue.address && (
                 <p className="text-gray-600 text-sm">
                   {config.venue.address}, {config.venue.city}, {config.venue.state}{' '}
                   {config.venue.zip}

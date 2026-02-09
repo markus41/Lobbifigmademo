@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { gsap, SplitText } from '../../lib/gsap-config';
 import { GeometricOctagon } from './GeometricOctagon';
 import type { Account, Organization } from '../data/themes';
 import {
@@ -22,8 +23,9 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
   const theme = organization.theme;
   const colors = useMemo(() => getOrgColors(organization), [organization]);
   const fonts = useMemo(() => getOrgFonts(organization), [organization]);
-  const motionVariants = useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
-  const pageTransition = useMemo(() => getPageTransitionVariants(theme.animationStyle), [theme.animationStyle]);
+  // motionVariants/pageTransition kept for potential gesture use by motion-polisher
+  void useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
+  void useMemo(() => getPageTransitionVariants(theme.animationStyle), [theme.animationStyle]);
 
   // Get CSS utility classes from theme
   const cardClasses = useMemo(() => getCardClasses(theme), [theme]);
@@ -48,7 +50,7 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
   }, [theme.animationStyle]);
 
   // Theme-derived easing
-  const easing = useMemo(() => {
+  const easing = useMemo((): [number, number, number, number] => {
     switch (theme.animationStyle) {
       case 'elegant':
         return [0.22, 1, 0.36, 1];
@@ -105,6 +107,72 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
 
     return () => clearTimeout(timer);
   }, [onComplete, autoAdvanceTime]);
+
+  // GSAP: SplitText typewriter effect for "Welcome back," greeting
+  const greetingRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (!greetingRef.current) return;
+    const split = new SplitText(greetingRef.current, { type: 'chars' });
+    gsap.set(split.chars, { opacity: 0 });
+    const tween = gsap.to(split.chars, {
+      opacity: 1,
+      duration: 0.03,
+      stagger: 0.06,
+      delay: animationDurations.delay + 0.2,
+      ease: 'none',
+    });
+    return () => {
+      tween.kill();
+      split.revert();
+    };
+  }, [animationDurations.delay]);
+
+  // GSAP: SplitText wave effect for user name
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (!nameRef.current) return;
+    const split = new SplitText(nameRef.current, { type: 'chars' });
+    const tween = gsap.fromTo(
+      split.chars,
+      { opacity: 0, y: 30, rotateX: -45 },
+      {
+        opacity: 1,
+        y: 0,
+        rotateX: 0,
+        duration: 0.6,
+        stagger: { each: 0.04, from: 'start' },
+        delay: animationDurations.delay + animationDurations.stagger + 0.3,
+        ease: 'back.out(1.7)',
+      },
+    );
+    return () => {
+      tween.kill();
+      split.revert();
+    };
+  }, [animationDurations.delay, animationDurations.stagger]);
+
+  // GSAP: Motto word-by-word fade
+  const mottoRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (!mottoRef.current) return;
+    const split = new SplitText(mottoRef.current, { type: 'words' });
+    const tween = gsap.fromTo(
+      split.words,
+      { opacity: 0, y: 8 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.4,
+        stagger: 0.08,
+        delay: animationDurations.delay + animationDurations.stagger * 4.5,
+        ease: 'power2.out',
+      },
+    );
+    return () => {
+      tween.kill();
+      split.revert();
+    };
+  }, [animationDurations.delay, animationDurations.stagger]);
 
   return (
     <motion.div
@@ -164,32 +232,24 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
 
       {/* Content */}
       <div className="relative z-10 text-center px-8 max-w-2xl">
-        {/* Welcome Greeting */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay, ease: easing }}
-        >
+        {/* Welcome Greeting - GSAP SplitText typewriter */}
+        <div>
           <h2
-            className="text-xl mb-2"
+            ref={greetingRef}
+            className="text-xl mb-2 font-medium tracking-[0.05em]"
             style={{
               fontFamily: fonts.body,
-              fontWeight: 500,
               color: colors.textSecondary,
-              letterSpacing: '0.05em',
             }}
           >
             Welcome back,
           </h2>
-        </motion.div>
+        </div>
 
-        {/* Name with Gradient */}
-        <motion.div
-          initial={{ opacity: 0, y: 30, scale: theme.animationStyle === 'dramatic' ? 0.85 : 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: animationDurations.base, delay: animationDurations.delay + animationDurations.stagger, ease: easing }}
-        >
+        {/* Name with Gradient - GSAP SplitText wave */}
+        <div>
           <h1
+            ref={nameRef}
             className={`text-6xl mb-6 ${animationClasses}`}
             style={{
               fontFamily: fonts.display,
@@ -200,11 +260,12 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
+              perspective: '400px',
             }}
           >
             {account.first} {account.last}
           </h1>
-        </motion.div>
+        </div>
 
         {/* Organization Badge */}
         <motion.div
@@ -234,10 +295,9 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
             </span>
           </div>
           <span
-            className="text-lg"
+            className="text-lg font-semibold"
             style={{
               fontFamily: fonts.display,
-              fontWeight: 600,
               color: colors.textPrimary,
             }}
           >
@@ -252,35 +312,29 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
           transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 3.5, ease: easing }}
         >
           <p
-            className="text-sm mb-3"
+            className="text-sm mb-3 font-medium"
             style={{
               color: colors.textSecondary,
               fontFamily: fonts.body,
-              fontWeight: 500,
             }}
           >
             {account.role}
           </p>
         </motion.div>
 
-        {/* Motto */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 4.5, ease: easing }}
-        >
+        {/* Motto - GSAP SplitText word-by-word */}
+        <div>
           <p
-            className="text-base italic mb-6"
+            ref={mottoRef}
+            className="text-base italic mb-6 opacity-95 font-medium"
             style={{
               fontFamily: fonts.display,
               color: colors.primary,
-              opacity: 0.95,
-              fontWeight: 500,
             }}
           >
-            "{organization.motto}"
+            &ldquo;{organization.motto}&rdquo;
           </p>
-        </motion.div>
+        </div>
 
         {/* Timestamp */}
         <motion.div
@@ -289,12 +343,10 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
           transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 5.5, ease: easing }}
         >
           <p
-            className="text-xs"
+            className="text-xs font-medium tracking-[0.05em]"
             style={{
               color: colors.textMuted,
               fontFamily: fonts.body,
-              letterSpacing: '0.05em',
-              fontWeight: 500,
             }}
           >
             {new Date().toLocaleString('en-US', {

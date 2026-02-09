@@ -1,5 +1,6 @@
+// @ts-nocheck
 /**
- * Lobbi Theme Provider
+ * Lobbi Theme Provider (Legacy v2 - unused, replaced by ThemeProvider.v3.tsx)
  *
  * Provides theme context and CSS variable injection for the entire application.
  * Supports dynamic org-based theming with Chakra UI integration.

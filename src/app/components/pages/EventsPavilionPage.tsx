@@ -10,8 +10,9 @@
  * - Event Builder wizard integration
  */
 
-import React, { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'sonner';
 import type { Organization, Account } from '../../data/themes';
 import { EventBuilder } from '@/components/lobbi/wizards';
 
@@ -168,8 +169,8 @@ const PlusIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const GridIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const GridIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <rect x="3" y="3" width="7" height="7" />
     <rect x="14" y="3" width="7" height="7" />
     <rect x="14" y="14" width="7" height="7" />
@@ -177,8 +178,8 @@ const GridIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const ListIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const ListIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <line x1="8" y1="6" x2="21" y2="6" />
     <line x1="8" y1="12" x2="21" y2="12" />
     <line x1="8" y1="18" x2="21" y2="18" />
@@ -225,9 +226,9 @@ function EventCard({ event, organization, onClick, onRegister }: EventCardProps)
         event.featured ? 'ring-2' : ''
       }`}
       style={{
+        '--tw-ring-color': event.featured ? organization.theme.primary : undefined,
         borderColor: '#EDE8DD',
-        ringColor: event.featured ? organization.theme.primary : undefined,
-      }}
+      } as CSSProperties}
       whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(0,0,0,0.1)' }}
       transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
       onClick={onClick}
@@ -347,7 +348,7 @@ const CloseIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export function EventsPavilionPage({ organization, account }: EventsPavilionPageProps) {
+export function EventsPavilionPage({ organization, account: _account }: EventsPavilionPageProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filterType, setFilterType] = useState<string>('all');
   const [showEventBuilder, setShowEventBuilder] = useState(false);
@@ -365,10 +366,9 @@ export function EventsPavilionPage({ organization, account }: EventsPavilionPage
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1
-            className="text-3xl font-light mb-2"
+            className="text-3xl font-light mb-2 text-[#2C2A25]"
             style={{
               fontFamily: 'Cormorant Garamond, Georgia, serif',
-              color: '#2C2A25',
             }}
           >
             Events Pavilion
@@ -398,8 +398,7 @@ export function EventsPavilionPage({ organization, account }: EventsPavilionPage
         ].map((stat, i) => (
           <motion.div
             key={i}
-            className="bg-white rounded-xl border p-4"
-            style={{ borderColor: '#EDE8DD' }}
+            className="bg-white rounded-xl border border-[#EDE8DD] p-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
@@ -465,9 +464,9 @@ export function EventsPavilionPage({ organization, account }: EventsPavilionPage
             <EventCard
               event={event}
               organization={organization}
-              onClick={() => console.log('Event clicked:', event.id)}
-              onRegister={(eventId, eventTitle) => {
-                alert(`🎟️ Registration confirmed!\n\nYou're registered for:\n"${eventTitle}"\n\nA confirmation email will be sent shortly.`);
+              onClick={() => toast.info(`Viewing event details for "${event.title}"`)}
+              onRegister={(_eventId, eventTitle) => {
+                toast.success(`Registration confirmed! You're registered for "${eventTitle}". A confirmation email will be sent shortly.`);
               }}
             />
           </motion.div>
@@ -501,7 +500,7 @@ export function EventsPavilionPage({ organization, account }: EventsPavilionPage
 
             {/* Modal Content */}
             <motion.div
-              className="relative w-full max-w-6xl max-h-[90vh] overflow-hidden bg-white rounded-2xl shadow-2xl"
+              className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl"
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}

@@ -10,10 +10,9 @@
  * - Mobile/desktop preview toggle
  */
 
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, Reorder } from 'motion/react';
 import {
-  Mail,
   Type,
   Image,
   Square,
@@ -24,7 +23,6 @@ import {
   Copy,
   Trash2,
   GripVertical,
-  ChevronDown,
   Sparkles,
   Eye,
   Code,
@@ -34,16 +32,9 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  Bold,
-  Italic,
-  Link,
-  List,
   Heading1,
-  Heading2,
-  Quote,
   LayoutTemplate,
   Send,
-  Save,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -942,7 +933,7 @@ function BlockSettings({ block, onUpdate }: BlockSettingsProps) {
       {block.type === 'spacer' && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Height: {block.content.height}px
+            Height: {block.content.height as React.ReactNode}px
           </label>
           <input
             type="range"

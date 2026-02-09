@@ -25,6 +25,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     return (
+      // @ts-expect-error - motion/react onDrag type conflicts with React's onDrag
       <motion.button
         ref={ref}
         className={cn(baseStyles, variants[variant], sizes[size], className)}

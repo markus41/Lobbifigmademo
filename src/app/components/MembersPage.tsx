@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Users, Search, Plus, Filter, Download, Upload } from 'lucide-react';
+import { Search, Plus, Filter, Download, Upload } from 'lucide-react';
 
 export function MembersPage() {
   const members = [

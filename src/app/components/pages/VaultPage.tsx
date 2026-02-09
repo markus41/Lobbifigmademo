@@ -9,8 +9,9 @@
  * - Search and filtering
  */
 
-import React, { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'sonner';
 import type { Organization, Account } from '../../data/themes';
 
 interface VaultPageProps {
@@ -54,8 +55,8 @@ const MOCK_DOCUMENTS: Document[] = [
 // ICONS
 // ============================================================================
 
-const FolderIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+const FolderIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="currentColor">
     <path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z" />
   </svg>
 );
@@ -136,11 +137,11 @@ const ShareIcon = ({ className }: { className?: string }) => (
 function getFileIcon(type: Document['type'], className?: string, color?: string) {
   const icons = {
     folder: <FolderIcon className={className} style={{ color: color || '#F59E0B' }} />,
-    pdf: <FileTextIcon className={className} style={{ color: '#DC2626' }} />,
-    doc: <FileTextIcon className={className} style={{ color: '#2563EB' }} />,
-    xls: <FileSpreadsheetIcon className={className} style={{ color: '#16A34A' }} />,
-    ppt: <FilePresentationIcon className={className} style={{ color: '#EA580C' }} />,
-    img: <FileImageIcon className={className} style={{ color: '#7C3AED' }} />,
+    pdf: <FileTextIcon className={`${className} text-red-600`} />,
+    doc: <FileTextIcon className={`${className} text-blue-600`} />,
+    xls: <FileSpreadsheetIcon className={`${className} text-green-600`} />,
+    ppt: <FilePresentationIcon className={`${className} text-orange-600`} />,
+    img: <FileImageIcon className={`${className} text-violet-600`} />,
   };
   return icons[type];
 }
@@ -168,8 +169,8 @@ function DocumentRow({ document, organization, onSelect, onOpen, onMenuAction, i
       }`}
       style={{
         backgroundColor: isSelected ? `rgba(${organization.theme.primaryRgb}, 0.05)` : 'transparent',
-        ringColor: isSelected ? organization.theme.primary : undefined,
-      }}
+        '--tw-ring-color': isSelected ? organization.theme.primary : undefined,
+      } as React.CSSProperties}
       onClick={onSelect}
       onDoubleClick={onOpen}
       whileHover={{ backgroundColor: `rgba(${organization.theme.primaryRgb}, 0.03)` }}
@@ -220,8 +221,7 @@ function DocumentRow({ document, organization, onSelect, onOpen, onMenuAction, i
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -5 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border z-50 py-1"
-              style={{ borderColor: '#EDE8DD' }}
+              className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-[#EDE8DD] z-50 py-1"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -261,10 +261,11 @@ function DocumentRow({ document, organization, onSelect, onOpen, onMenuAction, i
 // MAIN COMPONENT
 // ============================================================================
 
-export function VaultPage({ organization, account }: VaultPageProps) {
+export function VaultPage({ organization, account: _account }: VaultPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
   const [currentFolder, setCurrentFolder] = useState<string | null>(null);
+  void _account; void currentFolder;
 
   const folders = MOCK_DOCUMENTS.filter((d) => d.type === 'folder');
   const files = MOCK_DOCUMENTS.filter((d) => d.type !== 'folder');
@@ -279,10 +280,9 @@ export function VaultPage({ organization, account }: VaultPageProps) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1
-            className="text-3xl font-light mb-2"
+            className="text-3xl font-light mb-2 text-[#2C2A25]"
             style={{
               fontFamily: 'Cormorant Garamond, Georgia, serif',
-              color: '#2C2A25',
             }}
           >
             The Vault
@@ -293,9 +293,9 @@ export function VaultPage({ organization, account }: VaultPageProps) {
         </div>
 
         <button
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-white font-medium text-sm"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-white font-medium text-sm cursor-pointer"
           style={{ background: organization.theme.gradientBtn }}
-          onClick={() => alert('📁 Upload File\n\nFile upload dialog would open here.\nDrag and drop or browse to select files.')}
+          onClick={() => toast.info('File upload dialog would open here. Drag and drop or browse to select files.')}
         >
           <UploadIcon className="w-4 h-4" />
           Upload File
@@ -312,8 +312,7 @@ export function VaultPage({ organization, account }: VaultPageProps) {
         ].map((stat, i) => (
           <motion.div
             key={i}
-            className="bg-white rounded-xl border p-4"
-            style={{ borderColor: '#EDE8DD' }}
+            className="bg-white rounded-xl border border-[#EDE8DD] p-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
@@ -335,8 +334,7 @@ export function VaultPage({ organization, account }: VaultPageProps) {
             placeholder="Search files and folders..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-sm focus:outline-none transition-all"
-            style={{ borderColor: '#EDE8DD' }}
+            className="w-full pl-10 pr-4 py-3 bg-white border border-[#EDE8DD] rounded-xl text-sm focus:outline-none transition-all"
             onFocus={(e) => {
               e.target.style.borderColor = organization.theme.primary;
               e.target.style.boxShadow = `0 0 0 3px rgba(${organization.theme.primaryRgb}, 0.1)`;
@@ -350,9 +348,9 @@ export function VaultPage({ organization, account }: VaultPageProps) {
       </div>
 
       {/* File List */}
-      <div className="bg-white rounded-xl border" style={{ borderColor: '#EDE8DD' }}>
+      <div className="bg-white rounded-xl border border-[#EDE8DD]">
         {/* Header */}
-        <div className="flex items-center gap-4 px-4 py-3 border-b text-xs font-semibold text-gray-500 uppercase tracking-wider" style={{ borderColor: '#EDE8DD' }}>
+        <div className="flex items-center gap-4 px-4 py-3 border-b border-[#EDE8DD] text-xs font-semibold text-gray-500 uppercase tracking-wider">
           <div className="flex-1">Name</div>
           <div className="w-32 text-center">Owner</div>
           <div className="w-28 text-center">Modified</div>
@@ -362,11 +360,11 @@ export function VaultPage({ organization, account }: VaultPageProps) {
 
         {/* Folders */}
         {folders.length > 0 && !searchQuery && (
-          <div className="border-b" style={{ borderColor: '#EDE8DD' }}>
+          <div className="border-b border-[#EDE8DD]">
             <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50">
               Folders
             </div>
-            <div className="divide-y" style={{ borderColor: '#EDE8DD' }}>
+            <div className="divide-y divide-[#EDE8DD]">
               {folders.map((folder) => (
                 <DocumentRow
                   key={folder.id}
@@ -375,16 +373,17 @@ export function VaultPage({ organization, account }: VaultPageProps) {
                   onSelect={() => setSelectedDoc(folder.id)}
                   onOpen={() => {
                     setCurrentFolder(folder.id);
-                    alert(`📂 Opening folder: "${folder.name}"\n\nFolder navigation coming soon!`);
+                    toast.info(`Opening folder: "${folder.name}" -- folder navigation coming soon!`);
                   }}
                   onMenuAction={(action) => {
-                    const messages = {
-                      download: `Downloading folder "${folder.name}" as ZIP...`,
-                      share: `Share settings for "${folder.name}"`,
-                      rename: `Rename folder "${folder.name}"`,
-                      delete: `Are you sure you want to delete "${folder.name}" and all its contents?`,
+                    const messages: Record<string, { msg: string; type: 'info' | 'success' | 'warning' }> = {
+                      download: { msg: `Downloading folder "${folder.name}" as ZIP...`, type: 'success' },
+                      share: { msg: `Share settings for "${folder.name}"`, type: 'info' },
+                      rename: { msg: `Rename folder "${folder.name}"`, type: 'info' },
+                      delete: { msg: `Are you sure you want to delete "${folder.name}" and all its contents?`, type: 'warning' },
                     };
-                    alert(messages[action]);
+                    const { msg, type } = messages[action];
+                    toast[type](msg);
                   }}
                   isSelected={selectedDoc === folder.id}
                 />
@@ -400,7 +399,7 @@ export function VaultPage({ organization, account }: VaultPageProps) {
               Files
             </div>
           )}
-          <div className="divide-y" style={{ borderColor: '#EDE8DD' }}>
+          <div className="divide-y divide-[#EDE8DD]">
             {(searchQuery ? filteredDocs : files).map((doc) => (
               <DocumentRow
                 key={doc.id}
@@ -410,19 +409,19 @@ export function VaultPage({ organization, account }: VaultPageProps) {
                 onOpen={() => {
                   if (doc.type === 'folder') {
                     setCurrentFolder(doc.id);
-                    alert(`📂 Opening folder: "${doc.name}"`);
+                    toast.info(`Opening folder: "${doc.name}"`);
                   } else {
-                    alert(`📄 Opening file: "${doc.name}"\n\nDocument preview would open here.`);
+                    toast.info(`Opening file: "${doc.name}" -- document preview would open here.`);
                   }
                 }}
                 onMenuAction={(action) => {
-                  const messages = {
-                    download: `⬇️ Downloading "${doc.name}"...`,
-                    share: `🔗 Share settings for "${doc.name}"`,
-                    rename: `✏️ Rename "${doc.name}"`,
-                    delete: `🗑️ Are you sure you want to delete "${doc.name}"?`,
+                  const handlers: Record<string, () => void> = {
+                    download: () => toast.success(`Downloading "${doc.name}"...`),
+                    share: () => toast.info(`Share settings for "${doc.name}"`),
+                    rename: () => toast.info(`Rename "${doc.name}"`),
+                    delete: () => toast.warning(`Are you sure you want to delete "${doc.name}"?`),
                   };
-                  alert(messages[action]);
+                  handlers[action]();
                 }}
                 isSelected={selectedDoc === doc.id}
               />

@@ -9,7 +9,7 @@
  * - Search and filtering
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo, type CSSProperties } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Organization, Account } from '../../data/themes';
 
@@ -242,14 +242,14 @@ const SearchIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const BuildingIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const BuildingIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M6 22V4a2 2 0 012-2h8a2 2 0 012 2v18M2 22h20M9 6h.01M9 10h.01M9 14h.01M15 6h.01M15 10h.01M15 14h.01" />
   </svg>
 );
 
-const AwardIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const AwardIcon = ({ className, style }: { className?: string; style?: CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <circle cx="12" cy="8" r="6" />
     <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
   </svg>
@@ -301,8 +301,9 @@ function ChapterNode({
         style={{
           marginLeft: `${level * 20}px`,
           backgroundColor: isSelected ? `rgba(${organization.theme.primaryRgb}, 0.08)` : 'transparent',
-          ringColor: isSelected ? `rgba(${organization.theme.primaryRgb}, 0.4)` : undefined,
-        }}
+          // Use CSS variable for Tailwind ring color
+          '--tw-ring-color': isSelected ? `rgba(${organization.theme.primaryRgb}, 0.4)` : undefined,
+        } as CSSProperties}
         onClick={() => onSelectChapter(chapter)}
         whileHover={{ backgroundColor: `rgba(${organization.theme.primaryRgb}, 0.04)` }}
       >
@@ -400,8 +401,7 @@ function MemberCard({ member, organization }: MemberCardProps) {
 
   return (
     <motion.div
-      className="bg-white rounded-xl border p-4 cursor-pointer"
-      style={{ borderColor: '#EDE8DD' }}
+      className="bg-white rounded-xl border border-[#EDE8DD] p-4 cursor-pointer"
       whileHover={{
         y: -2,
         boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
@@ -455,7 +455,7 @@ function MemberCard({ member, organization }: MemberCardProps) {
 
       {/* Position History */}
       {member.positionHistory.length > 0 && (
-        <div className="mt-4 pt-4 border-t" style={{ borderColor: '#EDE8DD' }}>
+        <div className="mt-4 pt-4 border-t border-[#EDE8DD]">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
             Position History
           </p>
@@ -476,7 +476,7 @@ function MemberCard({ member, organization }: MemberCardProps) {
       )}
 
       {/* Quick Stats */}
-      <div className="mt-4 pt-4 border-t grid grid-cols-3 gap-4" style={{ borderColor: '#EDE8DD' }}>
+      <div className="mt-4 pt-4 border-t border-[#EDE8DD] grid grid-cols-3 gap-4">
         <div>
           <p className="text-xs text-gray-500">Events</p>
           <p className="font-semibold text-gray-900">{member.eventsAttended}</p>
@@ -498,7 +498,7 @@ function MemberCard({ member, organization }: MemberCardProps) {
 // MAIN COMPONENT
 // ============================================================================
 
-export function RegistryPage({ organization, account }: RegistryPageProps) {
+export function RegistryPage({ organization, account: _account }: RegistryPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
   const [viewMode, setViewMode] = useState<'hierarchy' | 'members'>('hierarchy');
@@ -519,10 +519,9 @@ export function RegistryPage({ organization, account }: RegistryPageProps) {
       {/* Header */}
       <div className="mb-6">
         <h1
-          className="text-3xl font-light mb-2"
+          className="text-3xl font-light mb-2 text-[#2C2A25]"
           style={{
             fontFamily: 'Cormorant Garamond, Georgia, serif',
-            color: '#2C2A25',
           }}
         >
           The Registry
@@ -541,10 +540,7 @@ export function RegistryPage({ organization, account }: RegistryPageProps) {
             placeholder="Search members by name, email, or role..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-sm focus:outline-none transition-all"
-            style={{
-              borderColor: '#EDE8DD',
-            }}
+            className="w-full pl-10 pr-4 py-3 bg-white border border-[#EDE8DD] rounded-xl text-sm focus:outline-none transition-all"
             onFocus={(e) => {
               e.target.style.borderColor = organization.theme.primary;
               e.target.style.boxShadow = `0 0 0 3px rgba(${organization.theme.primaryRgb}, 0.1)`;
@@ -588,8 +584,7 @@ export function RegistryPage({ organization, account }: RegistryPageProps) {
         {/* Chapter Hierarchy */}
         <div className="lg:col-span-1">
           <div
-            className="bg-white rounded-xl border p-4"
-            style={{ borderColor: '#EDE8DD' }}
+            className="bg-white rounded-xl border border-[#EDE8DD] p-4"
           >
             <h2 className="font-semibold text-gray-900 mb-4">Chapter Hierarchy</h2>
             <div className="space-y-1">

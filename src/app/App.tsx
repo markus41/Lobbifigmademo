@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { LandingPage } from './components/LandingPage';
 import { EmailSelection } from './components/EmailSelection';
@@ -20,8 +20,8 @@ import { EventsPavilionPage } from './components/pages/EventsPavilionPage';
 import { VaultPage } from './components/pages/VaultPage';
 import { SettingsPage } from './components/pages/SettingsPage';
 
-// Demo banner
-import { DemoBanner, DemoBannerMinimized } from './components/DemoBanner';
+// Chakra v3 Platform Demo Banner with phase routing
+import { PlatformDemoBanner } from '../components/demo';
 
 // Member Portal
 import { MemberPortal } from './components/MemberPortal';
@@ -30,21 +30,38 @@ type Stage = 'logo' | 'landing' | 'email' | 'orgLogin' | 'welcome' | 'dashboardE
 
 export default function App() {
   const [stage, setStage] = useState<Stage>('landing');
-  const [selectedEmail, setSelectedEmail] = useState('');
+  const [_selectedEmail, setSelectedEmail] = useState('');
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isBellhopOpen, setIsBellhopOpen] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Demo banner state
-  const [showDemoBanner, setShowDemoBanner] = useState(true);
+  // Guarded stage transition to prevent overlapping animations
+  const safeSetStage = (nextStage: Stage) => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
+    setStage(nextStage);
+    transitionTimeoutRef.current = setTimeout(() => {
+      setIsTransitioning(false);
+    }, 600); // matches exit animation duration
+  };
+
+  // Cleanup transition timeout
+  useEffect(() => {
+    return () => {
+      if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
+    };
+  }, []);
 
   // Auto-progress from logo to landing
   useEffect(() => {
     if (stage === 'logo') {
-      const timer = setTimeout(() => setStage('landing'), 5500);
+      const timer = setTimeout(() => safeSetStage('landing'), 5500);
       return () => clearTimeout(timer);
     }
   }, [stage]);
@@ -56,23 +73,62 @@ export default function App() {
     }
   }, [selectedOrg]);
 
-  // Handle organization change from demo banner
-  const handleOrganizationChange = useCallback((org: Organization) => {
-    // Find an account that belongs to this org, or keep the current account
-    const accountForOrg = ACCOUNTS.find(a => a.orgId === org.id);
-    if (accountForOrg) {
-      setSelectedAccount(accountForOrg);
-      setSelectedEmail(accountForOrg.email);
+  // Bug #2 fix: Set document title based on selected org (prevents "undefined | The Lobbi")
+  useEffect(() => {
+    if (selectedOrg) {
+      document.title = `${selectedOrg.short || selectedOrg.name} | The Lobbi`;
+    } else {
+      document.title = 'The Lobbi - Premium Member Management Platform';
     }
-    setSelectedOrg(org);
-    applyTheme(org);
+  }, [selectedOrg]);
+
+  // Bug #6 fix: Hash-based routing for browser navigation
+  useEffect(() => {
+    const hashMap: Record<Stage, string> = {
+      logo: '#logo', landing: '#landing', email: '#login',
+      orgLogin: '#login', welcome: '#welcome', dashboardEntry: '#dashboard',
+      dashboard: '#dashboard', memberPortal: '#member-portal',
+    };
+    window.location.hash = hashMap[stage] || '#landing';
+  }, [stage]);
+
+  // Bug #6 fix: Persist session to localStorage
+  useEffect(() => {
+    if (selectedAccount && selectedOrg && (stage === 'dashboard' || stage === 'memberPortal')) {
+      localStorage.setItem('lobbi_session', JSON.stringify({
+        email: selectedAccount.email, orgId: selectedOrg.id, stage, currentPage,
+      }));
+    }
+  }, [selectedAccount, selectedOrg, stage, currentPage]);
+
+  // Bug #6 fix: Restore session on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('lobbi_session');
+    if (saved) {
+      try {
+        const session = JSON.parse(saved);
+        const account = ACCOUNTS.find((a: Account) => a.email === session.email);
+        if (account) {
+          const org = ORGANIZATIONS[account.orgId];
+          if (org) {
+            setSelectedEmail(session.email);
+            setSelectedAccount(account);
+            setSelectedOrg(org);
+            setCurrentPage(session.currentPage || 'dashboard');
+            setShowDashboard(true);
+            setStage(session.stage === 'memberPortal' ? 'memberPortal' : 'dashboard');
+          }
+        }
+      } catch { localStorage.removeItem('lobbi_session'); }
+    }
   }, []);
 
   const handleLoginClick = () => {
-    setStage('email');
+    safeSetStage('email');
   };
 
   const handleEmailSelected = (email: string) => {
+    if (isTransitioning) return;
     const account = ACCOUNTS.find(a => a.email === email);
     if (!account) return;
 
@@ -80,28 +136,24 @@ export default function App() {
     setSelectedEmail(email);
     setSelectedAccount(account);
     setSelectedOrg(org);
-    setStage('orgLogin');
+    safeSetStage('orgLogin');
   };
 
   const handleOrgLogin = () => {
-    setStage('welcome');
+    safeSetStage('welcome');
   };
 
   const handleWelcomeComplete = () => {
-    setStage('dashboardEntry');
+    safeSetStage('dashboardEntry');
   };
 
   const handleDashboardEntryComplete = () => {
     setShowDashboard(true);
-    setStage('dashboard');
-  };
-
-  const handleMemberPortalClick = () => {
-    setStage('memberPortal');
+    safeSetStage('dashboard');
   };
 
   const handleSwitchToAdmin = () => {
-    setStage('dashboard');
+    safeSetStage('dashboard');
   };
 
   const renderPage = () => {
@@ -128,55 +180,45 @@ export default function App() {
   const currentRgb = selectedOrg?.theme.primaryRgb || '212,175,55';
 
   return (
+    <PlatformDemoBanner defaultPhase="all" defaultRole="org-admin">
     <div className="relative w-full h-screen overflow-hidden bg-[#FAF6E9]">
       {/* Cinematic Background - Only for non-dashboard stages */}
       {stage !== 'dashboard' && (
         <CinematicBackground primaryRgb={currentRgb} stage={stage} />
       )}
 
-      {/* Geometric Octagon Animation - Landing Page */}
-      {stage === 'landing' && <GeometricOctagon />}
+      {/* Geometric Octagon Animation - Pre-dashboard stages */}
+      {(stage === 'landing' || stage === 'email' || stage === 'orgLogin') && (
+        <GeometricOctagon primaryColor={selectedOrg?.theme.primary || '#D4AF37'} />
+      )}
 
-      {/* STAGE 2: LANDING PAGE */}
-      <AnimatePresence>
+      {/* Pre-dashboard stages - single AnimatePresence with mode="wait" prevents overlap */}
+      <AnimatePresence mode="wait">
         {stage === 'landing' && (
-          <LandingPage onLoginClick={handleLoginClick} />
+          <LandingPage key="landing" onLoginClick={handleLoginClick} />
         )}
-      </AnimatePresence>
-
-      {/* STAGE 3: EMAIL SELECTION */}
-      <AnimatePresence>
         {stage === 'email' && (
-          <EmailSelection onEmailSelected={handleEmailSelected} />
+          <EmailSelection key="email" onEmailSelected={handleEmailSelected} />
         )}
-      </AnimatePresence>
-
-      {/* STAGE 4: ORG-SPECIFIC LOGIN */}
-      <AnimatePresence>
         {stage === 'orgLogin' && selectedAccount && selectedOrg && (
           <OrgLogin
+            key="orgLogin"
             account={selectedAccount}
             organization={selectedOrg}
             onLogin={handleOrgLogin}
           />
         )}
-      </AnimatePresence>
-
-      {/* STAGE 5: WELCOME SCREEN */}
-      <AnimatePresence>
         {stage === 'welcome' && selectedAccount && selectedOrg && (
           <WelcomeScreen
+            key="welcome"
             onComplete={handleWelcomeComplete}
             organization={selectedOrg}
             account={selectedAccount}
           />
         )}
-      </AnimatePresence>
-
-      {/* STAGE 6: DASHBOARD ENTRY ANIMATION */}
-      <AnimatePresence>
         {stage === 'dashboardEntry' && selectedAccount && selectedOrg && (
           <DashboardEntryAnimation
+            key="dashboardEntry"
             onCompleted={handleDashboardEntryComplete}
             organization={selectedOrg}
             account={selectedAccount}
@@ -185,28 +227,15 @@ export default function App() {
       </AnimatePresence>
 
       {/* STAGE 7: DASHBOARD */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {stage === 'dashboard' && showDashboard && selectedAccount && selectedOrg && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
+            initial={{ opacity: 0, scale: 0.98, filter: 'blur(6px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, scale: 0.96, filter: 'blur(4px)' }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-60 flex flex-col bg-gray-50"
           >
-            {/* Demo Banner - Sits above everything */}
-            <DemoBanner
-              isVisible={showDemoBanner}
-              onVisibilityChange={setShowDemoBanner}
-              onMemberPortalClick={handleMemberPortalClick}
-              onOrganizationChange={handleOrganizationChange}
-              currentOrganization={selectedOrg}
-            />
-
-            {/* Minimized demo button when banner is hidden */}
-            {!showDemoBanner && (
-              <DemoBannerMinimized onRestore={() => setShowDemoBanner(true)} />
-            )}
-
             {/* Main Layout */}
             <div className="flex flex-1 min-h-0">
               <Sidebar
@@ -224,15 +253,16 @@ export default function App() {
                   onBellhopClick={() => setIsBellhopOpen(true)}
                   organization={selectedOrg}
                   account={selectedAccount}
+                  onNavigate={setCurrentPage}
                 />
 
                 <main className="flex-1 overflow-y-auto bg-gray-50">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentPage}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
+                      initial={{ opacity: 0, y: 16, scale: 0.98, filter: 'blur(4px)' }}
+                      animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                      exit={{ opacity: 0, y: -12, scale: 0.99, filter: 'blur(3px)' }}
                       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     >
                       {renderPage()}
@@ -251,13 +281,13 @@ export default function App() {
       </AnimatePresence>
 
       {/* STAGE 8: MEMBER PORTAL (Mobile-First View) */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {stage === 'memberPortal' && selectedAccount && selectedOrg && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -16, scale: 0.98, filter: 'blur(4px)' }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-70"
           >
             <MemberPortal
@@ -269,5 +299,6 @@ export default function App() {
         )}
       </AnimatePresence>
     </div>
+    </PlatformDemoBanner>
   );
 }

@@ -8,7 +8,6 @@ import { defineRecipe } from '@chakra-ui/react'
 
 export const buttonRecipe = defineRecipe({
   className: 'lobbi-button',
-  description: 'Button component with luxury styling',
 
   base: {
     display: 'inline-flex',
@@ -16,14 +15,14 @@ export const buttonRecipe = defineRecipe({
     justifyContent: 'center',
     gap: '2',
     flexShrink: 0,
-    fontWeight: 'medium',
+    fontWeight: 'semibold',
     fontFamily: 'body',
     letterSpacing: 'button',
     textTransform: 'uppercase',
     borderRadius: 'button',
     whiteSpace: 'nowrap',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
     userSelect: 'none',
     position: 'relative',
     overflow: 'hidden',
@@ -53,16 +52,18 @@ export const buttonRecipe = defineRecipe({
         bg: 'brand.primary',
         color: 'text.onBrand',
         boxShadow: 'goldSoft',
+        transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
 
         _hover: {
           bg: 'brand.secondary',
           transform: 'translateY(-1px)',
-          boxShadow: 'goldGlow',
+          boxShadow: 'buttonHover',
         },
 
         _active: {
           transform: 'translateY(0)',
-          boxShadow: 'sm',
+          boxShadow: 'buttonActive',
+          transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
         },
       },
 
@@ -71,14 +72,17 @@ export const buttonRecipe = defineRecipe({
         color: 'brand.primary',
         borderWidth: '1px',
         borderColor: 'brand.primary/40',
+        transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
 
         _hover: {
           bg: 'brand.primary/5',
           borderColor: 'brand.primary',
+          boxShadow: 'goldSoft',
         },
 
         _active: {
           bg: 'brand.primary/10',
+          transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
         },
       },
 
@@ -160,16 +164,40 @@ export const buttonRecipe = defineRecipe({
         bg: 'linear-gradient(135deg, {colors.brand.light}, {colors.brand.primary}, {colors.brand.secondary})',
         color: 'text.onBrand',
         boxShadow: 'goldSoft',
-        backgroundSize: '200% 200%',
+        backgroundSize: '300% 100%',
+        transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
 
         _hover: {
-          backgroundPosition: 'right center',
+          backgroundPosition: '100% center',
           transform: 'translateY(-1px)',
           boxShadow: 'goldGlow',
         },
 
         _active: {
           transform: 'translateY(0)',
+          transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+        },
+      },
+
+      glass: {
+        bg: 'glass.bg',
+        color: 'text.primary',
+        borderWidth: '1px',
+        borderColor: 'glass.border',
+        backdropFilter: 'blur(40px)',
+        transition: 'all 0.45s cubic-bezier(0.22, 1, 0.36, 1)',
+
+        _hover: {
+          bg: 'glass.bg',
+          borderColor: 'brand.primary/30',
+          boxShadow: 'goldSoft',
+          transform: 'translateY(-1px)',
+        },
+
+        _active: {
+          transform: 'translateY(0)',
+          boxShadow: 'none',
+          transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
         },
       },
     },

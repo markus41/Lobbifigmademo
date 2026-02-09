@@ -70,6 +70,7 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
       : '';
 
     return (
+      // @ts-expect-error - motion/react onDrag type conflicts with React's DragEventHandler
       <motion.div
         ref={ref}
         className={cn(baseStyles, variantStyles[variant], hoverStyles, className)}

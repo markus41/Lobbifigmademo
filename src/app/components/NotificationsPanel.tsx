@@ -136,16 +136,15 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
             <div className="p-4 border-b border-gray-100 flex items-center justify-between">
               <div>
                 <h3
-                  className="text-lg font-semibold"
+                  className="text-lg font-semibold text-[#1A1815]"
                   style={{
                     fontFamily: 'Cormorant Garamond, Georgia, serif',
-                    color: '#1A1815',
                   }}
                 >
                   Notifications
                 </h3>
                 {unreadCount > 0 && (
-                  <p className="text-xs" style={{ color: '#8A8578' }}>
+                  <p className="text-xs text-[#8A8578]">
                     {unreadCount} unread
                   </p>
                 )}
@@ -186,8 +185,7 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <p
-                          className={`text-sm ${!notification.read ? 'font-medium' : ''}`}
-                          style={{ color: '#1A1815' }}
+                          className={`text-sm text-[#1A1815] ${!notification.read ? 'font-medium' : ''}`}
                         >
                           {notification.title}
                         </p>
@@ -199,14 +197,12 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
                         )}
                       </div>
                       <p
-                        className="text-xs mt-0.5 truncate"
-                        style={{ color: '#8A8578' }}
+                        className="text-xs mt-0.5 truncate text-[#8A8578]"
                       >
                         {notification.message}
                       </p>
                       <p
-                        className="text-[10px] mt-1"
-                        style={{ color: '#B8B0A0' }}
+                        className="text-[10px] mt-1 text-[#B8B0A0]"
                       >
                         {notification.time}
                       </p>

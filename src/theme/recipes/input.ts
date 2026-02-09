@@ -8,7 +8,6 @@ import { defineRecipe } from '@chakra-ui/react'
 
 export const inputRecipe = defineRecipe({
   className: 'lobbi-input',
-  description: 'Input field component with luxury styling',
 
   base: {
     width: 'full',
@@ -19,7 +18,7 @@ export const inputRecipe = defineRecipe({
     fontFamily: 'body',
     fontSize: 'md',
     borderRadius: 'input',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
 
     _placeholder: {
       color: 'input.placeholder',
@@ -50,6 +49,11 @@ export const inputRecipe = defineRecipe({
 
         _hover: {
           borderColor: 'border.accent',
+        },
+
+        _focusVisible: {
+          borderColor: 'input.focus',
+          boxShadow: 'focus',
         },
 
         _focus: {
@@ -98,6 +102,24 @@ export const inputRecipe = defineRecipe({
         px: '0',
         height: 'auto',
       },
+
+      glass: {
+        bg: 'glass.bg',
+        borderWidth: '1px',
+        borderColor: 'glass.border',
+        backdropFilter: 'blur(24px)',
+
+        _hover: {
+          borderColor: 'border.accent',
+        },
+
+        _focusVisible: {
+          outline: 'none',
+          borderColor: 'input.focus',
+          boxShadow: 'focus',
+          bg: 'glass.bg',
+        },
+      },
     },
 
     size: {
@@ -140,7 +162,6 @@ export const inputRecipe = defineRecipe({
  */
 export const textareaRecipe = defineRecipe({
   className: 'lobbi-textarea',
-  description: 'Textarea component with luxury styling',
 
   base: {
     width: 'full',
@@ -153,7 +174,7 @@ export const textareaRecipe = defineRecipe({
     borderRadius: 'input',
     lineHeight: 'relaxed',
     resize: 'vertical',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
 
     _placeholder: {
       color: 'input.placeholder',
@@ -186,6 +207,11 @@ export const textareaRecipe = defineRecipe({
           borderColor: 'border.accent',
         },
 
+        _focusVisible: {
+          borderColor: 'input.focus',
+          boxShadow: 'focus',
+        },
+
         _focus: {
           borderColor: 'input.focus',
           boxShadow: 'focus',
@@ -213,6 +239,24 @@ export const textareaRecipe = defineRecipe({
         border: 'none',
         borderRadius: '0',
         px: '0',
+      },
+
+      glass: {
+        bg: 'glass.bg',
+        borderWidth: '1px',
+        borderColor: 'glass.border',
+        backdropFilter: 'blur(24px)',
+
+        _hover: {
+          borderColor: 'border.accent',
+        },
+
+        _focusVisible: {
+          outline: 'none',
+          borderColor: 'input.focus',
+          boxShadow: 'focus',
+          bg: 'glass.bg',
+        },
       },
     },
 
