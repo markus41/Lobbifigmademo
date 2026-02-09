@@ -20,6 +20,7 @@ Specialized agents for the Lobbi Figma demo project, adapted from agents across 
 | **Charts & Viz** | `charts-visualization.agent.md` | Recharts data visualization and dashboards |
 | **Coder** | `coder.agent.md` | TDD implementation, code quality |
 | **Debugging** | `debugging.agent.md` | React/Vite/TypeScript troubleshooting |
+| **Chakra Component Dev** | `chakra-component-dev.agent.md` | Chakra UI v3 recipes, slot recipes, tokens, CVA patterns |
 
 ### Quality & Process (4 agents)
 
