@@ -3,14 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { Organization, Account } from '@/app/data/themes';
-import {
-  getOrgColors,
-  getOrgFonts,
-  getCardEntranceVariants,
-  getCardClasses,
-  getButtonClasses,
-  getInputClasses,
-} from '../utils/themeMapper';
+import { getOrgColors, getOrgFonts, getButtonClasses, getInputClasses } from '../utils/themeMapper';
 
 interface OrgLoginProps {
   account: Account;
@@ -59,38 +52,35 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
   const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
   const [magicLinkSent, setMagicLinkSent] = useState(false);
 
-  const theme = organization.theme;
+  const t = organization.theme;
   const colors = useMemo(() => getOrgColors(organization), [organization]);
   const fonts = useMemo(() => getOrgFonts(organization), [organization]);
-  const cardEntrance = useMemo(() => getCardEntranceVariants(theme.animationStyle), [theme.animationStyle]);
-  const cardClasses = useMemo(() => getCardClasses(theme), [theme]);
-  const buttonClasses = useMemo(() => getButtonClasses(theme), [theme]);
-  const inputClasses = useMemo(() => getInputClasses(theme), [theme]);
+  const buttonClasses = useMemo(() => getButtonClasses(t), [t]);
+  const inputClasses = useMemo(() => getInputClasses(t), [t]);
 
   const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
-  const dur = theme.animationStyle === 'energetic' ? 0.5 : theme.animationStyle === 'elegant' ? 1.1 : 0.8;
-  const logoShape = theme.logoShape;
+  const logoShape = t.logoShape;
 
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setIsLoggingIn(true); setTimeout(onLogin, 800); };
   const handleMagicLinkSubmit = (e: React.FormEvent) => { e.preventDefault(); setIsLoggingIn(true); setTimeout(() => { setMagicLinkSent(true); setIsLoggingIn(false); }, 1200); };
   const handleSocialLogin = (_p: string) => { setIsLoggingIn(true); setTimeout(onLogin, 1000); };
   const handleMagicLinkContinue = () => { setIsLoggingIn(true); setTimeout(onLogin, 500); };
 
-  const inputStyle = (rgbVal: string) => ({
-    background: `rgba(${rgbVal}, 0.03)`,
-    borderColor: `rgba(${rgbVal}, 0.18)`,
+  const inputStyle = (rgb: string) => ({
+    background: `rgba(${rgb}, 0.02)`,
+    borderColor: `rgba(${rgb}, 0.15)`,
     color: colors.textPrimary,
     fontFamily: fonts.body,
   });
 
-  const focusHandlers = (rgbVal: string) => ({
+  const focusHandlers = (rgb: string) => ({
     onFocus: (e: React.FocusEvent<HTMLInputElement>) => {
-      e.target.style.borderColor = `rgba(${rgbVal}, 0.5)`;
-      e.target.style.boxShadow = `0 0 0 4px rgba(${rgbVal}, 0.08), 0 4px 16px rgba(0,0,0,0.06)`;
+      e.target.style.borderColor = `rgba(${rgb}, 0.45)`;
+      e.target.style.boxShadow = `0 0 0 3px rgba(${rgb}, 0.06)`;
     },
     onBlur: (e: React.FocusEvent<HTMLInputElement>) => {
-      e.target.style.borderColor = `rgba(${rgbVal}, 0.18)`;
-      e.target.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)';
+      e.target.style.borderColor = `rgba(${rgb}, 0.15)`;
+      e.target.style.boxShadow = 'none';
     },
   });
 
@@ -98,105 +88,89 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: dur, ease }}
+      exit={{ opacity: 0, filter: 'blur(6px)' }}
+      transition={{ duration: 0.7, ease }}
       className="fixed inset-0 z-20 flex items-center justify-center p-6"
     >
-      {/* Ambient glow */}
-      <motion.div
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[500px] rounded-full blur-[140px] pointer-events-none"
-        style={{ background: `radial-gradient(circle, rgba(${theme.primaryRgb}, 0.1), transparent 70%)` }}
-        animate={{ scale: [1, 1.06, 1], opacity: [0.7, 1, 0.7] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
       {/* Card */}
       <motion.div
         className="w-full max-w-md relative"
-        initial={cardEntrance.initial}
-        animate={cardEntrance.animate}
-        exit={{ y: -20, scale: 0.96, opacity: 0 }}
-        transition={{ duration: dur, ease }}
+        initial={{ y: 28, scale: 0.97, opacity: 0 }}
+        animate={{ y: 0, scale: 1, opacity: 1 }}
+        exit={{ y: -16, scale: 0.98, opacity: 0, filter: 'blur(4px)' }}
+        transition={{ duration: 0.65, ease }}
       >
         <div
-          className={`relative px-8 sm:px-10 py-10 sm:py-12 rounded-3xl overflow-hidden ${cardClasses}`}
+          className="relative px-8 sm:px-10 py-10 sm:py-12 rounded-2xl overflow-hidden"
           style={{
-            background: `linear-gradient(170deg, rgba(255,255,255,0.97) 0%, rgba(${theme.primaryRgb},0.06) 100%)`,
-            backdropFilter: 'blur(40px)',
-            border: `1.5px solid rgba(${theme.primaryRgb}, 0.2)`,
-            boxShadow: `0 32px 64px -16px rgba(0,0,0,0.12), 0 0 0 1px rgba(${theme.primaryRgb}, 0.08), inset 0 1px 0 rgba(255,255,255,0.9)`,
+            background: `linear-gradient(170deg, rgba(255,255,255,0.96) 0%, rgba(${t.primaryRgb},0.04) 100%)`,
+            backdropFilter: 'blur(32px)',
+            border: `1px solid rgba(${t.primaryRgb}, 0.15)`,
+            boxShadow: `0 24px 56px -16px rgba(0,0,0,0.1), 0 0 0 1px rgba(${t.primaryRgb}, 0.06)`,
           }}
         >
           {/* Top accent */}
-          <motion.div
-            className="absolute top-0 left-0 right-0 h-[2px]"
-            style={{ background: `linear-gradient(90deg, transparent 10%, ${colors.primary} 50%, transparent 90%)` }}
-            animate={{ opacity: [0.4, 0.7, 0.4] }}
-            transition={{ duration: 3, repeat: Infinity, ease }}
-          />
+          <div className="absolute top-0 left-[10%] right-[10%] h-px"
+            style={{ background: `linear-gradient(90deg, transparent, rgba(${t.primaryRgb}, 0.35), transparent)` }} />
 
           {/* Header */}
           <div className="text-center mb-8 relative z-10">
-            {/* Logo */}
             <motion.div
               layoutId="org-logo"
-              className="inline-flex items-center justify-center w-20 h-20 mx-auto mb-6 relative overflow-hidden"
+              className="inline-flex items-center justify-center w-18 h-18 mx-auto mb-5 relative overflow-hidden"
               style={{
-                background: theme.gradientBtn,
+                width: 72, height: 72,
+                background: t.gradientBtn,
                 borderRadius: logoShape === 'diamond' ? '16px' : logoShape === 'hexagon' ? '12px' : logoShape === 'crown' ? '20px 20px 8px 8px' : '50%',
                 transform: logoShape === 'diamond' ? 'rotate(45deg)' : 'none',
-                boxShadow: `0 12px 32px -4px rgba(${theme.primaryRgb}, 0.35)`,
+                boxShadow: `0 10px 28px -4px rgba(${t.primaryRgb}, 0.3)`,
               }}
               initial={{ scale: 0 }}
               animate={{ scale: 1, rotate: logoShape === 'diamond' ? 45 : 0 }}
-              transition={{ type: 'spring', stiffness: 160, delay: 0.2 }}
+              transition={{ type: 'spring', stiffness: 160, delay: 0.15 }}
             >
               <span className="relative z-10 text-3xl" style={{
                 fontFamily: fonts.display, fontWeight: 500, fontStyle: 'italic',
-                color: theme.textInverse,
+                color: t.textInverse,
                 transform: logoShape === 'diamond' ? 'rotate(-45deg)' : 'none',
               }}>
                 {organization.logoLetter}
               </span>
-              <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/25 to-transparent" />
             </motion.div>
 
             <motion.h2
               className="text-2xl mb-2 tracking-tight"
               style={{ fontFamily: fonts.display, fontWeight: fonts.weightHeading, color: colors.textPrimary }}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.6, ease }}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.5, ease }}
             >
               {organization.name}
             </motion.h2>
 
             <motion.p
-              className="text-sm italic opacity-80"
+              className="text-sm italic opacity-70"
               style={{ fontFamily: fonts.display, color: colors.primary }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.8 }}
-              transition={{ delay: 0.45, duration: 0.5 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 0.7 }}
+              transition={{ delay: 0.35, duration: 0.4 }}
             >
               {'"'}{organization.motto}{'"'}
             </motion.p>
 
             <motion.div
-              className="w-12 h-px mx-auto mt-5"
+              className="w-10 h-px mx-auto mt-4"
               style={{ background: `linear-gradient(90deg, transparent, ${colors.primary}, transparent)` }}
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.55, duration: 0.6, ease }}
+              initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+              transition={{ delay: 0.45, duration: 0.5, ease }}
             />
           </div>
 
           {/* Login Method Tabs */}
           <motion.div
             className="flex gap-1 mb-7 p-1 rounded-xl relative z-10"
-            style={{ background: `rgba(${theme.primaryRgb}, 0.05)` }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
+            style={{ background: `rgba(${t.primaryRgb}, 0.04)` }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
           >
             {([
               { id: 'password', label: 'Password' },
@@ -204,14 +178,13 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
               { id: 'magic-link', label: 'Magic Link' },
             ] as const).map((m) => (
               <button
-                key={m.id}
-                type="button"
+                key={m.id} type="button"
                 onClick={() => { setLoginMethod(m.id); setMagicLinkSent(false); }}
                 className="flex-1 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer"
                 style={{
-                  background: loginMethod === m.id ? theme.gradientBtn : 'transparent',
-                  color: loginMethod === m.id ? theme.textInverse : colors.textSecondary,
-                  boxShadow: loginMethod === m.id ? `0 2px 8px rgba(${theme.primaryRgb}, 0.25)` : 'none',
+                  background: loginMethod === m.id ? t.gradientBtn : 'transparent',
+                  color: loginMethod === m.id ? t.textInverse : colors.textSecondary,
+                  boxShadow: loginMethod === m.id ? `0 2px 8px rgba(${t.primaryRgb}, 0.2)` : 'none',
                 }}
               >
                 {m.label}
@@ -222,55 +195,39 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
           {/* Forms */}
           <AnimatePresence mode="wait">
             {loginMethod === 'password' && (
-              <motion.form
-                key="pw"
-                onSubmit={handleSubmit}
+              <motion.form key="pw" onSubmit={handleSubmit}
                 className="flex flex-col gap-5 relative z-10"
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 8 }}
-                transition={{ duration: 0.15 }}
-              >
-                {/* Email */}
+                initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 6 }} transition={{ duration: 0.15 }}>
                 <div>
-                  <label className="block text-[11px] uppercase tracking-[0.15em] mb-2 font-semibold" style={{ color: `rgba(${theme.primaryRgb}, 0.6)` }}>
-                    Email Address
-                  </label>
+                  <label className="block text-[11px] uppercase tracking-[0.15em] mb-2 font-semibold"
+                    style={{ color: `rgba(${t.primaryRgb}, 0.5)` }}>Email Address</label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-35" style={{ color: colors.primary }} />
-                    <input
-                      type="email" value={account.email} readOnly
-                      className={`w-full pl-11 pr-4 py-4 border-[1.5px] text-sm outline-none cursor-not-allowed transition-all rounded-xl shadow-sm ${inputClasses}`}
-                      style={inputStyle(theme.primaryRgb)}
-                    />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-30" style={{ color: colors.primary }} />
+                    <input type="email" value={account.email} readOnly
+                      className={`w-full pl-11 pr-4 py-4 border-[1.5px] text-sm outline-none cursor-not-allowed rounded-xl ${inputClasses}`}
+                      style={inputStyle(t.primaryRgb)} />
                   </div>
                 </div>
-
-                {/* Password */}
                 <div>
-                  <label className="block text-[11px] uppercase tracking-[0.15em] mb-2 font-semibold" style={{ color: `rgba(${theme.primaryRgb}, 0.6)` }}>
-                    Password
-                  </label>
+                  <label className="block text-[11px] uppercase tracking-[0.15em] mb-2 font-semibold"
+                    style={{ color: `rgba(${t.primaryRgb}, 0.5)` }}>Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-35" style={{ color: colors.primary }} />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-30" style={{ color: colors.primary }} />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password} onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password" required
-                      className={`w-full pl-11 pr-12 py-4 border-[1.5px] text-sm outline-none transition-all rounded-xl shadow-sm ${inputClasses}`}
-                      style={inputStyle(theme.primaryRgb)}
-                      {...focusHandlers(theme.primaryRgb)}
+                      className={`w-full pl-11 pr-12 py-4 border-[1.5px] text-sm outline-none transition-all rounded-xl ${inputClasses}`}
+                      style={inputStyle(t.primaryRgb)} {...focusHandlers(t.primaryRgb)}
                     />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 opacity-40 hover:opacity-80 transition-opacity cursor-pointer"
-                      style={{ color: colors.primary }}
-                    >
+                      className="absolute right-4 top-1/2 -translate-y-1/2 opacity-35 hover:opacity-70 transition-opacity cursor-pointer"
+                      style={{ color: colors.primary }}>
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
-
-                {/* Remember / Forgot */}
                 <div className="flex items-center justify-between text-xs">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" className="w-4 h-4 rounded accent-current cursor-pointer" style={{ accentColor: colors.primary }} />
@@ -279,23 +236,15 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                   <button type="button"
                     onClick={() => toast.success(`Password reset link sent to ${account.email}`)}
                     className="font-medium hover:underline cursor-pointer"
-                    style={{ color: colors.primary }}
-                  >
+                    style={{ color: colors.primary }}>
                     Forgot password?
                   </button>
                 </div>
-
-                {/* Submit */}
-                <motion.button
-                  type="submit" disabled={isLoggingIn || !password}
-                  className={`relative w-full py-4 text-sm font-bold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-40 disabled:cursor-not-allowed text-white mt-2 cursor-pointer ${buttonClasses}`}
-                  style={{
-                    background: theme.gradientBtn,
-                    boxShadow: `0 8px 24px rgba(${theme.primaryRgb}, 0.25)`,
-                  }}
-                  whileHover={!isLoggingIn && password ? { y: -2, boxShadow: `0 14px 36px rgba(${theme.primaryRgb}, 0.35)` } : {}}
-                  whileTap={!isLoggingIn && password ? { y: 0, scale: 0.98 } : {}}
-                >
+                <motion.button type="submit" disabled={isLoggingIn || !password}
+                  className={`relative w-full py-4 text-sm font-bold tracking-wider uppercase overflow-hidden transition-all disabled:opacity-35 disabled:cursor-not-allowed text-white mt-2 cursor-pointer ${buttonClasses}`}
+                  style={{ background: t.gradientBtn, boxShadow: `0 6px 20px rgba(${t.primaryRgb}, 0.2)` }}
+                  whileHover={!isLoggingIn && password ? { y: -2, boxShadow: `0 10px 28px rgba(${t.primaryRgb}, 0.3)` } : {}}
+                  whileTap={!isLoggingIn && password ? { y: 0, scale: 0.98 } : {}}>
                   {isLoggingIn ? (
                     <span className="flex items-center justify-center gap-3">
                       <motion.span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full"
@@ -304,8 +253,8 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                     </span>
                   ) : 'Enter The Lobbi'}
                   {!isLoggingIn && password && (
-                    <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                      animate={{ x: ['-200%', '200%'] }} transition={{ duration: 3, repeat: Infinity, repeatDelay: 1.5, ease: 'linear' }} />
+                    <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
+                      animate={{ x: ['-200%', '200%'] }} transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: 'linear' }} />
                   )}
                 </motion.button>
               </motion.form>
@@ -313,37 +262,38 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
             {loginMethod === 'magic-link' && (
               <motion.div key="ml" className="flex flex-col gap-5 relative z-10"
-                initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} transition={{ duration: 0.15 }}>
+                initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 6 }} transition={{ duration: 0.15 }}>
                 {!magicLinkSent ? (
                   <form onSubmit={handleMagicLinkSubmit} className="flex flex-col gap-5">
                     <div className="text-center mb-2">
-                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4"
-                        style={{ background: `rgba(${theme.primaryRgb}, 0.08)` }}>
-                        <MagicWandIcon className="w-8 h-8" style={{ color: colors.primary }} />
+                      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
+                        style={{ background: `rgba(${t.primaryRgb}, 0.06)` }}>
+                        <MagicWandIcon className="w-7 h-7" style={{ color: colors.primary }} />
                       </div>
                       <p className="text-sm" style={{ color: colors.textSecondary }}>
                         {"We'll send a magic link to your email for passwordless sign in"}
                       </p>
                     </div>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-35" style={{ color: colors.primary }} />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-30" style={{ color: colors.primary }} />
                       <input type="email" value={account.email} readOnly
-                        className={`w-full pl-11 pr-4 py-4 border-[1.5px] text-sm outline-none cursor-not-allowed rounded-xl shadow-sm ${inputClasses}`}
-                        style={inputStyle(theme.primaryRgb)} />
+                        className={`w-full pl-11 pr-4 py-4 border-[1.5px] text-sm outline-none cursor-not-allowed rounded-xl ${inputClasses}`}
+                        style={inputStyle(t.primaryRgb)} />
                     </div>
                     <motion.button type="submit" disabled={isLoggingIn}
-                      className={`w-full py-4 text-sm font-bold tracking-wider uppercase text-white disabled:opacity-40 cursor-pointer ${buttonClasses}`}
-                      style={{ background: theme.gradientBtn, boxShadow: `0 8px 24px rgba(${theme.primaryRgb}, 0.25)` }}
+                      className={`w-full py-4 text-sm font-bold tracking-wider uppercase text-white disabled:opacity-35 cursor-pointer ${buttonClasses}`}
+                      style={{ background: t.gradientBtn, boxShadow: `0 6px 20px rgba(${t.primaryRgb}, 0.2)` }}
                       whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                       {isLoggingIn ? 'Sending...' : 'Send Magic Link'}
                     </motion.button>
                   </form>
                 ) : (
-                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-4">
-                    <motion.div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-5"
-                      style={{ background: `rgba(${theme.primaryRgb}, 0.08)` }}
+                  <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-4">
+                    <motion.div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-5"
+                      style={{ background: `rgba(${t.primaryRgb}, 0.06)` }}
                       initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200 }}>
-                      <svg className="w-8 h-8" style={{ color: colors.primary }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg className="w-7 h-7" style={{ color: colors.primary }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                       </svg>
                     </motion.div>
@@ -352,8 +302,8 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       {"Magic link sent to "}<strong>{account.email}</strong>
                     </p>
                     <motion.button onClick={handleMagicLinkContinue} disabled={isLoggingIn}
-                      className={`w-full py-4 text-sm font-bold tracking-wider uppercase text-white disabled:opacity-40 cursor-pointer ${buttonClasses}`}
-                      style={{ background: theme.gradientBtn }} whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
+                      className={`w-full py-4 text-sm font-bold tracking-wider uppercase text-white disabled:opacity-35 cursor-pointer ${buttonClasses}`}
+                      style={{ background: t.gradientBtn }} whileHover={{ y: -2 }} whileTap={{ y: 0 }}>
                       {isLoggingIn ? 'Entering...' : 'Demo: Continue Anyway'}
                     </motion.button>
                   </motion.div>
@@ -363,7 +313,8 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
             {loginMethod === 'social' && (
               <motion.div key="sso" className="flex flex-col gap-4 relative z-10"
-                initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} transition={{ duration: 0.15 }}>
+                initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 6 }} transition={{ duration: 0.15 }}>
                 <p className="text-sm text-center mb-2" style={{ color: colors.textSecondary }}>
                   Sign in with your enterprise SSO provider
                 </p>
@@ -374,14 +325,14 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                   { id: 'apple', name: 'Apple', icon: AppleIcon, bg: '#000', border: '#000', text: '#fff' },
                 ].map((p) => (
                   <motion.button key={p.id} type="button" onClick={() => handleSocialLogin(p.id)} disabled={isLoggingIn}
-                    className="w-full py-3.5 px-4 rounded-xl text-sm font-medium flex items-center justify-center gap-3 border-[1.5px] transition-all disabled:opacity-40 cursor-pointer"
+                    className="w-full py-3.5 px-4 rounded-xl text-sm font-medium flex items-center justify-center gap-3 border-[1.5px] transition-all disabled:opacity-35 cursor-pointer"
                     style={{ background: p.bg, borderColor: p.border, color: p.text }}
-                    whileHover={{ y: -2, boxShadow: '0 6px 16px rgba(0,0,0,0.08)' }} whileTap={{ y: 0 }}>
+                    whileHover={{ y: -2, boxShadow: '0 4px 12px rgba(0,0,0,0.06)' }} whileTap={{ y: 0 }}>
                     <p.icon className="w-5 h-5" />
                     Continue with {p.name}
                   </motion.button>
                 ))}
-                <div className="pt-3 border-t mt-2" style={{ borderColor: `rgba(${theme.primaryRgb}, 0.1)` }}>
+                <div className="pt-3 border-t mt-2" style={{ borderColor: `rgba(${t.primaryRgb}, 0.08)` }}>
                   <button type="button" onClick={() => handleSocialLogin('saml')}
                     className="w-full py-3 text-sm font-medium transition-colors cursor-pointer" style={{ color: colors.textSecondary }}>
                     Sign in with SAML / OIDC
@@ -392,16 +343,16 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
           </AnimatePresence>
 
           {/* Footer */}
-          <motion.div className="mt-8 pt-5 border-t text-center relative z-10"
-            style={{ borderColor: `rgba(${theme.primaryRgb}, 0.08)` }}
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 0.5 }}>
+          <motion.div className="mt-7 pt-5 border-t text-center relative z-10"
+            style={{ borderColor: `rgba(${t.primaryRgb}, 0.06)` }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 0.4 }}>
             <div className="flex items-center justify-center gap-2 mb-1.5">
               <span className="text-lg italic" style={{
                 fontFamily: fonts.display,
                 background: 'linear-gradient(135deg, #F5E6A3, #D4AF37, #8B7330)',
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               }}>L</span>
-              <span className="text-[9px] uppercase tracking-widest" style={{ color: `rgba(${theme.primaryRgb}, 0.4)` }}>
+              <span className="text-[9px] uppercase tracking-widest" style={{ color: `rgba(${t.primaryRgb}, 0.3)` }}>
                 Powered by The Lobbi
               </span>
             </div>

@@ -7,13 +7,8 @@ interface EmailSelectionProps {
   onEmailSelected: (email: string) => void;
 }
 
-// Custom styled dropdown for account selection
 function AccountDropdown({
-  value,
-  onChange,
-  accounts,
-  organizations,
-  previewOrg,
+  value, onChange, accounts, organizations, previewOrg,
 }: {
   value: string;
   onChange: (email: string) => void;
@@ -25,275 +20,143 @@ function AccountDropdown({
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-
   const selectedAccount = accounts.find(a => a.email === value);
-  const primaryRgb = previewOrg?.theme.primaryRgb || '212,175,55';
+  const rgb = previewOrg?.theme.primaryRgb || '212,175,55';
 
-  // Close on click outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-        setFocusedIndex(-1);
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false); setFocusedIndex(-1);
       }
     };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    if (isOpen) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, [isOpen]);
 
-  // Keyboard navigation
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handler = (e: KeyboardEvent) => {
       if (!isOpen) return;
-
-      switch (e.key) {
-        case 'ArrowDown':
-          e.preventDefault();
-          setFocusedIndex(prev => Math.min(prev + 1, accounts.length - 1));
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          setFocusedIndex(prev => Math.max(prev - 1, 0));
-          break;
-        case 'Enter':
-          e.preventDefault();
-          if (focusedIndex >= 0) {
-            onChange(accounts[focusedIndex].email);
-            setIsOpen(false);
-            setFocusedIndex(-1);
-          }
-          break;
-        case 'Escape':
-          setIsOpen(false);
-          setFocusedIndex(-1);
-          break;
-      }
+      if (e.key === 'ArrowDown') { e.preventDefault(); setFocusedIndex(p => Math.min(p + 1, accounts.length - 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setFocusedIndex(p => Math.max(p - 1, 0)); }
+      else if (e.key === 'Enter' && focusedIndex >= 0) { e.preventDefault(); onChange(accounts[focusedIndex].email); setIsOpen(false); }
+      else if (e.key === 'Escape') { setIsOpen(false); setFocusedIndex(-1); }
     };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
   }, [isOpen, focusedIndex, accounts, onChange]);
 
-  // Scroll focused item into view
   useEffect(() => {
     if (isOpen && focusedIndex >= 0 && listRef.current) {
-      const items = listRef.current.querySelectorAll('[data-account-item]');
-      items[focusedIndex]?.scrollIntoView({ block: 'nearest' });
+      listRef.current.querySelectorAll('[data-account-item]')[focusedIndex]?.scrollIntoView({ block: 'nearest' });
     }
   }, [focusedIndex, isOpen]);
 
   return (
     <div ref={dropdownRef} className="relative">
-      {/* Trigger Button */}
       <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-5 py-4 border rounded-xl text-left cursor-pointer transition-all outline-none bg-white group"
+        type="button" onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-5 py-4 border rounded-xl text-left cursor-pointer transition-all duration-300 outline-none bg-white/90"
         style={{
-          borderColor: isOpen
-            ? `rgba(${primaryRgb}, 0.5)`
-            : `rgba(${primaryRgb}, 0.15)`,
-          boxShadow: isOpen
-            ? `0 0 0 3px rgba(${primaryRgb}, 0.1), 0 10px 40px -10px rgba(0,0,0,0.1)`
-            : 'none',
+          borderColor: isOpen ? `rgba(${rgb}, 0.5)` : `rgba(${rgb}, 0.15)`,
+          boxShadow: isOpen ? `0 0 0 3px rgba(${rgb}, 0.08), 0 8px 32px -8px rgba(0,0,0,0.08)` : '0 1px 3px rgba(0,0,0,0.04)',
         }}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
+        aria-haspopup="listbox" aria-expanded={isOpen}
       >
         {selectedAccount ? (
           <div className="flex items-center gap-3">
-            {/* Organization Avatar */}
-            <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm"
-              style={{
-                background: organizations[selectedAccount.orgId]?.theme.gradientBtn,
-              }}
-            >
-              <span
-                className="text-[14px] font-semibold text-white"
-                style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
-              >
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{ background: organizations[selectedAccount.orgId]?.theme.gradientBtn }}>
+              <span className="text-[14px] font-semibold text-white"
+                style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}>
                 {organizations[selectedAccount.orgId]?.logoLetter}
               </span>
             </div>
-
-            {/* Account Details */}
             <div className="flex-1 min-w-0">
-              <div className="text-[14px] font-medium text-[#2C2A25] truncate">
-                {selectedAccount.first} {selectedAccount.last}
-              </div>
-              <div
-                className="text-[12px] truncate"
-                style={{ color: `rgba(${primaryRgb}, 0.7)` }}
-              >
-                {organizations[selectedAccount.orgId]?.name}
-              </div>
+              <div className="text-[14px] font-medium text-[#2C2A25] truncate">{selectedAccount.first} {selectedAccount.last}</div>
+              <div className="text-[12px] truncate" style={{ color: `rgba(${rgb}, 0.7)` }}>{organizations[selectedAccount.orgId]?.name}</div>
             </div>
-
-            {/* Chevron */}
-            <ChevronDown
-              className={`w-5 h-5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-              style={{ color: `rgba(${primaryRgb}, 0.5)` }}
-            />
+            <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} style={{ color: `rgba(${rgb}, 0.4)` }} />
           </div>
         ) : (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-100"
-              >
-                <User className="w-4 h-4 text-gray-400" />
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-gray-50">
+                <User className="w-4 h-4 text-gray-300" />
               </div>
               <span className="text-[15px] text-gray-400">Select your account</span>
             </div>
-            <ChevronDown
-              className={`w-5 h-5 text-gray-300 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-            />
+            <ChevronDown className={`w-5 h-5 text-gray-300 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
           </div>
         )}
       </button>
 
-      {/* Dropdown List */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute left-0 right-0 mt-2 bg-white rounded-xl border overflow-hidden z-[100] max-h-[min(50vh,400px)] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.02)]"
-            style={{
-              borderColor: `rgba(${primaryRgb}, 0.15)`,
-            }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute left-0 right-0 mt-2 bg-white rounded-xl border overflow-hidden z-[100] max-h-[min(50vh,400px)]"
+            style={{ borderColor: `rgba(${rgb}, 0.12)`, boxShadow: '0 16px 48px -12px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.02)' }}
           >
-            {/* Header */}
-            <div
-              className="px-4 py-3 border-b flex items-center gap-2"
-              style={{
-                borderColor: `rgba(${primaryRgb}, 0.1)`,
-                background: `rgba(${primaryRgb}, 0.03)`,
-              }}
-            >
-              <Building2 className="w-4 h-4" style={{ color: `rgba(${primaryRgb}, 0.5)` }} />
-              <span
-                className="text-[11px] uppercase tracking-[0.15em] font-semibold"
-                style={{ color: `rgba(${primaryRgb}, 0.7)` }}
-              >
-                Available Accounts ({accounts.length})
+            <div className="px-4 py-2.5 border-b flex items-center gap-2"
+              style={{ borderColor: `rgba(${rgb}, 0.08)`, background: `rgba(${rgb}, 0.02)` }}>
+              <Building2 className="w-3.5 h-3.5" style={{ color: `rgba(${rgb}, 0.4)` }} />
+              <span className="text-[10px] uppercase tracking-[0.15em] font-semibold" style={{ color: `rgba(${rgb}, 0.5)` }}>
+                Accounts ({accounts.length})
               </span>
             </div>
 
-            {/* List */}
             <div ref={listRef} className="max-h-[min(50vh,400px)] overflow-y-auto py-1">
               {accounts.map((account, index) => {
                 const org = organizations[account.orgId];
                 const isSelected = account.email === value;
                 const isFocused = index === focusedIndex;
-
                 return (
-                  <motion.button
-                    key={account.email}
-                    type="button"
-                    data-account-item
-                    onClick={() => {
-                      onChange(account.email);
-                      setIsOpen(false);
-                      setFocusedIndex(-1);
-                    }}
-                    className={`w-full px-4 py-3 flex items-center gap-3 transition-all text-left group ${
-                      isSelected || isFocused ? 'bg-opacity-100' : 'bg-opacity-0'
-                    }`}
+                  <button
+                    key={account.email} type="button" data-account-item
+                    onClick={() => { onChange(account.email); setIsOpen(false); }}
+                    className="w-full px-4 py-3 flex items-center gap-3 transition-colors duration-150 text-left cursor-pointer"
                     style={{
-                      background: isSelected
-                        ? `rgba(${org.theme.primaryRgb}, 0.1)`
-                        : isFocused
-                          ? `rgba(${org.theme.primaryRgb}, 0.05)`
-                          : 'transparent',
-                    }}
-                    whileHover={{
-                      backgroundColor: `rgba(${org.theme.primaryRgb}, 0.08)`,
+                      background: isSelected ? `rgba(${org.theme.primaryRgb}, 0.08)` : isFocused ? `rgba(${org.theme.primaryRgb}, 0.04)` : 'transparent',
                     }}
                   >
-                    {/* Organization Avatar */}
-                    <div
-                      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow"
-                      style={{
-                        background: org.theme.gradientBtn,
-                      }}
-                    >
-                      <span
-                        className="text-[15px] font-semibold text-white"
-                        style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
-                      >
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{ background: org.theme.gradientBtn }}>
+                      <span className="text-[15px] font-semibold text-white"
+                        style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}>
                         {org.logoLetter}
                       </span>
                     </div>
-
-                    {/* Account Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-[14px] font-medium text-[#2C2A25]">
-                          {account.first} {account.last}
-                        </span>
+                        <span className="text-[14px] font-medium text-[#2C2A25]">{account.first} {account.last}</span>
                         {account.role && (
-                          <span
-                            className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase"
-                            style={{
-                              background: `rgba(${org.theme.primaryRgb}, 0.15)`,
-                              color: org.theme.primary,
-                            }}
-                          >
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase"
+                            style={{ background: `rgba(${org.theme.primaryRgb}, 0.12)`, color: org.theme.primary }}>
                             {account.role}
                           </span>
                         )}
                       </div>
-                      <div className="text-[12px] mt-0.5 truncate text-[#8A8578]">
-                        {account.email}
-                      </div>
-                      <div
-                        className="text-[11px] font-medium mt-1"
-                        style={{ color: org.theme.primary }}
-                      >
-                        {org.name}
-                      </div>
+                      <div className="text-[12px] mt-0.5 truncate text-[#8A8578]">{account.email}</div>
+                      <div className="text-[11px] font-medium mt-1" style={{ color: org.theme.primary }}>{org.name}</div>
                     </div>
-
-                    {/* Selection Check */}
                     {isSelected && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{
-                          background: org.theme.primary,
-                        }}
-                      >
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: org.theme.primary }}>
                         <Check className="w-3.5 h-3.5 text-white" />
-                      </motion.div>
+                      </div>
                     )}
-                  </motion.button>
+                  </button>
                 );
               })}
             </div>
 
-            {/* Footer */}
-            <div
-              className="px-4 py-2.5 border-t"
-              style={{
-                borderColor: `rgba(${primaryRgb}, 0.1)`,
-                background: `rgba(${primaryRgb}, 0.02)`,
-              }}
-            >
+            <div className="px-4 py-2 border-t" style={{ borderColor: `rgba(${rgb}, 0.08)`, background: `rgba(${rgb}, 0.02)` }}>
               <p className="text-[11px] text-center text-[#B8B0A0]">
-                Use <kbd className="px-1.5 py-0.5 rounded bg-gray-100 font-mono text-[10px]">↑</kbd>{' '}
-                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 font-mono text-[10px]">↓</kbd> to navigate,{' '}
-                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 font-mono text-[10px]">Enter</kbd> to select
+                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 font-mono text-[10px]">{'↑'}</kbd>{' '}
+                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 font-mono text-[10px]">{'↓'}</kbd> navigate,{' '}
+                <kbd className="px-1.5 py-0.5 rounded bg-gray-100 font-mono text-[10px]">Enter</kbd> select
               </p>
             </div>
           </motion.div>
@@ -310,187 +173,87 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedEmail) {
-      // Elite: Recognition phase - environmental response
       setIsRecognizing(true);
-      // The system understands where you belong (900ms shimmer)
-      setTimeout(() => {
-        onEmailSelected(selectedEmail);
-      }, 900);
+      setTimeout(() => onEmailSelected(selectedEmail), 900);
     }
   };
 
-  // Get organization for preview
   const getOrgForEmail = (email: string) => {
     const account = ACCOUNTS.find(a => a.email === email);
     return account ? ORGANIZATIONS[account.orgId] : null;
   };
 
   const previewOrg = getOrgForEmail(selectedEmail);
+  const rgb = previewOrg?.theme.primaryRgb || '212,175,55';
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.6 }}
+      exit={{ opacity: 0, filter: 'blur(6px)' }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-0 z-20 flex items-center justify-center p-4"
     >
-      {/* Ambient background glow */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[800px] h-[600px] rounded-full blur-[120px]"
-          style={{
-            background: `radial-gradient(circle, rgba(${previewOrg?.theme.primaryRgb || '212,175,55'}, 0.15), transparent 70%)`,
-          }}
-          animate={{
-            scale: [1, 1.08, 1],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-        />
-      </div>
-
-      {/* Floating particles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: `${2 + Math.random() * 2.5}px`,
-              height: `${2 + Math.random() * 2.5}px`,
-              background: previewOrg?.theme.primary || '#D4AF37',
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30 - Math.random() * 50],
-              opacity: [0, 0.5, 0],
-              scale: [0, 1, 0],
-            }}
-            transition={{
-              duration: 4 + Math.random() * 3,
-              repeat: Infinity,
-              delay: Math.random() * 4,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          />
-        ))}
-      </div>
-
       <motion.div
-        className="w-full max-w-[480px] px-4 relative"
-        initial={{ y: 30, scale: 0.95 }}
-        animate={{ y: 0, scale: 1 }}
-        exit={{ y: -20, scale: 0.95 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-[480px] relative"
+        initial={{ y: 24, scale: 0.97, opacity: 0 }}
+        animate={{ y: 0, scale: 1, opacity: 1 }}
+        exit={{ y: -16, scale: 0.98, opacity: 0, filter: 'blur(4px)' }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
-        {/* Ornamental corners */}
-        <div className="absolute -top-3 -left-1 w-10 h-10 border-l border-t rounded-tl-xl" style={{ borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.25)` : 'rgba(212,175,55,0.2)' }} />
-        <div className="absolute -top-3 -right-1 w-10 h-10 border-r border-t rounded-tr-xl" style={{ borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.25)` : 'rgba(212,175,55,0.2)' }} />
-        <div className="absolute -bottom-3 -left-1 w-10 h-10 border-l border-b rounded-bl-xl" style={{ borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.25)` : 'rgba(212,175,55,0.2)' }} />
-        <div className="absolute -bottom-3 -right-1 w-10 h-10 border-r border-b rounded-br-xl" style={{ borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.25)` : 'rgba(212,175,55,0.2)' }} />
-
-        {/* Main Card - Light mode frosted glass */}
         <div
-          className="relative p-6 sm:p-8 md:p-10 lg:p-12 rounded-2xl border"
+          className="relative p-8 sm:p-10 rounded-2xl border overflow-hidden"
           style={{
-            background: 'rgba(255, 255, 255, 0.9)',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-            borderColor: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.2)` : 'rgba(212,175,55,0.15)',
-            boxShadow: previewOrg
-              ? `0 30px 70px rgba(0,0,0,0.12), 0 0 0 1px rgba(${previewOrg.theme.primaryRgb}, 0.08), inset 0 2px 0 rgba(255,255,255,0.9), inset 0 0 120px rgba(${previewOrg.theme.primaryRgb}, 0.03)`
-              : '0 30px 70px rgba(0,0,0,0.12), 0 0 0 1px rgba(212,175,55,0.08), inset 0 2px 0 rgba(255,255,255,0.9), inset 0 0 120px rgba(212,175,55,0.03)',
+            background: 'rgba(255,255,255,0.92)',
+            backdropFilter: 'blur(32px)',
+            borderColor: `rgba(${rgb}, 0.15)`,
+            boxShadow: `0 24px 64px -16px rgba(0,0,0,0.1), 0 0 0 1px rgba(${rgb}, 0.06)`,
           }}
         >
-          {/* Elite: Recognition shimmer overlay (no spinners) */}
+          {/* Recognition overlay */}
           {isRecognizing && previewOrg && (
             <motion.div
-              className="absolute inset-0 pointer-events-none z-50"
+              className="absolute inset-0 z-50 pointer-events-none"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              style={{
-                background: `radial-gradient(ellipse 80% 50% at 50% 50%, rgba(${previewOrg.theme.primaryRgb}, 0.15), transparent)`,
-              }}
-            >
-              {/* Slow pulse shimmer */}
-              <motion.div
-                className="absolute inset-0"
-                animate={{
-                  opacity: [0.3, 0.7, 0.3],
-                }}
-                transition={{
-                  duration: 1.5,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                style={{
-                  background: `linear-gradient(135deg, transparent, rgba(${previewOrg.theme.primaryRgb}, 0.2), transparent)`,
-                }}
-              />
-            </motion.div>
+              animate={{ opacity: [0, 0.6, 0.3] }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              style={{ background: `radial-gradient(ellipse at center, rgba(${previewOrg.theme.primaryRgb}, 0.12), transparent 70%)` }}
+            />
           )}
 
-          {/* Subtle top border accent */}
+          {/* Top accent */}
           <motion.div
-            className="absolute top-0 left-0 right-0 h-[2px]"
-            style={{
-              background: previewOrg
-                ? `linear-gradient(90deg, transparent, ${previewOrg.theme.primary}, transparent)`
-                : 'linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent)',
-            }}
-            animate={{
-              opacity: [0.3, 0.7, 0.3],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-            }}
+            className="absolute top-0 left-[10%] right-[10%] h-px"
+            style={{ background: `linear-gradient(90deg, transparent, rgba(${rgb}, 0.4), transparent)` }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           />
 
           {/* Header */}
           <div className="text-center mb-8">
-            {/* Logo Mark */}
             <motion.div
-              className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center relative shadow-lg"
+              className="w-14 h-14 mx-auto mb-5 rounded-2xl flex items-center justify-center relative overflow-hidden"
               style={{
-                background: previewOrg
-                  ? previewOrg.theme.gradientBtn
-                  : 'linear-gradient(135deg, #D4AF37, #8B7330)',
+                background: previewOrg ? previewOrg.theme.gradientBtn : 'linear-gradient(135deg, #D4AF37, #8B7330)',
               }}
-              initial={{ scale: 0, rotate: -10 }}
+              initial={{ scale: 0, rotate: -8 }}
               animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.5, delay: 0.2, type: 'spring', stiffness: 200 }}
+              transition={{ duration: 0.6, delay: 0.15, type: 'spring', stiffness: 180, damping: 18 }}
             >
-              <span
-                className="text-[28px] font-light italic relative z-10 text-white"
-                style={{
-                  fontFamily: 'Cormorant Garamond, Georgia, serif',
-                }}
-              >
+              <span className="text-[24px] font-light italic relative z-10 text-white"
+                style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}>
                 {previewOrg ? previewOrg.logoLetter : 'L'}
               </span>
-              {/* Shine overlay */}
-              <div
-                className="absolute inset-0 rounded-2xl"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 50%)',
-                }}
-              />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/25 to-transparent" />
             </motion.div>
 
             <motion.h2
-              className="text-[28px] md:text-[32px] mb-3 font-normal text-[#2C2A25]"
-              style={{
-                fontFamily: 'Cormorant Garamond, Georgia, serif',
-              }}
+              className="text-[26px] mb-2 font-normal text-[#2C2A25]"
+              style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.25, duration: 0.5 }}
             >
               Welcome to The Lobbi
             </motion.h2>
@@ -499,7 +262,7 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
               className="text-sm text-[#8A8578]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.35 }}
             >
               Select your account to continue
             </motion.p>
@@ -510,112 +273,73 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             onSubmit={handleSubmit}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="space-y-6"
+            transition={{ delay: 0.4 }}
+            className="flex flex-col gap-5"
           >
-            {/* Account Dropdown */}
             <div>
-              <label
-                className="block text-[11px] uppercase tracking-[0.2em] mb-3 font-medium transition-colors duration-500"
-                style={{
-                  color: previewOrg
-                    ? `rgba(${previewOrg.theme.primaryRgb}, 0.7)`
-                    : 'rgba(212,175,55,0.7)',
-                }}
-              >
+              <label className="block text-[11px] uppercase tracking-[0.2em] mb-3 font-medium transition-colors duration-300"
+                style={{ color: previewOrg ? `rgba(${previewOrg.theme.primaryRgb}, 0.6)` : 'rgba(212,175,55,0.6)' }}>
                 Choose Account
               </label>
               <AccountDropdown
-                value={selectedEmail}
-                onChange={setSelectedEmail}
-                accounts={ACCOUNTS}
-                organizations={ORGANIZATIONS}
-                previewOrg={previewOrg}
+                value={selectedEmail} onChange={setSelectedEmail}
+                accounts={ACCOUNTS} organizations={ORGANIZATIONS} previewOrg={previewOrg}
               />
             </div>
 
-            {/* Selected Account Preview */}
+            {/* Preview */}
             {selectedEmail && previewOrg && (
               <motion.div
-                initial={{ opacity: 0, y: -10, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{ duration: 0.3 }}
                 className="flex items-center gap-4 p-4 rounded-xl border overflow-hidden"
                 style={{
-                  background: `linear-gradient(135deg, rgba(${previewOrg.theme.primaryRgb}, 0.05), rgba(${previewOrg.theme.primaryRgb}, 0.02))`,
-                  borderColor: `rgba(${previewOrg.theme.primaryRgb}, 0.2)`,
+                  background: `linear-gradient(135deg, rgba(${previewOrg.theme.primaryRgb}, 0.04), rgba(${previewOrg.theme.primaryRgb}, 0.02))`,
+                  borderColor: `rgba(${previewOrg.theme.primaryRgb}, 0.15)`,
                 }}
               >
-                {/* Organization Badge */}
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md"
-                  style={{
-                    background: previewOrg.theme.gradientBtn,
-                  }}
-                >
-                  <span
-                    className="text-[20px] font-semibold text-white"
-                    style={{
-                      fontFamily: 'Cormorant Garamond, Georgia, serif',
-                    }}
-                  >
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: previewOrg.theme.gradientBtn }}>
+                  <span className="text-[20px] font-semibold text-white"
+                    style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}>
                     {previewOrg.logoLetter}
                   </span>
                 </div>
-
-                {/* Account Info */}
                 <div className="flex-1 min-w-0">
-                  <div
-                    className="text-[13px] uppercase tracking-[0.1em] mb-1 font-semibold"
-                    style={{ color: previewOrg.theme.primary }}
-                  >
+                  <div className="text-[13px] uppercase tracking-[0.1em] mb-1 font-semibold" style={{ color: previewOrg.theme.primary }}>
                     {previewOrg.name}
                   </div>
-                  <div
-                    className="text-[12px] italic"
-                    style={{
-                      color: `rgba(${previewOrg.theme.primaryRgb}, 0.6)`,
-                      fontFamily: 'Cormorant Garamond, Georgia, serif',
-                    }}
-                  >
+                  <div className="text-[12px] italic" style={{ color: `rgba(${previewOrg.theme.primaryRgb}, 0.5)`, fontFamily: 'Cormorant Garamond, Georgia, serif' }}>
                     {previewOrg.motto}
                   </div>
                 </div>
-
-                {/* Checkmark */}
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ background: previewOrg.theme.primary }}
-                >
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: previewOrg.theme.primary }}>
                   <Check className="w-4 h-4 text-white" />
                 </div>
               </motion.div>
             )}
 
-            {/* Continue Button */}
+            {/* Continue */}
             <motion.button
-              type="submit"
-              disabled={!selectedEmail}
-              className="relative w-full py-4 rounded-xl text-[13px] font-semibold tracking-[0.1em] uppercase overflow-hidden transition-all disabled:opacity-40 disabled:cursor-not-allowed group text-white"
+              type="submit" disabled={!selectedEmail}
+              className="relative w-full py-4 rounded-xl text-[13px] font-semibold tracking-[0.1em] uppercase overflow-hidden transition-all disabled:opacity-30 disabled:cursor-not-allowed group text-white cursor-pointer"
               style={{
-                background: previewOrg
-                  ? previewOrg.theme.gradientBtn
-                  : 'linear-gradient(135deg, #8B7330, #D4AF37, #F4D03F)',
-                boxShadow: selectedEmail ? `0 10px 30px -10px rgba(${previewOrg?.theme.primaryRgb || '212,175,55'}, 0.5)` : 'none',
+                background: previewOrg ? previewOrg.theme.gradientBtn : 'linear-gradient(135deg, #8B7330, #D4AF37, #F4D03F)',
+                boxShadow: selectedEmail ? `0 8px 24px -6px rgba(${rgb}, 0.35)` : 'none',
               }}
-              whileHover={selectedEmail ? { y: -2, boxShadow: `0 15px 40px -10px rgba(${previewOrg?.theme.primaryRgb || '212,175,55'}, 0.6)` } : {}}
+              whileHover={selectedEmail ? { y: -2, boxShadow: `0 12px 32px -6px rgba(${rgb}, 0.4)` } : {}}
               whileTap={selectedEmail ? { y: 0 } : {}}
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 Continue
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </span>
-
-              {/* Shine effect */}
               {selectedEmail && (
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full"
-                  animate={{ x: ['0%', '200%'] }}
-                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{ x: ['-100%', '200%'] }}
+                  transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 2, ease: 'linear' }}
                 />
               )}
             </motion.button>
@@ -623,19 +347,11 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
 
           {/* Footer */}
           <motion.div
-            className="mt-8 pt-6 border-t text-center"
-            style={{
-              borderColor: previewOrg
-                ? `rgba(${previewOrg.theme.primaryRgb}, 0.1)`
-                : 'rgba(212,175,55,0.1)',
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
+            className="mt-7 pt-5 border-t text-center"
+            style={{ borderColor: `rgba(${rgb}, 0.08)` }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
           >
-            <p className="text-xs text-[#B8B0A0]">
-              Demo mode: Each account is connected to a unique organization theme
-            </p>
+            <p className="text-xs text-[#B8B0A0]">Demo mode: Each account connects to a unique theme</p>
           </motion.div>
         </div>
       </motion.div>
