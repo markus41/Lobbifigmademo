@@ -8,7 +8,6 @@ tools:
   - search
   - execute
   - todo
-  - github/*
 applyTo:
   - "**/*.tsx"
   - "**/components/**"
