@@ -189,6 +189,7 @@ const BANNER_BG = "#0B1220";
 const BANNER_PANEL = "#111A2F";
 const BANNER_PANEL_ALT = "#15213B";
 const BANNER_BORDER = "rgba(148, 163, 184, 0.4)";
+const BANNER_DETAIL_BORDER = "rgba(148, 163, 184, 0.3)";
 const BANNER_TEXT = "#F8FAFC";
 const BANNER_MUTED_TEXT = "#D6E1F2";
 const BANNER_SUBTLE_TEXT = "#AFC2DD";
@@ -532,8 +533,8 @@ export function PlatformDemoBanner({
           >
             <Box
               ref={bannerRef}
-              bg="var(--mantine-color-dark-9, #111827)"
-              c="white"
+              bg={BANNER_BG}
+              c={BANNER_TEXT}
               style={{
                 overflow: "visible",
                 position: "relative",
@@ -561,12 +562,26 @@ export function PlatformDemoBanner({
                 py="xs"
                 align="center"
                 justify="space-between"
-                style={{ position: "relative", zIndex: 2 }}
+                style={{ position: "relative", zIndex: 2, rowGap: 8 }}
                 gap="sm"
                 wrap="wrap"
               >
                 {/* Left: Logo + Phase */}
-                <Flex align="center" gap="sm" maw="100%" style={{ minWidth: 0 }}>
+                <Flex
+                  align="center"
+                  gap="sm"
+                  maw="100%"
+                  style={{
+                    minWidth: 0,
+                    flex: "1 1 420px",
+                    flexWrap: "wrap",
+                    rowGap: 6,
+                    borderRadius: 10,
+                    background: BANNER_PANEL,
+                    border: `1px solid ${BANNER_BORDER}`,
+                    padding: "6px 10px",
+                  }}
+                >
                   <Box
                     w={8}
                     h={8}
@@ -577,11 +592,18 @@ export function PlatformDemoBanner({
                       boxShadow: `0 0 8px ${phaseInfo.color}`,
                     }}
                   />
-                  <Text fz="xs" fw="bold" c="dimmed" style={{ whiteSpace: "nowrap" }}>
+                  <Text
+                    fz={11}
+                    fw={700}
+                    style={{ whiteSpace: "nowrap", color: BANNER_MUTED_TEXT, letterSpacing: "0.06em" }}
+                  >
                     LOBBI PLATFORM DEMO
                   </Text>
 
                   {/* Phase Dropdown */}
+                  <Text fz={10} fw={700} style={{ color: BANNER_SUBTLE_TEXT, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                    Phase
+                  </Text>
                   <Box pos="relative" ref={phaseMenuRef}>
                     <Flex
                       component="button"
@@ -591,11 +613,11 @@ export function PlatformDemoBanner({
                       px="sm"
                       py={4}
                       style={{
-                        borderRadius: 6,
-                        background: "rgba(255,255,255,0.1)",
+                        borderRadius: 8,
+                        background: BANNER_PANEL_ALT,
                         cursor: "pointer",
-                        border: "none",
-                        color: "white",
+                        border: `1px solid ${BANNER_BORDER}`,
+                        color: BANNER_TEXT,
                         transition: "all 0.15s",
                       }}
                     >
@@ -623,12 +645,12 @@ export function PlatformDemoBanner({
                         >
                           <Box
                             style={{
-                              background: "#1f2937",
-                              border: "1px solid #4b5563",
-                              borderRadius: 8,
+                              background: BANNER_PANEL,
+                              border: `1px solid ${BANNER_BORDER}`,
+                              borderRadius: 10,
                               padding: "4px 0",
                               minWidth: 280,
-                              boxShadow: "0 20px 25px -5px rgba(0,0,0,0.3)",
+                              boxShadow: "0 20px 25px -5px rgba(0,0,0,0.45)",
                               maxHeight: 400,
                               overflowY: "auto",
                             }}
@@ -644,9 +666,9 @@ export function PlatformDemoBanner({
                                 py="xs"
                                 w="100%"
                                 style={{
-                                  background: phase.id === currentPhase ? "rgba(255,255,255,0.1)" : "transparent",
+                                  background: phase.id === currentPhase ? "rgba(255,255,255,0.14)" : "transparent",
                                   border: "none",
-                                  color: "white",
+                                  color: BANNER_TEXT,
                                   cursor: "pointer",
                                   transition: "all 0.1s",
                                 }}
@@ -656,7 +678,7 @@ export function PlatformDemoBanner({
                                   <Text fz="xs" fw={600} lineClamp={1}>
                                     {phase.label}
                                   </Text>
-                                  <Text fz={10} c="dimmed" lineClamp={1}>
+                                  <Text fz={10} lineClamp={1} style={{ color: BANNER_MUTED_TEXT }}>
                                     {phase.description}
                                   </Text>
                                 </Box>
@@ -664,7 +686,11 @@ export function PlatformDemoBanner({
                                   variant="light"
                                   size="xs"
                                   radius="md"
-                                  style={{ background: "rgba(255,255,255,0.2)", color: "#d1d5db" }}
+                                  style={{
+                                    background: "rgba(15, 23, 42, 0.92)",
+                                    border: `1px solid ${BANNER_DETAIL_BORDER}`,
+                                    color: BANNER_MUTED_TEXT,
+                                  }}
                                 >
                                   {phase.componentCount}
                                 </Badge>
@@ -678,17 +704,40 @@ export function PlatformDemoBanner({
                 </Flex>
 
                 {/* Right: Role + Controls */}
-                <Flex align="center" gap="xs">
+                <Flex
+                  align="center"
+                  gap="xs"
+                  wrap="wrap"
+                  style={{
+                    flex: "1 1 520px",
+                    justifyContent: "flex-end",
+                    borderRadius: 10,
+                    background: BANNER_PANEL,
+                    border: `1px solid ${BANNER_BORDER}`,
+                    padding: "6px",
+                    rowGap: 6,
+                  }}
+                >
                   <Badge
                     variant="light"
                     size="xs"
                     radius="xl"
-                    style={{ background: "rgba(255,255,255,0.1)", color: phaseInfo.color }}
+                    style={{
+                      background: "rgba(15, 23, 42, 0.9)",
+                      color: BANNER_MUTED_TEXT,
+                      border: `1px solid ${BANNER_DETAIL_BORDER}`,
+                    }}
                   >
                     {phaseInfo.componentCount} components
                   </Badge>
+                  <Text fz={10} fw={600} style={{ color: BANNER_MUTED_TEXT, letterSpacing: "0.02em", whiteSpace: "nowrap" }}>
+                    {phaseInfo.shortLabel} • {roleInfo.label}
+                  </Text>
 
                   {/* Role Dropdown */}
+                  <Text fz={10} fw={700} style={{ color: BANNER_SUBTLE_TEXT, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                    Role
+                  </Text>
                   <Box pos="relative" ref={roleMenuRef}>
                     <Flex
                       component="button"
@@ -698,11 +747,11 @@ export function PlatformDemoBanner({
                       px={10}
                       py={4}
                       style={{
-                        borderRadius: 6,
-                        background: "rgba(255,255,255,0.1)",
+                        borderRadius: 8,
+                        background: BANNER_PANEL_ALT,
                         cursor: "pointer",
-                        border: "none",
-                        color: "white",
+                        border: `1px solid ${BANNER_BORDER}`,
+                        color: BANNER_TEXT,
                         transition: "all 0.15s",
                       }}
                     >
@@ -730,12 +779,12 @@ export function PlatformDemoBanner({
                         >
                           <Box
                             style={{
-                              background: "#1f2937",
-                              border: "1px solid #4b5563",
-                              borderRadius: 8,
+                              background: BANNER_PANEL,
+                              border: `1px solid ${BANNER_BORDER}`,
+                              borderRadius: 10,
                               padding: "4px 0",
                               minWidth: 200,
-                              boxShadow: "0 20px 25px -5px rgba(0,0,0,0.3)",
+                              boxShadow: "0 20px 25px -5px rgba(0,0,0,0.45)",
                             }}
                           >
                             {USER_ROLES.map((role) => (
@@ -749,9 +798,9 @@ export function PlatformDemoBanner({
                                 py={6}
                                 w="100%"
                                 style={{
-                                  background: role.id === currentRole ? "rgba(255,255,255,0.1)" : "transparent",
+                                  background: role.id === currentRole ? "rgba(255,255,255,0.14)" : "transparent",
                                   border: "none",
-                                  color: "white",
+                                  color: BANNER_TEXT,
                                   cursor: "pointer",
                                   transition: "all 0.1s",
                                 }}
@@ -760,7 +809,7 @@ export function PlatformDemoBanner({
                                 <Text fz="xs" fw={500} style={{ flex: 1, textAlign: "left" }}>
                                   {role.label}
                                 </Text>
-                                <Text fz={10} c="dimmed">
+                                <Text fz={10} style={{ color: BANNER_MUTED_TEXT }}>
                                   L{role.level}
                                 </Text>
                               </Flex>
@@ -772,6 +821,9 @@ export function PlatformDemoBanner({
                   </Box>
 
                   {/* Org Selector Dropdown */}
+                  <Text fz={10} fw={700} style={{ color: BANNER_SUBTLE_TEXT, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                    Org
+                  </Text>
                   <Box pos="relative" ref={orgMenuRef}>
                     <Flex
                       component="button"
@@ -781,11 +833,11 @@ export function PlatformDemoBanner({
                       px={10}
                       py={4}
                       style={{
-                        borderRadius: 6,
-                        background: "rgba(139, 92, 246, 0.2)",
+                        borderRadius: 8,
+                        background: BANNER_PANEL_ALT,
                         cursor: "pointer",
-                        border: "1px solid rgba(139, 92, 246, 0.4)",
-                        color: "white",
+                        border: "1px solid rgba(139, 92, 246, 0.55)",
+                        color: BANNER_TEXT,
                         transition: "all 0.15s",
                       }}
                     >
@@ -821,60 +873,86 @@ export function PlatformDemoBanner({
                         >
                           <Box
                             style={{
-                              background: "#1f2937",
-                              border: "1px solid #4b5563",
-                              borderRadius: 8,
-                              padding: "4px 0",
-                              minWidth: 220,
-                              maxHeight: 400,
+                              background: BANNER_PANEL,
+                              border: `1px solid ${BANNER_BORDER}`,
+                              borderRadius: 10,
+                              padding: "6px 0",
+                              minWidth: 300,
+                              maxHeight: 440,
                               overflowY: "auto",
-                              boxShadow: "0 20px 25px -5px rgba(0,0,0,0.3), 0 0 15px rgba(139, 92, 246, 0.15)",
+                              boxShadow: "0 20px 25px -5px rgba(0,0,0,0.45), 0 0 15px rgba(139, 92, 246, 0.2)",
                             }}
                           >
-                            <Text fz={10} c="dimmed" px="sm" py={4} fw={600} style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                              Organization Theme
-                            </Text>
-                            {AVAILABLE_ORGS.map((orgId) => (
-                              <Flex
-                                key={orgId}
-                                component="button"
-                                onClick={() => { setOrg(orgId); setShowOrgMenu(false); }}
-                                align="center"
-                                gap="xs"
-                                px="sm"
-                                py={6}
-                                w="100%"
+                            {groupedOrgs.map((group, groupIndex) => (
+                              <Box
+                                key={group.id}
+                                pt={groupIndex === 0 ? 0 : 6}
+                                pb={groupIndex === groupedOrgs.length - 1 ? 0 : 6}
                                 style={{
-                                  background: orgId === currentOrg ? "rgba(139, 92, 246, 0.2)" : "transparent",
-                                  border: "none",
-                                  color: "white",
-                                  cursor: "pointer",
-                                  transition: "all 0.1s",
-                                  borderLeft: orgId === currentOrg ? "2px solid #8b5cf6" : "2px solid transparent",
+                                  borderTop: groupIndex === 0 ? "none" : `1px solid ${BANNER_DETAIL_BORDER}`,
                                 }}
                               >
-                                <Box
-                                  w={8}
-                                  h={8}
-                                  style={{
-                                    borderRadius: "50%",
-                                    background: orgId === currentOrg ? "#8b5cf6" : "rgba(255,255,255,0.2)",
-                                    transition: "all 0.15s",
-                                  }}
-                                />
-                                <Text fz="xs" fw={orgId === currentOrg ? 600 : 400} style={{ flex: 1, textAlign: "left" }}>
-                                  {ORG_NAMES[orgId] || orgId}
-                                </Text>
-                                {orgId === currentOrg && (
-                                  <Badge
-                                    variant="light"
-                                    size="xs"
-                                    style={{ background: "rgba(139, 92, 246, 0.3)", color: "#c4b5fd" }}
+                                <Flex align="center" gap={6} px="sm" py={4}>
+                                  <Box w={7} h={7} style={{ borderRadius: "50%", background: group.color }} />
+                                  <Text
+                                    fz={10}
+                                    fw={700}
+                                    style={{
+                                      color: BANNER_SUBTLE_TEXT,
+                                      textTransform: "uppercase",
+                                      letterSpacing: "0.06em",
+                                    }}
                                   >
-                                    Active
-                                  </Badge>
-                                )}
-                              </Flex>
+                                    {group.label}
+                                  </Text>
+                                </Flex>
+                                {group.orgs.map((orgId) => (
+                                  <Flex
+                                    key={orgId}
+                                    component="button"
+                                    onClick={() => { setOrg(orgId); setShowOrgMenu(false); }}
+                                    align="center"
+                                    gap="xs"
+                                    px="sm"
+                                    py={6}
+                                    w="100%"
+                                    style={{
+                                      background: orgId === currentOrg ? "rgba(139, 92, 246, 0.22)" : "transparent",
+                                      border: "none",
+                                      color: BANNER_TEXT,
+                                      cursor: "pointer",
+                                      transition: "all 0.1s",
+                                      borderLeft: orgId === currentOrg ? "2px solid #8b5cf6" : "2px solid transparent",
+                                    }}
+                                  >
+                                    <Box
+                                      w={8}
+                                      h={8}
+                                      style={{
+                                        borderRadius: "50%",
+                                        background: orgId === currentOrg ? "#8b5cf6" : "rgba(255,255,255,0.24)",
+                                        transition: "all 0.15s",
+                                      }}
+                                    />
+                                    <Text
+                                      fz="xs"
+                                      fw={orgId === currentOrg ? 700 : 500}
+                                      style={{ flex: 1, textAlign: "left", color: BANNER_TEXT }}
+                                    >
+                                      {ORG_NAMES[orgId] || orgId}
+                                    </Text>
+                                    {orgId === currentOrg && (
+                                      <Badge
+                                        variant="filled"
+                                        size="xs"
+                                        style={{ background: "rgba(139, 92, 246, 0.4)", color: "#DDD6FE" }}
+                                      >
+                                        Active
+                                      </Badge>
+                                    )}
+                                  </Flex>
+                                ))}
+                              </Box>
                             ))}
                           </Box>
                         </motion.div>
@@ -886,17 +964,19 @@ export function PlatformDemoBanner({
                   <Box
                     component="button"
                     onClick={() => setIsDarkMode(!isDarkMode)}
-                    p={6}
+                    p={7}
                     style={{
-                      borderRadius: 6,
-                      background: isDarkMode ? "rgba(251, 191, 36, 0.2)" : "rgba(255,255,255,0.1)",
+                      borderRadius: 8,
+                      background: isDarkMode ? "rgba(251, 191, 36, 0.24)" : BANNER_PANEL_ALT,
                       cursor: "pointer",
-                      border: isDarkMode ? "1px solid rgba(251, 191, 36, 0.45)" : "1px solid transparent",
-                      color: "white",
+                      border: isDarkMode ? "1px solid rgba(251, 191, 36, 0.5)" : `1px solid ${BANNER_BORDER}`,
+                      color: BANNER_TEXT,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       transition: "all 0.15s",
+                      minWidth: 34,
+                      minHeight: 34,
                     }}
                     title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
                   >
@@ -910,11 +990,11 @@ export function PlatformDemoBanner({
                     px={10}
                     py={6}
                     style={{
-                      borderRadius: 6,
-                      background: isDyslexicMode ? "rgba(16, 185, 129, 0.22)" : "rgba(255,255,255,0.1)",
+                      borderRadius: 8,
+                      background: isDyslexicMode ? "rgba(16, 185, 129, 0.25)" : BANNER_PANEL_ALT,
                       cursor: "pointer",
-                      border: isDyslexicMode ? "1px solid rgba(16, 185, 129, 0.5)" : "1px solid transparent",
-                      color: "white",
+                      border: isDyslexicMode ? "1px solid rgba(16, 185, 129, 0.5)" : `1px solid ${BANNER_BORDER}`,
+                      color: BANNER_TEXT,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -923,6 +1003,7 @@ export function PlatformDemoBanner({
                       letterSpacing: "0.05em",
                       transition: "all 0.15s",
                       whiteSpace: "nowrap",
+                      minHeight: 34,
                     }}
                     title={isDyslexicMode ? "Disable dyslexic mode" : "Enable dyslexic mode"}
                   >
@@ -941,11 +1022,11 @@ export function PlatformDemoBanner({
                     }}
                     p={6}
                     style={{
-                      borderRadius: 6,
-                      background: "rgba(239, 68, 68, 0.2)",
+                      borderRadius: 8,
+                      background: "rgba(239, 68, 68, 0.24)",
                       cursor: "pointer",
-                      border: "1px solid rgba(239, 68, 68, 0.4)",
-                      color: "#fca5a5",
+                      border: "1px solid rgba(248, 113, 113, 0.6)",
+                      color: "#FECACA",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -955,6 +1036,7 @@ export function PlatformDemoBanner({
                       whiteSpace: "nowrap",
                       paddingLeft: 10,
                       paddingRight: 10,
+                      minHeight: 34,
                     }}
                     title="Restart from landing/auth flow"
                   >
@@ -965,17 +1047,19 @@ export function PlatformDemoBanner({
                   <Box
                     component="button"
                     onClick={() => setIsExpanded(!isExpanded)}
-                    p={6}
+                    p={7}
                     style={{
-                      borderRadius: 6,
-                      background: "rgba(255,255,255,0.1)",
+                      borderRadius: 8,
+                      background: BANNER_PANEL_ALT,
                       cursor: "pointer",
-                      border: "none",
-                      color: "white",
+                      border: `1px solid ${BANNER_BORDER}`,
+                      color: BANNER_TEXT,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       transition: "all 0.15s",
+                      minWidth: 34,
+                      minHeight: 34,
                     }}
                     title={isExpanded ? "Collapse demo details" : "Expand demo details"}
                   >
@@ -986,18 +1070,20 @@ export function PlatformDemoBanner({
                   <Box
                     component="button"
                     onClick={() => setIsVisible(false)}
-                    p={6}
+                    p={7}
                     style={{
-                      borderRadius: 6,
-                      background: "rgba(255,255,255,0.1)",
+                      borderRadius: 8,
+                      background: BANNER_PANEL_ALT,
                       cursor: "pointer",
-                      border: "none",
-                      color: "white",
+                      border: `1px solid ${BANNER_BORDER}`,
+                      color: BANNER_TEXT,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       fontSize: 12,
                       transition: "all 0.15s",
+                      minWidth: 34,
+                      minHeight: 34,
                     }}
                     title="Hide demo banner"
                   >
@@ -1016,7 +1102,15 @@ export function PlatformDemoBanner({
                     transition={{ duration: 0.25 }}
                     style={{ overflow: "hidden" }}
                   >
-                    <Box px="md" pb="sm" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                    <Box
+                      px="md"
+                      pb="sm"
+                      pt="sm"
+                      style={{
+                        borderTop: `1px solid ${BANNER_DETAIL_BORDER}`,
+                        background: "linear-gradient(180deg, rgba(17,26,47,0.95) 0%, rgba(11,18,32,0.98) 100%)",
+                      }}
+                    >
                       {/* Sprint progress bar */}
                       <Flex gap={4} mt="xs" mb="xs">
                         {SPRINT_PHASES.slice(1).map((phase) => (
@@ -1025,7 +1119,7 @@ export function PlatformDemoBanner({
                             style={{
                               flex: phase.componentCount,
                               height: 4,
-                              background: isFeatureEnabled(phase.id) ? phase.color : "rgba(255,255,255,0.1)",
+                              background: isFeatureEnabled(phase.id) ? phase.color : "rgba(148,163,184,0.28)",
                               borderRadius: 9999,
                               transition: "all 0.3s",
                               cursor: "pointer",
@@ -1038,46 +1132,91 @@ export function PlatformDemoBanner({
 
                       {/* Phase info */}
                       <Flex gap="md" wrap="wrap" mt="xs">
-                        <Box style={{ flex: 1, minWidth: 200 }}>
-                          <Text fz={10} c="dimmed" mb={4}>
+                        <Box
+                          style={{
+                            flex: 1,
+                            minWidth: 240,
+                            background: BANNER_PANEL_ALT,
+                            border: `1px solid ${BANNER_DETAIL_BORDER}`,
+                            borderRadius: 10,
+                            padding: "10px 12px",
+                          }}
+                        >
+                          <Text
+                            fz={10}
+                            fw={700}
+                            mb={4}
+                            style={{ color: BANNER_SUBTLE_TEXT, textTransform: "uppercase", letterSpacing: "0.06em" }}
+                          >
                             CURRENT PHASE
                           </Text>
                           <Flex align="center" gap="xs">
                             <Box w={10} h={10} style={{ borderRadius: "50%", background: phaseInfo.color }} />
-                            <Text fz="sm" fw="bold">
+                            <Text fz="sm" fw={700} style={{ color: BANNER_TEXT }}>
                               {phaseInfo.label}
                             </Text>
                           </Flex>
-                          <Text fz="xs" c="dimmed" mt={2}>
+                          <Text fz="xs" mt={2} style={{ color: BANNER_MUTED_TEXT }}>
                             {phaseInfo.description} &bull; Components {phaseInfo.componentRange}
                           </Text>
                         </Box>
 
-                        <Box style={{ flex: 1, minWidth: 200 }}>
-                          <Text fz={10} c="dimmed" mb={4}>
+                        <Box
+                          style={{
+                            flex: 1,
+                            minWidth: 240,
+                            background: BANNER_PANEL_ALT,
+                            border: `1px solid ${BANNER_DETAIL_BORDER}`,
+                            borderRadius: 10,
+                            padding: "10px 12px",
+                          }}
+                        >
+                          <Text
+                            fz={10}
+                            fw={700}
+                            mb={4}
+                            style={{ color: BANNER_SUBTLE_TEXT, textTransform: "uppercase", letterSpacing: "0.06em" }}
+                          >
                             ROLE PERMISSIONS
                           </Text>
                           <Flex align="center" gap="xs">
                             <Box w={10} h={10} style={{ borderRadius: "50%", background: roleInfo.color }} />
-                            <Text fz="sm" fw="bold">
+                            <Text fz="sm" fw={700} style={{ color: BANNER_TEXT }}>
                               {roleInfo.label}
                             </Text>
                             <Badge
                               variant="light"
                               size="xs"
-                              style={{ background: "rgba(255,255,255,0.2)", color: "#d1d5db" }}
+                              style={{
+                                background: "rgba(15, 23, 42, 0.92)",
+                                border: `1px solid ${BANNER_DETAIL_BORDER}`,
+                                color: BANNER_MUTED_TEXT,
+                              }}
                             >
                               Level {roleInfo.level}
                             </Badge>
                           </Flex>
-                          <Text fz="xs" c="dimmed" mt={2}>
+                          <Text fz="xs" mt={2} style={{ color: BANNER_MUTED_TEXT }}>
                             Access: {roleInfo.level >= 5 ? "Full admin" : roleInfo.level >= 3 ? "Management" : "Member"}
                           </Text>
                         </Box>
 
                         {/* Sprint grid */}
-                        <Box w="100%">
-                          <Text fz={10} c="dimmed" mb={4}>
+                        <Box
+                          w="100%"
+                          style={{
+                            background: BANNER_PANEL_ALT,
+                            border: `1px solid ${BANNER_DETAIL_BORDER}`,
+                            borderRadius: 10,
+                            padding: "10px 12px",
+                          }}
+                        >
+                          <Text
+                            fz={10}
+                            fw={700}
+                            mb={4}
+                            style={{ color: BANNER_SUBTLE_TEXT, textTransform: "uppercase", letterSpacing: "0.06em" }}
+                          >
                             ALL SPRINTS
                           </Text>
                           <Flex gap={4} wrap="wrap">
@@ -1089,22 +1228,22 @@ export function PlatformDemoBanner({
                                 align="center"
                                 gap={4}
                                 px="xs"
-                                py={2}
+                                py={4}
                                 style={{
                                   borderRadius: 6,
-                                  background: phase.id === currentPhase ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.05)",
-                                  border: phase.id === currentPhase ? `1px solid ${phase.color}` : "1px solid transparent",
+                                  background: phase.id === currentPhase ? "rgba(255,255,255,0.22)" : "rgba(148,163,184,0.16)",
+                                  border: phase.id === currentPhase ? `1px solid ${phase.color}` : `1px solid ${BANNER_DETAIL_BORDER}`,
                                   cursor: "pointer",
-                                  color: "white",
+                                  color: BANNER_TEXT,
                                   transition: "all 0.15s",
                                   opacity: isFeatureEnabled(phase.id) ? 1 : 0.4,
                                 }}
                               >
                                 <Box w={4} h={4} style={{ borderRadius: "50%", background: phase.color }} />
-                                <Text fz={10} fw={500}>
+                                <Text fz={11} fw={600}>
                                   {phase.shortLabel}
                                 </Text>
-                                <Text fz={10} c="dimmed">
+                                <Text fz={10} style={{ color: BANNER_MUTED_TEXT }}>
                                   {phase.componentCount}
                                 </Text>
                               </Flex>
