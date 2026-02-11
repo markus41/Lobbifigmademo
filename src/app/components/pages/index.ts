@@ -9,3 +9,4 @@ export { BusinessCenterPage } from './BusinessCenterPage';
 export { EventsPavilionPage } from './EventsPavilionPage';
 export { VaultPage } from './VaultPage';
 export { SettingsPage } from './SettingsPage';
+export { InnovationLabPage } from './InnovationLabPage';

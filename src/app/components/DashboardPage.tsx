@@ -91,7 +91,7 @@ export function DashboardPage() {
         transition={{ duration: 0.5 }}
       >
         <h1 ref={welcomeTitleRef} className="mb-2">Welcome back, John</h1>
-        <p className="text-gray-600">Here's what's happening with your community today.</p>
+        <p style={{ color: 'var(--theme-text-secondary)' }}>Here's what's happening with your community today.</p>
       </motion.div>
 
       {/* Quick Stats */}
@@ -103,7 +103,7 @@ export function DashboardPage() {
             value: '1,247',
             change: '+12 this month',
             trend: 'up',
-            color: 'gold'
+            color: 'primary'
           },
           {
             icon: TrendingUp,
@@ -111,7 +111,7 @@ export function DashboardPage() {
             value: '1,186',
             change: '95% engagement',
             trend: 'up',
-            color: 'success'
+            color: 'secondary'
           },
           {
             icon: DollarSign,
@@ -119,7 +119,7 @@ export function DashboardPage() {
             value: '$48,392',
             change: '+8% vs last month',
             trend: 'up',
-            color: 'gold'
+            color: 'primary'
           },
           {
             icon: Calendar,
@@ -127,27 +127,49 @@ export function DashboardPage() {
             value: '12',
             change: '3 this week',
             trend: 'neutral',
-            color: 'info'
+            color: 'accent'
           }
         ].map((stat) => (
           <motion.div
             key={stat.label}
-            whileHover={{ y: -4, boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.1)' }}
-            className="stat-widget bg-white rounded-xl border border-gray-200 p-6 transition-shadow"
+            whileHover={{ y: -4, boxShadow: 'var(--theme-shadow-lg, 0 10px 30px -5px rgba(0, 0, 0, 0.1))' }}
+            className="stat-widget rounded-xl p-6 transition-shadow"
+            style={{
+              background: 'var(--theme-bg-card, #ffffff)',
+              border: '1px solid var(--theme-border-light, #EDE8DD)',
+            }}
           >
             <div className="flex items-start justify-between mb-4">
-              <div className={`p-3 rounded-lg bg-${stat.color === 'gold' ? 'gold-50' : stat.color === 'success' ? 'emerald-50' : 'sky-50'}`}>
-                <stat.icon className={`w-6 h-6 ${stat.color === 'gold' ? 'text-gold-primary' : stat.color === 'success' ? 'text-success' : 'text-info'}`} />
+              <div
+                className="p-3 rounded-lg"
+                style={{
+                  background: stat.color === 'primary'
+                    ? 'var(--theme-primary-pale, rgba(var(--theme-primary-rgb), 0.1))'
+                    : stat.color === 'secondary'
+                    ? 'var(--theme-secondary-light, rgba(var(--theme-secondary-rgb), 0.1))'
+                    : 'var(--theme-accent-light, rgba(var(--theme-accent-rgb), 0.1))',
+                }}
+              >
+                <stat.icon
+                  className="w-6 h-6"
+                  style={{
+                    color: stat.color === 'primary'
+                      ? 'var(--theme-primary, #D4AF37)'
+                      : stat.color === 'secondary'
+                      ? 'var(--theme-secondary, #22C55E)'
+                      : 'var(--theme-accent, #0EA5E9)',
+                  }}
+                />
               </div>
               {stat.trend === 'up' && (
-                <span className="text-success text-sm font-medium flex items-center gap-1">
+                <span className="text-sm font-medium flex items-center gap-1" style={{ color: 'var(--theme-secondary, #22C55E)' }}>
                   <TrendingUp className="w-4 h-4" />
                 </span>
               )}
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-            <div className="text-sm text-gray-600">{stat.label}</div>
-            <div className="text-xs text-gray-500 mt-2">{stat.change}</div>
+            <div className="text-3xl font-bold mb-1" style={{ color: 'var(--theme-text-primary)' }}>{stat.value}</div>
+            <div className="text-sm" style={{ color: 'var(--theme-text-secondary)' }}>{stat.label}</div>
+            <div className="text-xs mt-2" style={{ color: 'var(--theme-text-muted)' }}>{stat.change}</div>
           </motion.div>
         ))}
       </div>
@@ -159,14 +181,18 @@ export function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="bg-white rounded-xl border border-gray-200 p-6 lg:col-span-2"
+          className="rounded-xl p-6 lg:col-span-2"
+          style={{
+            background: 'var(--theme-bg-card, #ffffff)',
+            border: '1px solid var(--theme-border-light, #EDE8DD)',
+          }}
         >
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 ref={renewalTitleRef} className="mb-1">Renewal Alerts</h3>
-              <p className="text-sm text-gray-600">Members requiring attention</p>
+              <p className="text-sm" style={{ color: 'var(--theme-text-secondary)' }}>Members requiring attention</p>
             </div>
-            <AlertCircle className="w-5 h-5 text-warning" />
+            <AlertCircle className="w-5 h-5" style={{ color: 'var(--theme-accent, #F59E0B)' }} />
           </div>
 
           <div className="space-y-4">
@@ -180,28 +206,46 @@ export function DashboardPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-                className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:border-gold-primary/30 hover:bg-gold-50/30 transition-all group"
+                className="flex items-center justify-between p-4 rounded-lg transition-all group"
+                style={{
+                  border: '1px solid var(--theme-border-light, #EDE8DD)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = `rgba(var(--theme-primary-rgb), 0.3)`;
+                  e.currentTarget.style.background = `rgba(var(--theme-primary-rgb), 0.04)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--theme-border-light, #EDE8DD)';
+                  e.currentTarget.style.background = 'transparent';
+                }}
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold-light to-gold-primary flex items-center justify-center">
-                    <span className="text-white text-sm font-semibold">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center"
+                    style={{ background: 'var(--theme-gradient-btn, linear-gradient(135deg, var(--theme-primary-light), var(--theme-primary)))' }}
+                  >
+                    <span className="text-sm font-semibold" style={{ color: 'var(--theme-text-inverse, #ffffff)' }}>
                       {member.name.split(' ').map(n => n[0]).join('')}
                     </span>
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900">{member.name}</div>
-                    <div className="text-sm text-gray-600">{member.type}</div>
+                    <div className="font-medium" style={{ color: 'var(--theme-text-primary)' }}>{member.name}</div>
+                    <div className="text-sm" style={{ color: 'var(--theme-text-secondary)' }}>{member.type}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <div className="text-sm font-medium text-warning">Expires in {member.days} days</div>
-                    <div className="text-xs text-gray-500">{member.email}</div>
+                    <div className="text-sm font-medium" style={{ color: 'var(--theme-accent, #F59E0B)' }}>Expires in {member.days} days</div>
+                    <div className="text-xs" style={{ color: 'var(--theme-text-muted)' }}>{member.email}</div>
                   </div>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-4 py-2 bg-gold-primary text-white rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="px-4 py-2 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{
+                      background: 'var(--theme-primary, #D4AF37)',
+                      color: 'var(--theme-text-inverse, #ffffff)',
+                    }}
                   >
                     Send Reminder
                   </motion.button>
@@ -210,7 +254,12 @@ export function DashboardPage() {
             ))}
           </div>
 
-          <button className="w-full mt-4 py-3 text-sm font-medium text-gold-primary hover:bg-gold-50 rounded-lg transition-colors">
+          <button
+            className="w-full mt-4 py-3 text-sm font-medium rounded-lg transition-colors"
+            style={{ color: 'var(--theme-primary, #D4AF37)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--theme-primary-pale, rgba(var(--theme-primary-rgb), 0.06))'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          >
             View All Renewals
           </button>
         </motion.div>
@@ -220,14 +269,18 @@ export function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="bg-white rounded-xl border border-gray-200 p-6"
+          className="rounded-xl p-6"
+          style={{
+            background: 'var(--theme-bg-card, #ffffff)',
+            border: '1px solid var(--theme-border-light, #EDE8DD)',
+          }}
         >
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="mb-1">Upcoming Events</h3>
-              <p className="text-sm text-gray-600">Next 7 days</p>
+              <p className="text-sm" style={{ color: 'var(--theme-text-secondary)' }}>Next 7 days</p>
             </div>
-            <Calendar className="w-5 h-5 text-gold-primary" />
+            <Calendar className="w-5 h-5" style={{ color: 'var(--theme-primary, #D4AF37)' }} />
           </div>
 
           <div className="space-y-4">
@@ -241,24 +294,46 @@ export function DashboardPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.6 + index * 0.1 }}
-                className="p-4 rounded-lg border border-gray-100 hover:border-gold-primary/30 hover:bg-gold-50/30 transition-all cursor-pointer"
+                className="p-4 rounded-lg transition-all cursor-pointer"
+                style={{
+                  border: '1px solid var(--theme-border-light, #EDE8DD)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = `rgba(var(--theme-primary-rgb), 0.3)`;
+                  e.currentTarget.style.background = `rgba(var(--theme-primary-rgb), 0.04)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--theme-border-light, #EDE8DD)';
+                  e.currentTarget.style.background = 'transparent';
+                }}
               >
                 <div className="flex items-start justify-between mb-2">
-                  <div className="font-medium text-gray-900">{event.name}</div>
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  <div className="font-medium" style={{ color: 'var(--theme-text-primary)' }}>{event.name}</div>
+                  <span
+                    className="text-xs px-2 py-1 rounded-full"
+                    style={{
+                      background: 'var(--theme-bg-muted, #f3f4f6)',
+                      color: 'var(--theme-text-muted)',
+                    }}
+                  >
                     {event.attendees} attending
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
+                <div className="flex items-center gap-4 text-sm" style={{ color: 'var(--theme-text-secondary)' }}>
                   <span>{event.date}</span>
-                  <span>•</span>
+                  <span>&#8226;</span>
                   <span>{event.time}</span>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          <button className="w-full mt-4 py-3 text-sm font-medium text-gold-primary hover:bg-gold-50 rounded-lg transition-colors">
+          <button
+            className="w-full mt-4 py-3 text-sm font-medium rounded-lg transition-colors"
+            style={{ color: 'var(--theme-primary, #D4AF37)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--theme-primary-pale, rgba(var(--theme-primary-rgb), 0.06))'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          >
             View All Events
           </button>
         </motion.div>
@@ -271,14 +346,18 @@ export function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="bg-white rounded-xl border border-gray-200 p-6 lg:col-span-2"
+          className="rounded-xl p-6 lg:col-span-2"
+          style={{
+            background: 'var(--theme-bg-card, #ffffff)',
+            border: '1px solid var(--theme-border-light, #EDE8DD)',
+          }}
         >
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 ref={activityTitleRef} className="mb-1">Recent Activity</h3>
-              <p className="text-sm text-gray-600">Latest updates from your community</p>
+              <p className="text-sm" style={{ color: 'var(--theme-text-secondary)' }}>Latest updates from your community</p>
             </div>
-            <Activity className="w-5 h-5 text-gold-primary" />
+            <Activity className="w-5 h-5" style={{ color: 'var(--theme-primary, #D4AF37)' }} />
           </div>
 
           <div className="space-y-4">
@@ -294,24 +373,45 @@ export function DashboardPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.7 + index * 0.05 }}
-                className="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-start gap-4 p-3 rounded-lg transition-colors"
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--theme-bg-muted, #f9fafb)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
               >
-                <div className="w-2 h-2 mt-2 rounded-full bg-gold-primary flex-shrink-0" />
+                <div
+                  className="w-2 h-2 mt-2 rounded-full flex-shrink-0"
+                  style={{ background: 'var(--theme-primary, #D4AF37)' }}
+                />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-900">
+                  <p className="text-sm" style={{ color: 'var(--theme-text-primary)' }}>
                     <span className="font-medium">{activity.user}</span>
                     {' '}
-                    <span className="text-gray-600">{activity.action}</span>
+                    <span style={{ color: 'var(--theme-text-secondary)' }}>{activity.action}</span>
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                  <p className="text-xs mt-1" style={{ color: 'var(--theme-text-muted)' }}>{activity.time}</p>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full flex-shrink-0 ${
-                  activity.type === 'renewal' ? 'bg-gold-50 text-gold-primary' :
-                  activity.type === 'event' ? 'bg-sky-50 text-info' :
-                  activity.type === 'learning' ? 'bg-emerald-50 text-success' :
-                  activity.type === 'new' ? 'bg-purple-50 text-purple-600' :
-                  'bg-gray-50 text-gray-600'
-                }`}>
+                <span
+                  className="text-xs px-2 py-1 rounded-full flex-shrink-0"
+                  style={{
+                    background: activity.type === 'renewal'
+                      ? 'var(--theme-primary-pale, rgba(var(--theme-primary-rgb), 0.1))'
+                      : activity.type === 'event'
+                      ? 'var(--theme-accent-light, rgba(var(--theme-accent-rgb), 0.1))'
+                      : activity.type === 'learning'
+                      ? 'var(--theme-secondary-light, rgba(var(--theme-secondary-rgb), 0.1))'
+                      : activity.type === 'new'
+                      ? '#F3E8FF'
+                      : 'var(--theme-bg-muted, #f3f4f6)',
+                    color: activity.type === 'renewal'
+                      ? 'var(--theme-primary, #D4AF37)'
+                      : activity.type === 'event'
+                      ? 'var(--theme-accent, #0EA5E9)'
+                      : activity.type === 'learning'
+                      ? 'var(--theme-secondary, #22C55E)'
+                      : activity.type === 'new'
+                      ? '#9333EA'
+                      : 'var(--theme-text-secondary)',
+                  }}
+                >
                   {activity.type}
                 </span>
               </motion.div>
@@ -324,18 +424,22 @@ export function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.7 }}
-          className="bg-white rounded-xl border border-gray-200 p-6"
+          className="rounded-xl p-6"
+          style={{
+            background: 'var(--theme-bg-card, #ffffff)',
+            border: '1px solid var(--theme-border-light, #EDE8DD)',
+          }}
         >
           <div className="mb-6">
             <h3 className="mb-1">Quick Actions</h3>
-            <p className="text-sm text-gray-600">Common tasks</p>
+            <p className="text-sm" style={{ color: 'var(--theme-text-secondary)' }}>Common tasks</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             {[
-              { icon: Users, label: 'Add Member', color: 'gold' },
-              { icon: Calendar, label: 'Create Event', color: 'info' },
-              { icon: DollarSign, label: 'Send Invoice', color: 'success' },
+              { icon: Users, label: 'Add Member', color: 'primary' },
+              { icon: Calendar, label: 'Create Event', color: 'accent' },
+              { icon: DollarSign, label: 'Send Invoice', color: 'secondary' },
               { icon: Activity, label: 'Launch Campaign', color: 'purple' }
             ].map((action, index) => (
               <motion.button
@@ -345,17 +449,41 @@ export function DashboardPage() {
                 transition={{ duration: 0.3, delay: 0.8 + index * 0.05 }}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 hover:border-gold-primary/50 hover:bg-gold-50/30 transition-all group"
+                className="flex flex-col items-center justify-center gap-3 p-4 rounded-xl transition-all group"
+                style={{
+                  border: '1px solid var(--theme-border-light, #EDE8DD)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = `rgba(var(--theme-primary-rgb), 0.5)`;
+                  e.currentTarget.style.background = `rgba(var(--theme-primary-rgb), 0.04)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--theme-border-light, #EDE8DD)';
+                  e.currentTarget.style.background = 'transparent';
+                }}
               >
-                <div className={`p-3 rounded-lg ${
-                  action.color === 'gold' ? 'bg-gold-50 text-gold-primary' :
-                  action.color === 'info' ? 'bg-sky-50 text-info' :
-                  action.color === 'success' ? 'bg-emerald-50 text-success' :
-                  'bg-purple-50 text-purple-600'
-                }`}>
+                <div
+                  className="p-3 rounded-lg"
+                  style={{
+                    background: action.color === 'primary'
+                      ? 'var(--theme-primary-pale, rgba(var(--theme-primary-rgb), 0.1))'
+                      : action.color === 'accent'
+                      ? 'var(--theme-accent-light, rgba(var(--theme-accent-rgb), 0.1))'
+                      : action.color === 'secondary'
+                      ? 'var(--theme-secondary-light, rgba(var(--theme-secondary-rgb), 0.1))'
+                      : '#F3E8FF',
+                    color: action.color === 'primary'
+                      ? 'var(--theme-primary, #D4AF37)'
+                      : action.color === 'accent'
+                      ? 'var(--theme-accent, #0EA5E9)'
+                      : action.color === 'secondary'
+                      ? 'var(--theme-secondary, #22C55E)'
+                      : '#9333EA',
+                  }}
+                >
                   <action.icon className="w-5 h-5" />
                 </div>
-                <span className="text-sm font-medium text-gray-900 text-center">{action.label}</span>
+                <span className="text-sm font-medium text-center" style={{ color: 'var(--theme-text-primary)' }}>{action.label}</span>
               </motion.button>
             ))}
           </div>

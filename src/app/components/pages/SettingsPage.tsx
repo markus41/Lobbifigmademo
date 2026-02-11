@@ -13,6 +13,7 @@ import type { Organization, Account } from '../../data/themes';
 interface SettingsPageProps {
   organization: Organization;
   account: Account;
+  onUpdateOrganizationTheme?: (themePatch: Partial<Organization['theme']>) => void;
 }
 
 // ============================================================================
@@ -178,11 +179,50 @@ function InputField({ label, value, onChange, type = 'text', placeholder, organi
   );
 }
 
+function clampByte(value: number) {
+  return Math.max(0, Math.min(255, Math.round(value)));
+}
+
+function hexToRgbString(hex: string): string | null {
+  const normalized = hex.trim().replace('#', '');
+  if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
+    return null;
+  }
+  const r = parseInt(normalized.slice(0, 2), 16);
+  const g = parseInt(normalized.slice(2, 4), 16);
+  const b = parseInt(normalized.slice(4, 6), 16);
+  return `${r},${g},${b}`;
+}
+
+function mixHexWithWhite(hex: string, whiteRatio: number): string {
+  const normalized = hex.trim().replace('#', '');
+  if (!/^[0-9a-fA-F]{6}$/.test(normalized)) return hex;
+  const r = parseInt(normalized.slice(0, 2), 16);
+  const g = parseInt(normalized.slice(2, 4), 16);
+  const b = parseInt(normalized.slice(4, 6), 16);
+  const mixedR = clampByte(r * (1 - whiteRatio) + 255 * whiteRatio);
+  const mixedG = clampByte(g * (1 - whiteRatio) + 255 * whiteRatio);
+  const mixedB = clampByte(b * (1 - whiteRatio) + 255 * whiteRatio);
+  return `#${mixedR.toString(16).padStart(2, '0')}${mixedG.toString(16).padStart(2, '0')}${mixedB.toString(16).padStart(2, '0')}`.toUpperCase();
+}
+
+function mixHexWithBlack(hex: string, blackRatio: number): string {
+  const normalized = hex.trim().replace('#', '');
+  if (!/^[0-9a-fA-F]{6}$/.test(normalized)) return hex;
+  const r = parseInt(normalized.slice(0, 2), 16);
+  const g = parseInt(normalized.slice(2, 4), 16);
+  const b = parseInt(normalized.slice(4, 6), 16);
+  const mixedR = clampByte(r * (1 - blackRatio));
+  const mixedG = clampByte(g * (1 - blackRatio));
+  const mixedB = clampByte(b * (1 - blackRatio));
+  return `#${mixedR.toString(16).padStart(2, '0')}${mixedG.toString(16).padStart(2, '0')}${mixedB.toString(16).padStart(2, '0')}`.toUpperCase();
+}
+
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
-export function SettingsPage({ organization, account }: SettingsPageProps) {
+export function SettingsPage({ organization, account, onUpdateOrganizationTheme }: SettingsPageProps) {
   const [settings, setSettings] = useState({
     emailNotifications: true,
     pushNotifications: false,
@@ -197,6 +237,15 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
     email: account.email,
     phone: '+1 (555) 123-4567',
     timezone: 'America/Los_Angeles',
+  });
+  const [designDraft, setDesignDraft] = useState({
+    primary: organization.theme.primary,
+    secondary: organization.theme.secondary,
+    accent: organization.theme.accent,
+    fontDisplay: organization.theme.fontDisplay,
+    fontBody: organization.theme.fontBody,
+    borderRadius: organization.theme.borderRadius,
+    buttonStyle: organization.theme.buttonStyle,
   });
 
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -218,6 +267,18 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
     }
   }, [settings.darkMode]);
 
+  useEffect(() => {
+    setDesignDraft({
+      primary: organization.theme.primary,
+      secondary: organization.theme.secondary,
+      accent: organization.theme.accent,
+      fontDisplay: organization.theme.fontDisplay,
+      fontBody: organization.theme.fontBody,
+      borderRadius: organization.theme.borderRadius,
+      buttonStyle: organization.theme.buttonStyle,
+    });
+  }, [organization.id, organization.theme]);
+
   const handleSaveProfile = () => {
     setSaveStatus('saving');
     // Simulate API call
@@ -225,6 +286,54 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     }, 800);
+  };
+
+  const handleApplyDesign = () => {
+    if (!onUpdateOrganizationTheme) {
+      toast.warning('Theme updates are not enabled for this view.');
+      return;
+    }
+
+    const primaryRgb = hexToRgbString(designDraft.primary);
+    const secondaryRgb = hexToRgbString(designDraft.secondary);
+    const accentRgb = hexToRgbString(designDraft.accent);
+
+    if (!primaryRgb || !secondaryRgb || !accentRgb) {
+      toast.error('Please use valid 6-digit hex colors for all palette fields.');
+      return;
+    }
+
+    const nextPrimaryLight = mixHexWithWhite(designDraft.primary, 0.2);
+    const nextPrimaryPale = mixHexWithWhite(designDraft.primary, 0.78);
+    const nextPrimaryDark = mixHexWithBlack(designDraft.primary, 0.28);
+    const nextSecondaryLight = mixHexWithWhite(designDraft.secondary, 0.2);
+    const nextSecondaryDark = mixHexWithBlack(designDraft.secondary, 0.3);
+    const nextAccentLight = mixHexWithWhite(designDraft.accent, 0.24);
+    const nextAccentDark = mixHexWithBlack(designDraft.accent, 0.3);
+
+    onUpdateOrganizationTheme({
+      primary: designDraft.primary.toUpperCase(),
+      primaryLight: nextPrimaryLight,
+      primaryPale: nextPrimaryPale,
+      primaryDark: nextPrimaryDark,
+      primaryRgb,
+      secondary: designDraft.secondary.toUpperCase(),
+      secondaryLight: nextSecondaryLight,
+      secondaryDark: nextSecondaryDark,
+      secondaryRgb,
+      accent: designDraft.accent.toUpperCase(),
+      accentLight: nextAccentLight,
+      accentDark: nextAccentDark,
+      accentRgb,
+      gradientBtn: `linear-gradient(135deg, ${nextPrimaryDark}, ${designDraft.primary.toUpperCase()})`,
+      avatarBg: `linear-gradient(135deg, ${designDraft.primary.toUpperCase()}, ${nextPrimaryDark})`,
+      borderRadius: designDraft.borderRadius as Organization['theme']['borderRadius'],
+      buttonStyle: designDraft.buttonStyle as Organization['theme']['buttonStyle'],
+      fontDisplay: designDraft.fontDisplay,
+      fontBody: designDraft.fontBody,
+    });
+
+    toast.success('Organization UI design updated.');
   };
 
   return (
@@ -401,6 +510,139 @@ export function SettingsPage({ organization, account }: SettingsPageProps) {
               onChange={(v) => setSettings({ ...settings, compactView: v })}
               organization={organization}
             />
+          </div>
+        </SettingSection>
+
+        {/* Organization UI Design */}
+        <SettingSection
+          title="Organization UI Design (Admin)"
+          description="Adjust brand colors, typography, and component style for this organization"
+          icon={<PaletteIcon className="w-5 h-5" style={{ color: organization.theme.primary }} />}
+          organization={organization}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <InputField
+              label="Primary Color"
+              value={designDraft.primary}
+              onChange={(v) => setDesignDraft({ ...designDraft, primary: v })}
+              placeholder="#D4AF37"
+              organization={organization}
+            />
+            <InputField
+              label="Secondary Color"
+              value={designDraft.secondary}
+              onChange={(v) => setDesignDraft({ ...designDraft, secondary: v })}
+              placeholder="#1A1A2E"
+              organization={organization}
+            />
+            <InputField
+              label="Accent Color"
+              value={designDraft.accent}
+              onChange={(v) => setDesignDraft({ ...designDraft, accent: v })}
+              placeholder="#C9A227"
+              organization={organization}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div className="py-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Display Font</label>
+              <select
+                value={designDraft.fontDisplay}
+                onChange={(e) => setDesignDraft({ ...designDraft, fontDisplay: e.target.value })}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-[#EDE8DD] rounded-lg text-sm"
+              >
+                <option value='"Playfair Display", Georgia, serif'>Playfair Display</option>
+                <option value='"Cormorant Garamond", Georgia, serif'>Cormorant Garamond</option>
+                <option value='"Merriweather", Georgia, serif'>Merriweather</option>
+                <option value='"DM Serif Display", Georgia, serif'>DM Serif Display</option>
+              </select>
+            </div>
+            <div className="py-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Body Font</label>
+              <select
+                value={designDraft.fontBody}
+                onChange={(e) => setDesignDraft({ ...designDraft, fontBody: e.target.value })}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-[#EDE8DD] rounded-lg text-sm"
+              >
+                <option value='"Inter", system-ui, sans-serif'>Inter</option>
+                <option value='"Sora", "DM Sans", system-ui, sans-serif'>Sora</option>
+                <option value='"Poppins", system-ui, sans-serif'>Poppins</option>
+                <option value='"Open Sans", system-ui, sans-serif'>Open Sans</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="py-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Border Radius</label>
+              <select
+                value={designDraft.borderRadius}
+                onChange={(e) => setDesignDraft({ ...designDraft, borderRadius: e.target.value as typeof designDraft.borderRadius })}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-[#EDE8DD] rounded-lg text-sm"
+              >
+                <option value="none">None</option>
+                <option value="sm">Small</option>
+                <option value="md">Medium</option>
+                <option value="lg">Large</option>
+                <option value="xl">XL</option>
+                <option value="2xl">2XL</option>
+                <option value="full">Full</option>
+              </select>
+            </div>
+            <div className="py-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Button Shape</label>
+              <select
+                value={designDraft.buttonStyle}
+                onChange={(e) => setDesignDraft({ ...designDraft, buttonStyle: e.target.value as typeof designDraft.buttonStyle })}
+                className="w-full px-4 py-2.5 bg-gray-50 border border-[#EDE8DD] rounded-lg text-sm"
+              >
+                <option value="rounded">Rounded</option>
+                <option value="pill">Pill</option>
+                <option value="sharp">Sharp</option>
+                <option value="soft">Soft</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-2 mb-4">
+            <p className="text-xs text-gray-500 mb-2">Preview Palette</p>
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-md border border-[#EDE8DD]" style={{ background: designDraft.primary }} />
+              <span className="w-8 h-8 rounded-md border border-[#EDE8DD]" style={{ background: designDraft.secondary }} />
+              <span className="w-8 h-8 rounded-md border border-[#EDE8DD]" style={{ background: designDraft.accent }} />
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-[#EDE8DD] flex items-center gap-3">
+            <button
+              className="px-6 py-2 rounded-lg text-white font-medium text-sm transition-all"
+              style={{ background: organization.theme.gradientBtn }}
+              onClick={handleApplyDesign}
+            >
+              Apply Organization Design
+            </button>
+            <button
+              className="px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+              style={{
+                border: `1px solid rgba(${organization.theme.primaryRgb}, 0.3)`,
+                color: organization.theme.primary,
+              }}
+              onClick={() => {
+                setDesignDraft({
+                  primary: organization.theme.primary,
+                  secondary: organization.theme.secondary,
+                  accent: organization.theme.accent,
+                  fontDisplay: organization.theme.fontDisplay,
+                  fontBody: organization.theme.fontBody,
+                  borderRadius: organization.theme.borderRadius,
+                  buttonStyle: organization.theme.buttonStyle,
+                });
+                toast.info('Design draft reset to current organization theme.');
+              }}
+            >
+              Reset Draft
+            </button>
           </div>
         </SettingSection>
 

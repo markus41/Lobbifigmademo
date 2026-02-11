@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { gsap } from '../../lib/gsap-config';
+import { LUXURY_EASE, LUXURY_TIMING } from '../../lib/motion/gsap-luxury';
 
 interface UseCountUpOptions {
   /** Target number to count up to */
@@ -23,9 +24,9 @@ interface UseCountUpOptions {
 }
 
 /**
- * Number counter animation hook.
+ * Luxury number counter animation hook.
  *
- * Animates a number from `start` to `end` with formatting options.
+ * Animates a number from `start` to `end` with professional formatting.
  * Attach the returned ref to the element that displays the number.
  */
 export function useCountUp<T extends HTMLElement = HTMLSpanElement>(
@@ -34,7 +35,7 @@ export function useCountUp<T extends HTMLElement = HTMLSpanElement>(
   const {
     end,
     start = 0,
-    duration = 1.5,
+    duration = LUXURY_TIMING.dramatic,
     delay = 0,
     prefix = '',
     suffix = '',
@@ -55,7 +56,7 @@ export function useCountUp<T extends HTMLElement = HTMLSpanElement>(
       value: end,
       duration,
       delay,
-      ease: 'power2.out',
+      ease: LUXURY_EASE.signature,
       onUpdate: () => {
         const formatted = separator
           ? obj.value.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',')

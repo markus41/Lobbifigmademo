@@ -279,10 +279,10 @@ function ChapterNode({
   const isSelected = selectedChapterId === chapter.id;
 
   const typeColors = {
-    national: organization.theme.primary,
-    regional: organization.theme.primaryLight,
-    state: organization.theme.primaryLight,
-    local: '#8A8578',
+    national: 'var(--theme-primary)',
+    regional: 'var(--theme-primary-light)',
+    state: 'var(--theme-primary-light)',
+    local: 'var(--theme-text-muted, #8A8578)',
   };
 
   const typeLabels = {
@@ -300,12 +300,11 @@ function ChapterNode({
         }`}
         style={{
           marginLeft: `${level * 20}px`,
-          backgroundColor: isSelected ? `rgba(${organization.theme.primaryRgb}, 0.08)` : 'transparent',
-          // Use CSS variable for Tailwind ring color
-          '--tw-ring-color': isSelected ? `rgba(${organization.theme.primaryRgb}, 0.4)` : undefined,
+          backgroundColor: isSelected ? `rgba(var(--theme-primary-rgb), 0.08)` : 'transparent',
+          '--tw-ring-color': isSelected ? `rgba(var(--theme-primary-rgb), 0.4)` : undefined,
         } as CSSProperties}
         onClick={() => onSelectChapter(chapter)}
-        whileHover={{ backgroundColor: `rgba(${organization.theme.primaryRgb}, 0.04)` }}
+        whileHover={{ backgroundColor: `rgba(var(--theme-primary-rgb), 0.04)` }}
       >
         {/* Expand/Collapse Toggle */}
         {hasChildren ? (
@@ -392,7 +391,7 @@ interface MemberCardProps {
   organization: Organization;
 }
 
-function MemberCard({ member, organization }: MemberCardProps) {
+function MemberCard({ member, organization: _organization }: MemberCardProps) {
   const initials = member.name
     .split(' ')
     .map((n) => n[0])
@@ -401,10 +400,14 @@ function MemberCard({ member, organization }: MemberCardProps) {
 
   return (
     <motion.div
-      className="bg-white rounded-xl border border-[#EDE8DD] p-4 cursor-pointer"
+      className="rounded-xl p-4 cursor-pointer"
+      style={{
+        background: 'var(--theme-bg-card, #ffffff)',
+        border: '1px solid var(--theme-border-light, #EDE8DD)',
+      }}
       whileHover={{
         y: -2,
-        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+        boxShadow: 'var(--theme-shadow-md, 0 8px 24px rgba(0,0,0,0.08))',
       }}
       transition={{ duration: 0.2 }}
     >
@@ -412,7 +415,7 @@ function MemberCard({ member, organization }: MemberCardProps) {
         {/* Avatar */}
         <div
           className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold"
-          style={{ background: organization.theme.gradientBtn }}
+          style={{ background: 'var(--theme-gradient-btn)' }}
         >
           {initials}
         </div>
@@ -422,7 +425,7 @@ function MemberCard({ member, organization }: MemberCardProps) {
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-gray-900">{member.name}</h3>
             {member.positionHistory.length > 0 && (
-              <AwardIcon className="w-4 h-4" style={{ color: organization.theme.primary }} />
+              <AwardIcon className="w-4 h-4" style={{ color: 'var(--theme-primary)' }} />
             )}
           </div>
           <p className="text-sm text-gray-500">{member.email}</p>
@@ -430,8 +433,8 @@ function MemberCard({ member, organization }: MemberCardProps) {
             <span
               className="text-xs px-2 py-0.5 rounded-full"
               style={{
-                backgroundColor: `rgba(${organization.theme.primaryRgb}, 0.1)`,
-                color: organization.theme.primaryDark,
+                backgroundColor: `rgba(var(--theme-primary-rgb), 0.1)`,
+                color: 'var(--theme-primary-dark)',
               }}
             >
               {member.role}
@@ -446,7 +449,7 @@ function MemberCard({ member, organization }: MemberCardProps) {
 
         {/* Stats */}
         <div className="text-right">
-          <div className="text-lg font-bold" style={{ color: organization.theme.primary }}>
+          <div className="text-lg font-bold" style={{ color: 'var(--theme-primary)' }}>
             {member.engagementScore}%
           </div>
           <div className="text-xs text-gray-500">Engagement</div>
@@ -455,7 +458,7 @@ function MemberCard({ member, organization }: MemberCardProps) {
 
       {/* Position History */}
       {member.positionHistory.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-[#EDE8DD]">
+        <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--theme-border-light, #EDE8DD)' }}>
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
             Position History
           </p>
@@ -476,7 +479,7 @@ function MemberCard({ member, organization }: MemberCardProps) {
       )}
 
       {/* Quick Stats */}
-      <div className="mt-4 pt-4 border-t border-[#EDE8DD] grid grid-cols-3 gap-4">
+      <div className="mt-4 pt-4 border-t grid grid-cols-3 gap-4" style={{ borderColor: 'var(--theme-border-light, #EDE8DD)' }}>
         <div>
           <p className="text-xs text-gray-500">Events</p>
           <p className="font-semibold text-gray-900">{member.eventsAttended}</p>
@@ -519,9 +522,10 @@ export function RegistryPage({ organization, account: _account }: RegistryPagePr
       {/* Header */}
       <div className="mb-6">
         <h1
-          className="text-3xl font-light mb-2 text-[#2C2A25]"
+          className="text-3xl font-light mb-2"
           style={{
-            fontFamily: 'Cormorant Garamond, Georgia, serif',
+            fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)',
+            color: 'var(--theme-text-primary, #2C2A25)',
           }}
         >
           The Registry
@@ -540,13 +544,17 @@ export function RegistryPage({ organization, account: _account }: RegistryPagePr
             placeholder="Search members by name, email, or role..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-white border border-[#EDE8DD] rounded-xl text-sm focus:outline-none transition-all"
+            className="w-full pl-10 pr-4 py-3 rounded-xl text-sm focus:outline-none transition-all"
+            style={{
+              background: 'var(--theme-bg-card, #ffffff)',
+              border: '1px solid var(--theme-border-light, #EDE8DD)',
+            }}
             onFocus={(e) => {
-              e.target.style.borderColor = organization.theme.primary;
-              e.target.style.boxShadow = `0 0 0 3px rgba(${organization.theme.primaryRgb}, 0.1)`;
+              e.target.style.borderColor = 'var(--theme-primary)';
+              e.target.style.boxShadow = `0 0 0 3px rgba(var(--theme-primary-rgb), 0.1)`;
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = '#EDE8DD';
+              e.target.style.borderColor = 'var(--theme-border-light, #EDE8DD)';
               e.target.style.boxShadow = 'none';
             }}
           />
@@ -560,7 +568,7 @@ export function RegistryPage({ organization, account: _account }: RegistryPagePr
             }`}
             onClick={() => setViewMode('hierarchy')}
             style={{
-              color: viewMode === 'hierarchy' ? organization.theme.primary : '#8A8578',
+              color: viewMode === 'hierarchy' ? 'var(--theme-primary)' : 'var(--theme-text-muted, #8A8578)',
             }}
           >
             Hierarchy
@@ -571,7 +579,7 @@ export function RegistryPage({ organization, account: _account }: RegistryPagePr
             }`}
             onClick={() => setViewMode('members')}
             style={{
-              color: viewMode === 'members' ? organization.theme.primary : '#8A8578',
+              color: viewMode === 'members' ? 'var(--theme-primary)' : 'var(--theme-text-muted, #8A8578)',
             }}
           >
             All Members
@@ -584,7 +592,11 @@ export function RegistryPage({ organization, account: _account }: RegistryPagePr
         {/* Chapter Hierarchy */}
         <div className="lg:col-span-1">
           <div
-            className="bg-white rounded-xl border border-[#EDE8DD] p-4"
+            className="rounded-xl p-4"
+            style={{
+              background: 'var(--theme-bg-card, #ffffff)',
+              border: '1px solid var(--theme-border-light, #EDE8DD)',
+            }}
           >
             <h2 className="font-semibold text-gray-900 mb-4">Chapter Hierarchy</h2>
             <div className="space-y-1">

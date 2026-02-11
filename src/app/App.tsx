@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { LandingPage } from './components/LandingPage';
 import { EmailSelection } from './components/EmailSelection';
@@ -9,11 +9,11 @@ import { DashboardEntryAnimation } from './components/DashboardEntryAnimation';
 import { Sidebar } from './components/Sidebar';
 import { TopNav } from './components/TopNav';
 import { AIBellhop } from './components/AIBellhop';
-import { CinematicBackground } from './components/CinematicBackground';
-import { GeometricOctagon } from './components/GeometricOctagon';
 import { CinematicIntro } from './components/CinematicIntro';
 import { StageCinematicTransition } from './components/StageCinematicTransition';
 import { ACCOUNTS, ORGANIZATIONS, applyTheme, type Account, type Organization } from './data/themes';
+import { useOrgTheme } from '../theme/LobbiMantineProvider';
+import { cn } from '@/lib/utils';
 
 // Page components
 import { RegistryPage } from './components/pages/RegistryPage';
@@ -21,9 +21,16 @@ import { BusinessCenterPage } from './components/pages/BusinessCenterPage';
 import { EventsPavilionPage } from './components/pages/EventsPavilionPage';
 import { VaultPage } from './components/pages/VaultPage';
 import { SettingsPage } from './components/pages/SettingsPage';
+import { InnovationLabPage } from './components/pages/InnovationLabPage';
 
 // Chakra v3 Platform Demo Banner with phase routing
-import { PlatformDemoBanner } from '../components/demo';
+import { PlatformDemoBanner, type SprintPhase } from '../components/demo';
+import {
+  canAccessPage,
+  getFirstAccessiblePage,
+  isAppPage,
+  isValidSprintPhase,
+} from './navigation/accessPolicy';
 
 // Member Portal
 import { MemberPortal } from './components/MemberPortal';
@@ -41,6 +48,28 @@ const STAGE_TRANSITION_LABELS: Record<Stage, string> = {
   memberPortal: 'Switching to member view',
 };
 
+function mapAccountRoleToDemoRole(role?: string): string {
+  const normalizedRole = role?.toLowerCase() ?? '';
+  if (normalizedRole.includes('national')) return 'national-admin';
+  if (normalizedRole.includes('regional')) return 'regional-admin';
+  if (normalizedRole.includes('owner')) return 'org-owner';
+  if (normalizedRole.includes('admin')) return 'org-admin';
+  if (normalizedRole.includes('manager')) return 'org-manager';
+  if (normalizedRole.includes('premium')) return 'premium-member';
+  return 'standard-member';
+}
+
+function readStoredDemoPhase(): SprintPhase {
+  if (typeof window === 'undefined') return 'all';
+  const storedPhase = localStorage.getItem('lobbi_demo_phase');
+  return storedPhase && isValidSprintPhase(storedPhase) ? storedPhase : 'all';
+}
+
+function readStoredDemoRole(): string {
+  if (typeof window === 'undefined') return 'org-admin';
+  return localStorage.getItem('lobbi_demo_role') || 'org-admin';
+}
+
 export default function App() {
   const [stage, setStage] = useState<Stage>(() => {
     if (typeof window === 'undefined') return 'landing';
@@ -49,12 +78,19 @@ export default function App() {
   const [_selectedEmail, setSelectedEmail] = useState('');
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
+
+  // Sync demo banner org dropdown → app state
+  const { currentOrg: bannerOrg, setOrg: setBannerOrg } = useOrgTheme();
+  const bannerOrgRef = useRef(bannerOrg);
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [demoPhase, setDemoPhase] = useState<SprintPhase>(() => readStoredDemoPhase());
+  const [demoRole, setDemoRole] = useState(() => readStoredDemoRole());
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isBellhopOpen, setIsBellhopOpen] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionCue, setTransitionCue] = useState<{ id: number; to: Stage } | null>(null);
+  const [pendingStage, setPendingStage] = useState<Stage | null>(null);
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Guarded stage transition to prevent overlapping animations
@@ -63,16 +99,46 @@ export default function App() {
 
     const shouldCue = !(stage === 'logo' && nextStage === 'landing');
     setIsTransitioning(true);
+    setPendingStage(nextStage);
     if (shouldCue) {
       setTransitionCue({ id: Date.now(), to: nextStage });
+      return;
     }
     if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
     setStage(nextStage);
+    setPendingStage(null);
     transitionTimeoutRef.current = setTimeout(() => {
       setIsTransitioning(false);
       setTransitionCue(null);
-    }, 620);
+    }, 300);
   };
+
+  const handleTransitionMidpoint = () => {
+    if (!pendingStage) return;
+    setStage(pendingStage);
+  };
+
+  const handleTransitionComplete = () => {
+    setPendingStage(null);
+    setIsTransitioning(false);
+    setTransitionCue(null);
+  };
+
+  const canNavigateToPage = useCallback(
+    (page: string) => canAccessPage(page, demoPhase, demoRole),
+    [demoPhase, demoRole]
+  );
+
+  const navigateToPage = useCallback(
+    (page: string) => {
+      if (canNavigateToPage(page)) {
+        setCurrentPage(page);
+        return;
+      }
+      setCurrentPage(getFirstAccessiblePage(demoPhase, demoRole));
+    },
+    [canNavigateToPage, demoPhase, demoRole]
+  );
 
   // Cleanup transition timeout
   useEffect(() => {
@@ -87,6 +153,41 @@ export default function App() {
       applyTheme(selectedOrg);
     }
   }, [selectedOrg]);
+
+  useEffect(() => {
+    if (!selectedOrg) return;
+
+    const orgId = selectedOrg.id;
+    document.documentElement.setAttribute('data-org-id', orgId);
+    document.body.setAttribute('data-org-id', orgId);
+    document.documentElement.style.setProperty('--lobbi-org-id', `"${orgId}"`);
+  }, [selectedOrg]);
+
+  // When banner org dropdown changes, update app state to match
+  useEffect(() => {
+    if (bannerOrg !== bannerOrgRef.current) {
+      bannerOrgRef.current = bannerOrg;
+      const org = ORGANIZATIONS[bannerOrg];
+      if (org) {
+        setSelectedOrg(org);
+        // Also find matching account for this org
+        const account = ACCOUNTS.find(a => a.orgId === bannerOrg);
+        if (account) {
+          setSelectedEmail(account.email);
+          setSelectedAccount(account);
+          setDemoRole(mapAccountRoleToDemoRole(account.role));
+        }
+      }
+    }
+  }, [bannerOrg]);
+
+  // When app selects an org (via login flow), sync back to banner
+  useEffect(() => {
+    if (selectedOrg && selectedOrg.id !== bannerOrgRef.current) {
+      bannerOrgRef.current = selectedOrg.id as typeof bannerOrg;
+      setBannerOrg(selectedOrg.id as typeof bannerOrg);
+    }
+  }, [selectedOrg, setBannerOrg]);
 
   // Bug #2 fix: Set document title based on selected org (prevents "undefined | The Lobbi")
   useEffect(() => {
@@ -118,6 +219,15 @@ export default function App() {
 
   // Bug #6 fix: Restore session on mount
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const shouldRestoreSession =
+      searchParams.get('resume') === '1' ||
+      sessionStorage.getItem('lobbi_resume_session') === '1';
+
+    if (!shouldRestoreSession) {
+      return;
+    }
+
     const saved = localStorage.getItem('lobbi_session');
     if (saved) {
       try {
@@ -126,16 +236,50 @@ export default function App() {
         if (account) {
           const org = ORGANIZATIONS[account.orgId];
           if (org) {
+            const mappedRole = mapAccountRoleToDemoRole(account.role);
+            const restoredPage = isAppPage(session.currentPage) ? session.currentPage : 'dashboard';
             setSelectedEmail(session.email);
             setSelectedAccount(account);
             setSelectedOrg(org);
-            setCurrentPage(session.currentPage || 'dashboard');
+            setDemoRole(mappedRole);
+            setCurrentPage(
+              canAccessPage(restoredPage, demoPhase, mappedRole)
+                ? restoredPage
+                : getFirstAccessiblePage(demoPhase, mappedRole)
+            );
             setShowDashboard(true);
             setStage(session.stage === 'memberPortal' ? 'memberPortal' : 'dashboard');
           }
         }
       } catch { localStorage.removeItem('lobbi_session'); }
     }
+
+    sessionStorage.removeItem('lobbi_resume_session');
+  }, []);
+
+  useEffect(() => {
+    if (canNavigateToPage(currentPage)) return;
+    setCurrentPage(getFirstAccessiblePage(demoPhase, demoRole));
+  }, [currentPage, canNavigateToPage, demoPhase, demoRole]);
+
+  useEffect(() => {
+    const onDemoState = (event: Event) => {
+      const customEvent = event as CustomEvent<{
+        phase?: SprintPhase;
+        role?: string;
+      }>;
+      const phase = customEvent.detail?.phase;
+      const role = customEvent.detail?.role;
+      if (phase && isValidSprintPhase(phase)) {
+        setDemoPhase(phase);
+      }
+      if (role) {
+        setDemoRole(role);
+      }
+    };
+
+    window.addEventListener('lobbi:demo-state', onDemoState as EventListener);
+    return () => window.removeEventListener('lobbi:demo-state', onDemoState as EventListener);
   }, []);
 
   const handleLoginClick = () => {
@@ -148,18 +292,28 @@ export default function App() {
     if (!account) return;
 
     const org = ORGANIZATIONS[account.orgId];
+    if (!org) return;
+    const mappedRole = mapAccountRoleToDemoRole(account.role);
     setSelectedEmail(email);
     setSelectedAccount(account);
     setSelectedOrg(org);
-    safeSetStage('orgLogin');
+    setDemoRole(mappedRole);
+    applyTheme(org);
+    window.setTimeout(() => {
+      safeSetStage('orgLogin');
+    }, 100);
   };
 
   const handleOrgLogin = () => {
-    safeSetStage('welcome');
+    window.setTimeout(() => {
+      safeSetStage('welcome');
+    }, 80);
   };
 
   const handleWelcomeComplete = () => {
-    safeSetStage('dashboardEntry');
+    window.setTimeout(() => {
+      safeSetStage('dashboardEntry');
+    }, 80);
   };
 
   const handleDashboardEntryComplete = () => {
@@ -176,7 +330,7 @@ export default function App() {
 
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard organization={selectedOrg} account={selectedAccount} onNavigate={setCurrentPage} />;
+        return <Dashboard organization={selectedOrg} account={selectedAccount} onNavigate={navigateToPage} />;
       case 'registry':
         return <RegistryPage organization={selectedOrg} account={selectedAccount} />;
       case 'business':
@@ -186,26 +340,50 @@ export default function App() {
       case 'vault':
         return <VaultPage organization={selectedOrg} account={selectedAccount} />;
       case 'settings':
-        return <SettingsPage organization={selectedOrg} account={selectedAccount} />;
+        return (
+          <SettingsPage
+            organization={selectedOrg}
+            account={selectedAccount}
+            onUpdateOrganizationTheme={(themePatch) => {
+              setSelectedOrg((prev) => {
+                if (!prev) return prev;
+                return {
+                  ...prev,
+                  theme: {
+                    ...prev.theme,
+                    ...themePatch,
+                  },
+                };
+              });
+            }}
+          />
+        );
+      case 'innovation':
+        return <InnovationLabPage organization={selectedOrg} account={selectedAccount} />;
       default:
-        return <Dashboard organization={selectedOrg} account={selectedAccount} onNavigate={setCurrentPage} />;
+        return <Dashboard organization={selectedOrg} account={selectedAccount} onNavigate={navigateToPage} />;
     }
   };
 
   const currentRgb = selectedOrg?.theme.primaryRgb || '212,175,55';
+  const isLandingStage = stage === 'landing';
 
   return (
-    <PlatformDemoBanner defaultPhase="all" defaultRole="org-admin">
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-b from-[#FCF8EF] via-[#F6F0E2] to-[#ECE3D3]">
-      {/* Cinematic Background - Only for non-dashboard stages */}
-      {stage !== 'dashboard' && (
-        <CinematicBackground primaryRgb={currentRgb} stage={stage} />
+    <PlatformDemoBanner
+      defaultPhase={demoPhase}
+      defaultRole={selectedAccount ? mapAccountRoleToDemoRole(selectedAccount.role) : demoRole}
+    >
+    <div
+      className={cn(
+        'relative w-full',
+        isLandingStage ? 'min-h-screen overflow-x-hidden overflow-y-auto' : 'h-screen overflow-hidden'
       )}
+      style={{
+        background:
+          'var(--theme-gradient-hero, linear-gradient(180deg, var(--theme-bg-secondary, #FCF8EF) 0%, var(--theme-bg-primary, #F6F0E2) 55%, var(--theme-bg-tertiary, #ECE3D3) 100%))',
+      }}
+    >
 
-      {/* Geometric Octagon Animation - Pre-dashboard stages */}
-      {(stage === 'landing' || stage === 'email' || stage === 'orgLogin') && (
-        <GeometricOctagon primaryColor={selectedOrg?.theme.primary || '#D4AF37'} />
-      )}
 
       {/* Pre-dashboard stages - single AnimatePresence with mode="wait" prevents overlap */}
       <AnimatePresence mode="wait">
@@ -217,7 +395,7 @@ export default function App() {
           />
         )}
         {stage === 'landing' && (
-          <LandingPage key="landing" onLoginClick={handleLoginClick} />
+          <LandingPage key="landing" onLoginClick={handleLoginClick} organization={selectedOrg ?? undefined} />
         )}
         {stage === 'email' && (
           <EmailSelection key="email" onEmailSelected={handleEmailSelected} />
@@ -255,6 +433,8 @@ export default function App() {
             transitionKey={`${transitionCue.id}-${transitionCue.to}`}
             label={STAGE_TRANSITION_LABELS[transitionCue.to]}
             primaryRgb={currentRgb}
+            onMidpoint={handleTransitionMidpoint}
+            onComplete={handleTransitionComplete}
           />
         )}
       </AnimatePresence>
@@ -267,13 +447,14 @@ export default function App() {
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, scale: 0.96, filter: 'blur(4px)' }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-60 flex flex-col bg-[#F8F3E8]"
+            className="fixed inset-0 z-60 flex flex-col"
+            style={{ background: 'var(--theme-bg-primary, #F8F3E8)' }}
           >
             {/* Main Layout */}
             <div className="flex flex-1 min-h-0">
               <Sidebar
                 currentPage={currentPage}
-                onNavigate={setCurrentPage}
+                onNavigate={navigateToPage}
                 isCollapsed={isSidebarCollapsed}
                 onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                 organization={selectedOrg}
@@ -286,17 +467,18 @@ export default function App() {
                   onBellhopClick={() => setIsBellhopOpen(true)}
                   organization={selectedOrg}
                   account={selectedAccount}
-                  onNavigate={setCurrentPage}
+                  onNavigate={navigateToPage}
+                  canNavigateToPage={canNavigateToPage}
                 />
 
                 <main className="flex-1 overflow-y-auto bg-transparent">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentPage}
-                      initial={{ opacity: 0, y: 16, scale: 0.98, filter: 'blur(4px)' }}
-                      animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-                      exit={{ opacity: 0, y: -12, scale: 0.99, filter: 'blur(3px)' }}
-                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                     >
                       {renderPage()}
                     </motion.div>
@@ -317,10 +499,10 @@ export default function App() {
       <AnimatePresence mode="wait">
         {stage === 'memberPortal' && selectedAccount && selectedOrg && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -16, scale: 0.98, filter: 'blur(4px)' }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className="fixed inset-0 z-70"
           >
             <MemberPortal

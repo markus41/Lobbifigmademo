@@ -27,16 +27,6 @@ export interface LobbiBadgeProps extends HTMLAttributes<HTMLSpanElement> {
   children?: ReactNode;
 }
 
-const variantStyles: Record<string, string> = {
-  default: 'bg-gray-100 text-gray-700 border-gray-200',
-  primary: 'bg-gold-400/10 text-gold-700 border-gold-400/20',
-  success: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  warning: 'bg-amber-50 text-amber-700 border-amber-200',
-  error: 'bg-red-50 text-red-700 border-red-200',
-  info: 'bg-sky-50 text-sky-700 border-sky-200',
-  outline: 'bg-transparent text-gray-600 border-gray-300',
-};
-
 const sizeStyles: Record<string, string> = {
   sm: 'text-[9px] px-2 py-0.5',
   md: 'text-[10px] px-2.5 py-1',
@@ -49,9 +39,58 @@ const mantineSizeMap: Record<string, BadgeProps['size']> = {
   lg: 'md',
 };
 
+function getVariantInlineStyle(variant: string): React.CSSProperties {
+  switch (variant) {
+    case 'default':
+      return {
+        background: 'var(--theme-bg-muted, #f3f4f6)',
+        color: 'var(--theme-text-secondary, #374151)',
+        borderColor: 'var(--theme-border-light, #e5e7eb)',
+      };
+    case 'primary':
+      return {
+        background: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.1)',
+        color: 'var(--theme-primary-dark, #8B7330)',
+        borderColor: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.2)',
+      };
+    case 'success':
+      return {
+        background: '#ecfdf5',
+        color: '#047857',
+        borderColor: '#a7f3d0',
+      };
+    case 'warning':
+      return {
+        background: '#fffbeb',
+        color: '#b45309',
+        borderColor: '#fde68a',
+      };
+    case 'error':
+      return {
+        background: '#fef2f2',
+        color: '#b91c1c',
+        borderColor: '#fecaca',
+      };
+    case 'info':
+      return {
+        background: '#f0f9ff',
+        color: '#0369a1',
+        borderColor: '#bae6fd',
+      };
+    case 'outline':
+      return {
+        background: 'transparent',
+        color: 'var(--theme-text-secondary, #4b5563)',
+        borderColor: 'var(--theme-border, #d1d5db)',
+      };
+    default:
+      return {};
+  }
+}
+
 export const LobbiBadge = forwardRef<HTMLSpanElement, LobbiBadgeProps>(
   (
-    { variant = 'default', size = 'md', children, className, ...props },
+    { variant = 'default', size = 'md', children, className, style, ...props },
     ref
   ) => {
     return (
@@ -65,11 +104,14 @@ export const LobbiBadge = forwardRef<HTMLSpanElement, LobbiBadgeProps>(
           'inline-flex items-center gap-1',
           'rounded-full border',
           'font-medium uppercase tracking-[0.06em]',
-          "font-['DM_Sans']",
-          variantStyles[variant],
           sizeStyles[size],
           className
         )}
+        style={{
+          ...getVariantInlineStyle(variant),
+          fontFamily: 'var(--theme-font-display, "DM Sans", sans-serif)',
+          ...style,
+        }}
         styles={{
           root: {
             '--badge-bg': 'transparent',
@@ -77,7 +119,6 @@ export const LobbiBadge = forwardRef<HTMLSpanElement, LobbiBadgeProps>(
             '--badge-bd': 'none',
             textTransform: 'uppercase',
             letterSpacing: '0.06em',
-            fontFamily: "'DM Sans', sans-serif",
           },
           label: {
             textTransform: 'uppercase',
@@ -109,15 +150,21 @@ export const LobbiKPIBadge = forwardRef<HTMLSpanElement, LobbiKPIBadgeProps>(
       showIcon = true,
       size = 'md',
       className,
+      style,
       ...props
     },
     ref
   ) => {
     const isPositive = value > 0;
     const isNegative = value < 0;
-    const isNeutral = value === 0;
 
     const Icon = isPositive ? TrendingUp : isNegative ? TrendingDown : Minus;
+
+    const kpiStyle: React.CSSProperties = isPositive
+      ? { background: '#ecfdf5', color: '#059669' }
+      : isNegative
+        ? { background: '#fef2f2', color: '#dc2626' }
+        : { background: 'var(--theme-bg-muted, #f3f4f6)', color: 'var(--theme-text-secondary, #4b5563)' };
 
     return (
       <Badge
@@ -131,13 +178,14 @@ export const LobbiKPIBadge = forwardRef<HTMLSpanElement, LobbiKPIBadgeProps>(
           'inline-flex items-center gap-1',
           'rounded-full',
           'font-semibold',
-          "font-['DM_Sans']",
           sizeStyles[size],
-          isPositive && 'bg-emerald-50 text-emerald-600',
-          isNegative && 'bg-red-50 text-red-600',
-          isNeutral && 'bg-gray-100 text-gray-600',
           className
         )}
+        style={{
+          ...kpiStyle,
+          fontFamily: 'var(--theme-font-display, "DM Sans", sans-serif)',
+          ...style,
+        }}
         styles={{
           root: {
             '--badge-bg': 'transparent',
@@ -173,44 +221,44 @@ export interface LobbiStatusBadgeProps
 
 const statusConfig: Record<
   string,
-  { label: string; color: string; dot: string }
+  { label: string; style: React.CSSProperties; dotColor: string }
 > = {
   active: {
     label: 'Active',
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    dot: 'bg-emerald-500',
+    style: { background: '#ecfdf5', color: '#047857', borderColor: '#a7f3d0' },
+    dotColor: '#10b981',
   },
   inactive: {
     label: 'Inactive',
-    color: 'bg-gray-100 text-gray-600 border-gray-200',
-    dot: 'bg-gray-400',
+    style: { background: 'var(--theme-bg-muted, #f3f4f6)', color: 'var(--theme-text-secondary, #4b5563)', borderColor: 'var(--theme-border-light, #e5e7eb)' },
+    dotColor: 'var(--theme-text-muted, #9ca3af)',
   },
   pending: {
     label: 'Pending',
-    color: 'bg-amber-50 text-amber-700 border-amber-200',
-    dot: 'bg-amber-500',
+    style: { background: '#fffbeb', color: '#b45309', borderColor: '#fde68a' },
+    dotColor: '#f59e0b',
   },
   approved: {
     label: 'Approved',
-    color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    dot: 'bg-emerald-500',
+    style: { background: '#ecfdf5', color: '#047857', borderColor: '#a7f3d0' },
+    dotColor: '#10b981',
   },
   rejected: {
     label: 'Rejected',
-    color: 'bg-red-50 text-red-700 border-red-200',
-    dot: 'bg-red-500',
+    style: { background: '#fef2f2', color: '#b91c1c', borderColor: '#fecaca' },
+    dotColor: '#ef4444',
   },
   expired: {
     label: 'Expired',
-    color: 'bg-gray-100 text-gray-600 border-gray-200',
-    dot: 'bg-gray-400',
+    style: { background: 'var(--theme-bg-muted, #f3f4f6)', color: 'var(--theme-text-secondary, #4b5563)', borderColor: 'var(--theme-border-light, #e5e7eb)' },
+    dotColor: 'var(--theme-text-muted, #9ca3af)',
   },
 };
 
 export const LobbiStatusBadge = forwardRef<
   HTMLSpanElement,
   LobbiStatusBadgeProps
->(({ status, size = 'md', showDot = true, className, ...props }, ref) => {
+>(({ status, size = 'md', showDot = true, className, style: styleProp, ...props }, ref) => {
   const config = statusConfig[status];
 
   return (
@@ -222,18 +270,24 @@ export const LobbiStatusBadge = forwardRef<
       radius="xl"
       leftSection={
         showDot ? (
-          <span className={cn('w-1.5 h-1.5 rounded-full', config.dot)} />
+          <span
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ background: config.dotColor }}
+          />
         ) : undefined
       }
       className={cn(
         'inline-flex items-center gap-1.5',
         'rounded-full border',
         'font-medium uppercase tracking-[0.06em]',
-        "font-['DM_Sans']",
-        config.color,
         sizeStyles[size],
         className
       )}
+      style={{
+        ...config.style,
+        fontFamily: 'var(--theme-font-display, "DM Sans", sans-serif)',
+        ...styleProp,
+      }}
       styles={{
         root: {
           '--badge-bg': 'transparent',
@@ -258,33 +312,41 @@ export interface LobbiMembershipBadgeProps
   size?: 'sm' | 'md' | 'lg';
 }
 
-const membershipConfig: Record<string, { label: string; color: string }> = {
+const membershipConfig: Record<string, { label: string; style: React.CSSProperties }> = {
   platinum: {
     label: 'Platinum',
-    color: 'bg-slate-100 text-slate-700 border-slate-300',
+    style: { background: '#f1f5f9', color: '#334155', borderColor: '#cbd5e1' },
   },
   gold: {
     label: 'Gold',
-    color: 'bg-gold-400/10 text-gold-700 border-gold-400/30',
+    style: {
+      background: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.1)',
+      color: 'var(--theme-primary-dark, #8B7330)',
+      borderColor: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.3)',
+    },
   },
   silver: {
     label: 'Silver',
-    color: 'bg-gray-100 text-gray-600 border-gray-300',
+    style: { background: '#f3f4f6', color: '#4b5563', borderColor: '#d1d5db' },
   },
   bronze: {
     label: 'Bronze',
-    color: 'bg-amber-100/50 text-amber-700 border-amber-300',
+    style: { background: 'rgba(245,158,11,0.1)', color: '#b45309', borderColor: '#fcd34d' },
   },
   standard: {
     label: 'Standard',
-    color: 'bg-gray-50 text-gray-600 border-gray-200',
+    style: {
+      background: 'var(--theme-bg-muted, #f9fafb)',
+      color: 'var(--theme-text-secondary, #4b5563)',
+      borderColor: 'var(--theme-border-light, #e5e7eb)',
+    },
   },
 };
 
 export const LobbiMembershipBadge = forwardRef<
   HTMLSpanElement,
   LobbiMembershipBadgeProps
->(({ type, size = 'md', className, ...props }, ref) => {
+>(({ type, size = 'md', className, style: styleProp, ...props }, ref) => {
   const config = membershipConfig[type];
 
   return (
@@ -298,11 +360,14 @@ export const LobbiMembershipBadge = forwardRef<
         'inline-flex items-center',
         'rounded-full border',
         'font-semibold uppercase tracking-[0.08em]',
-        "font-['DM_Sans']",
-        config.color,
         sizeStyles[size],
         className
       )}
+      style={{
+        ...config.style,
+        fontFamily: 'var(--theme-font-display, "DM Sans", sans-serif)',
+        ...styleProp,
+      }}
       styles={{
         root: {
           '--badge-bg': 'transparent',

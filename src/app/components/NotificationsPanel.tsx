@@ -130,21 +130,33 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 top-full mt-2 w-96 bg-white rounded-xl shadow-xl border border-gray-100 z-[100] overflow-hidden"
+            className="absolute right-0 top-full mt-2 w-96 rounded-xl overflow-hidden z-[100]"
+            style={{
+              background: 'var(--theme-bg-card, #FFFFFF)',
+              boxShadow: 'var(--theme-shadow-xl, 0 20px 25px -5px rgba(0,0,0,0.1))',
+              border: '1px solid var(--theme-border-light, #F4F4F5)',
+            }}
           >
             {/* Header */}
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+            <div
+              className="p-4 flex items-center justify-between"
+              style={{ borderBottom: '1px solid var(--theme-border-light, #F4F4F5)' }}
+            >
               <div>
                 <h3
-                  className="text-lg font-semibold text-[#1A1815]"
+                  className="text-lg font-semibold"
                   style={{
-                    fontFamily: 'Cormorant Garamond, Georgia, serif',
+                    color: 'var(--theme-text-primary, #1A1815)',
+                    fontFamily: 'var(--theme-font-display, inherit)',
                   }}
                 >
                   Notifications
                 </h3>
                 {unreadCount > 0 && (
-                  <p className="text-xs text-[#8A8578]">
+                  <p
+                    className="text-xs"
+                    style={{ color: 'var(--theme-text-muted, #8A8578)' }}
+                  >
                     {unreadCount} unread
                   </p>
                 )}
@@ -152,8 +164,14 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="text-xs font-medium px-3 py-1 rounded-full hover:bg-gray-100 transition-colors"
+                  className="text-xs font-medium px-3 py-1 rounded-full transition-colors"
                   style={{ color: primaryColor }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
                 >
                   Mark all read
                 </button>
@@ -168,9 +186,21 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   onClick={() => markAsRead(notification.id)}
-                  className={`p-4 border-b border-gray-50 cursor-pointer transition-colors hover:bg-gray-50 ${
-                    !notification.read ? 'bg-[#FAFAF8]' : ''
-                  }`}
+                  className="p-4 cursor-pointer transition-colors"
+                  style={{
+                    borderBottom: '1px solid var(--theme-border-light, rgba(0,0,0,0.03))',
+                    background: !notification.read
+                      ? 'var(--theme-bg-muted, #FAFAF8)'
+                      : 'transparent',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = !notification.read
+                      ? 'var(--theme-bg-muted, #FAFAF8)'
+                      : 'transparent';
+                  }}
                 >
                   <div className="flex gap-3">
                     <div
@@ -185,7 +215,8 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <p
-                          className={`text-sm text-[#1A1815] ${!notification.read ? 'font-medium' : ''}`}
+                          className={`text-sm ${!notification.read ? 'font-medium' : ''}`}
+                          style={{ color: 'var(--theme-text-primary, #1A1815)' }}
                         >
                           {notification.title}
                         </p>
@@ -197,12 +228,14 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
                         )}
                       </div>
                       <p
-                        className="text-xs mt-0.5 truncate text-[#8A8578]"
+                        className="text-xs mt-0.5 truncate"
+                        style={{ color: 'var(--theme-text-muted, #8A8578)' }}
                       >
                         {notification.message}
                       </p>
                       <p
-                        className="text-[10px] mt-1 text-[#B8B0A0]"
+                        className="text-[10px] mt-1"
+                        style={{ color: 'var(--theme-text-muted, #B8B0A0)' }}
                       >
                         {notification.time}
                       </p>
@@ -213,15 +246,26 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
             </div>
 
             {/* Footer */}
-            <div className="p-3 border-t border-gray-100 bg-[#FAFAF8]">
+            <div
+              className="p-3"
+              style={{
+                borderTop: '1px solid var(--theme-border-light, #F4F4F5)',
+                background: 'var(--theme-bg-muted, #FAFAF8)',
+              }}
+            >
               <button
                 onClick={() => {
-                  // Navigate to dedicated notifications page
                   console.log('Navigating to full notifications view');
                   onClose();
                 }}
-                className="w-full py-2 text-sm font-medium rounded-lg transition-colors hover:bg-gray-100"
+                className="w-full py-2 text-sm font-medium rounded-lg transition-colors"
                 style={{ color: primaryColor }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                }}
               >
                 View All Notifications
               </button>

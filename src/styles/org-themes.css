@@ -100,9 +100,9 @@
    Deep blacks, silver/platinum accents, mysterious elite
    ============================================================================ */
 [data-org="obsidian-society"] {
-  --theme-primary: #18181B;
-  --theme-primary-light: #3F3F46;
-  --theme-primary-dark: #09090B;
+  --theme-primary: #232329;
+  --theme-primary-light: #5A5A65;
+  --theme-primary-dark: #050507;
   --theme-primary-rgb: 24, 24, 27;
   --theme-accent: #E4E4E7;
   --theme-gradient: linear-gradient(135deg, #09090B 0%, #18181B 50%, #27272A 100%);
@@ -136,9 +136,9 @@
    Crisp whites, ice blues, northern lights aurora
    ============================================================================ */
 [data-org="arctic-circle"] {
-  --theme-primary: #E0F2FE;
-  --theme-primary-light: #F0F9FF;
-  --theme-primary-dark: #7DD3FC;
+  --theme-primary: #7DD3FC;
+  --theme-primary-light: #E0F2FE;
+  --theme-primary-dark: #1D4ED8;
   --theme-primary-rgb: 224, 242, 254;
   --theme-accent: #818CF8;
   --theme-gradient: linear-gradient(135deg, #7DD3FC 0%, #BAE6FD 30%, #E0F2FE 60%, #C4B5FD 100%);
@@ -280,9 +280,9 @@
    Electric neons, dark backgrounds, futuristic cyber
    ============================================================================ */
 [data-org="neon-district"] {
-  --theme-primary: #06FFA5;
-  --theme-primary-light: #39FFBD;
-  --theme-primary-dark: #00CC83;
+  --theme-primary: #00E69A;
+  --theme-primary-light: #97FFD9;
+  --theme-primary-dark: #009E6A;
   --theme-primary-rgb: 6, 255, 165;
   --theme-accent: #FF00FF;
   --theme-gradient: linear-gradient(135deg, #06FFA5 0%, #00D4FF 50%, #FF00FF 100%);

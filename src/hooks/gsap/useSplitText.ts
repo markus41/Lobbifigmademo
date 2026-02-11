@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { gsap, SplitText } from '../../lib/gsap-config';
+import { LUXURY_EASE, LUXURY_TIMING, LUXURY_STAGGER } from '../../lib/motion/gsap-luxury';
 
 type SplitType = 'chars' | 'words' | 'lines';
 
@@ -21,10 +22,10 @@ interface UseSplitTextOptions {
 }
 
 /**
- * SplitText animation hook.
+ * SplitText animation hook with luxury easing
  *
  * Splits text content of the ref element and animates
- * characters/words/lines with various presets.
+ * characters/words/lines with professional presets.
  */
 export function useSplitText<T extends HTMLElement = HTMLDivElement>(
   options: UseSplitTextOptions = {},
@@ -33,8 +34,8 @@ export function useSplitText<T extends HTMLElement = HTMLDivElement>(
     type = 'chars',
     animation = 'wave',
     delay = 0,
-    duration = 0.6,
-    stagger = 0.03,
+    duration = LUXURY_TIMING.standard,
+    stagger = LUXURY_STAGGER.tight,
     enabled = true,
     onComplete,
   } = options;
@@ -60,24 +61,25 @@ export function useSplitText<T extends HTMLElement = HTMLDivElement>(
 
     switch (animation) {
       case 'wave':
-        fromVars = { opacity: 0, y: 20, rotateX: -40 };
+        // Luxury wave reveal - 3D perspective with calibrated overshoot
+        fromVars = { opacity: 0, y: 32, rotateX: -60, transformPerspective: 600 };
         toVars = {
           opacity: 1,
           y: 0,
           rotateX: 0,
           duration,
           stagger: { each: stagger, from: 'start' },
-          ease: 'back.out(1.7)',
+          ease: LUXURY_EASE.textReveal,
         };
         break;
       case 'fade':
-        fromVars = { opacity: 0, y: 8 };
+        fromVars = { opacity: 0, y: 12 };
         toVars = {
           opacity: 1,
           y: 0,
           duration,
           stagger: { each: stagger, from: 'start' },
-          ease: 'power2.out',
+          ease: LUXURY_EASE.signature,
         };
         break;
       case 'typewriter':
@@ -85,9 +87,9 @@ export function useSplitText<T extends HTMLElement = HTMLDivElement>(
         toVars = {
           opacity: 1,
           display: 'inline-block',
-          duration: 0.01,
-          stagger: { each: stagger * 2 },
-          ease: 'none',
+          duration: LUXURY_TIMING.instant,
+          stagger: { each: stagger * 1.5 },
+          ease: LUXURY_EASE.loop,
         };
         break;
       case 'rise':
@@ -97,12 +99,12 @@ export function useSplitText<T extends HTMLElement = HTMLDivElement>(
           y: '0%',
           duration,
           stagger: { each: stagger },
-          ease: 'power3.out',
+          ease: LUXURY_EASE.signature,
         };
         break;
       default:
         fromVars = { opacity: 0 };
-        toVars = { opacity: 1, duration, stagger: { each: stagger } };
+        toVars = { opacity: 1, duration, stagger: { each: stagger }, ease: LUXURY_EASE.signature };
     }
 
     const tween = gsap.fromTo(targets, fromVars, {

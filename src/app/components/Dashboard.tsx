@@ -7,6 +7,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import {
+  MetabaseProvider,
+  StaticQuestion,
+  type MetabaseAuthConfig,
+} from '@metabase/embedding-sdk-react';
 import { toast } from '@/lib/notifications';
 import { gsap } from '../../lib/gsap-config';
 import type { Organization, Account } from '../data/themes';
@@ -321,10 +326,79 @@ interface MemberStat {
 }
 
 const MEMBER_STATS: MemberStat[] = [
-  { label: 'Premium', value: 342, percentage: 27, color: '#D4AF37' },
-  { label: 'Professional', value: 518, percentage: 40, color: '#8B7330' },
-  { label: 'Standard', value: 289, percentage: 23, color: '#B8B0A0' },
-  { label: 'Student', value: 135, percentage: 10, color: '#E5DFD1' },
+  { label: 'Premium', value: 342, percentage: 27, color: 'var(--theme-primary, #D4AF37)' },
+  { label: 'Professional', value: 518, percentage: 40, color: 'var(--theme-primary-dark, #8B7330)' },
+  { label: 'Standard', value: 289, percentage: 23, color: 'var(--theme-accent, #B8B0A0)' },
+  { label: 'Student', value: 135, percentage: 10, color: 'var(--theme-primary-pale, #E5DFD1)' },
+];
+
+const METABASE_PLACEHOLDER_VALUES = new Set([
+  'your_metabase_api_key',
+  'your_api_key',
+  'replace_me',
+  'changeme',
+  'undefined',
+  'null',
+]);
+
+const METABASE_PLACEHOLDER_PREFIXES = ['your_', 'replace_', 'changeme', 'placeholder'];
+
+function sanitizeMetabaseValue(value?: string): string | null {
+  if (!value) return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const lowered = trimmed.toLowerCase();
+  if (METABASE_PLACEHOLDER_VALUES.has(lowered)) return null;
+  if (METABASE_PLACEHOLDER_PREFIXES.some((prefix) => lowered.startsWith(prefix))) return null;
+  return trimmed;
+}
+
+const METABASE_INSTANCE_URL = sanitizeMetabaseValue(import.meta.env.VITE_METABASE_INSTANCE_URL as string | undefined);
+const METABASE_API_KEY = sanitizeMetabaseValue(import.meta.env.VITE_METABASE_API_KEY as string | undefined);
+
+function parseMetabaseEntityId(value?: string): number | string | null {
+  const sanitized = sanitizeMetabaseValue(value);
+  if (!sanitized) return null;
+
+  const parsedAsNumber = Number(sanitized);
+  if (Number.isInteger(parsedAsNumber) && `${parsedAsNumber}` === sanitized) {
+    return parsedAsNumber;
+  }
+
+  return sanitized;
+}
+
+const METABASE_DASHBOARD_KPI_QUESTION_IDS: Record<string, number | string | null> = {
+  revenue: parseMetabaseEntityId(import.meta.env.VITE_METABASE_DASHBOARD_KPI_REVENUE_QUESTION_ID as string | undefined),
+  events: parseMetabaseEntityId(import.meta.env.VITE_METABASE_DASHBOARD_KPI_EVENTS_QUESTION_ID as string | undefined),
+  donations: parseMetabaseEntityId(import.meta.env.VITE_METABASE_DASHBOARD_KPI_DONATIONS_QUESTION_ID as string | undefined),
+  members: parseMetabaseEntityId(import.meta.env.VITE_METABASE_DASHBOARD_KPI_MEMBERS_QUESTION_ID as string | undefined),
+};
+
+const METABASE_DASHBOARD_MEMBERSHIP_TIERS_QUESTION_ID = parseMetabaseEntityId(
+  import.meta.env.VITE_METABASE_DASHBOARD_MEMBERSHIP_TIERS_QUESTION_ID as string | undefined,
+);
+
+const METABASE_AUTH_CONFIG: MetabaseAuthConfig | null =
+  METABASE_INSTANCE_URL && METABASE_API_KEY
+    ? {
+      metabaseInstanceUrl: METABASE_INSTANCE_URL,
+      apiKey: METABASE_API_KEY,
+    }
+    : null;
+
+const METABASE_DASHBOARD_ID_LABELS: Record<string, string> = {
+  revenue: 'Revenue KPI',
+  events: 'Events KPI',
+  donations: 'Donations KPI',
+  members: 'Members KPI',
+};
+
+const METABASE_DASHBOARD_MISSING_LABELS = [
+  ...Object.entries(METABASE_DASHBOARD_KPI_QUESTION_IDS)
+    .filter(([, id]) => !id)
+    .map(([key]) => METABASE_DASHBOARD_ID_LABELS[key] || key),
+  ...(METABASE_DASHBOARD_MEMBERSHIP_TIERS_QUESTION_ID ? [] : ['Membership tiers chart']),
 ];
 
 // ============================================================================
@@ -382,6 +456,7 @@ function Sparkline({ data, color, trend, id }: SparklineProps) {
 
 interface KpiCardComponentProps {
   card: KpiCard;
+  metabaseQuestionId?: number | string | null;
   primaryColor: string;
   primaryRgb: string;
   borderColor: string;
@@ -394,6 +469,7 @@ interface KpiCardComponentProps {
 
 function KpiCardComponent({
   card,
+  metabaseQuestionId,
   primaryColor,
   primaryRgb,
   borderColor,
@@ -406,10 +482,10 @@ function KpiCardComponent({
   const [showHistory, setShowHistory] = useState(false);
   // Color thresholds: red only for >5% decrease, yellow/amber for 0-5% decrease, green for positive
   const trendColor = card.trend === 'up'
-    ? '#16A34A'
+    ? 'var(--success, #16A34A)'
     : card.trend === 'down'
-      ? (Math.abs(card.change) > 5 ? '#DC2626' : '#D97706')
-      : '#6B7280';
+      ? (Math.abs(card.change) > 5 ? 'var(--error, #DC2626)' : 'var(--warning, #D97706)')
+      : 'var(--theme-text-muted, #6B7280)';
 
   // GSAP: CountUp animation for the metric value
   const valueRef = useRef<HTMLParagraphElement>(null);
@@ -505,8 +581,12 @@ function KpiCardComponent({
       </p>
 
       {/* Sparkline */}
-      <div className="mt-4">
-        <Sparkline data={card.history} color={primaryColor} trend={card.trend} id={card.id} />
+      <div className="mt-4 h-[88px]">
+        <DashboardMetabaseQuestion
+          questionId={metabaseQuestionId}
+          height={88}
+          fallback={<Sparkline data={card.history} color={primaryColor} trend={card.trend} id={card.id} />}
+        />
       </div>
 
       {/* History Popover */}
@@ -582,16 +662,94 @@ function getActivityIcon(type: RecentActivity['type']) {
 function getEventTypeStyles(type: UpcomingEvent['type']) {
   switch (type) {
     case 'gala':
-      return { bg: '#FEF3C7', text: '#92400E', label: 'Gala' };
+      return { bg: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.16)', text: 'var(--theme-primary-dark, #92400E)', label: 'Gala' };
     case 'meeting':
-      return { bg: '#DBEAFE', text: '#1E40AF', label: 'Meeting' };
+      return { bg: 'rgba(var(--theme-accent-rgb, 14,165,233), 0.14)', text: 'var(--theme-accent-dark, #1E40AF)', label: 'Meeting' };
     case 'workshop':
-      return { bg: '#D1FAE5', text: '#065F46', label: 'Workshop' };
+      return { bg: 'rgba(5, 150, 105, 0.14)', text: 'var(--success, #065F46)', label: 'Workshop' };
     case 'networking':
-      return { bg: '#FCE7F3', text: '#9D174D', label: 'Networking' };
+      return { bg: 'rgba(217, 119, 6, 0.12)', text: 'var(--warning, #9D174D)', label: 'Networking' };
     default:
-      return { bg: '#F4F4F5', text: '#374151', label: 'Event' };
+      return { bg: 'var(--theme-bg-muted, #F4F4F5)', text: 'var(--theme-text-secondary, #374151)', label: 'Event' };
   }
+}
+
+function DashboardMetabaseQuestion({
+  questionId,
+  height,
+  fallback,
+}: {
+  questionId?: number | string | null;
+  height: number;
+  fallback: React.ReactNode;
+}) {
+  if (!METABASE_AUTH_CONFIG || !questionId) {
+    return <>{fallback}</>;
+  }
+
+  return (
+    <div className="h-full overflow-hidden rounded-lg">
+      <StaticQuestion
+        questionId={questionId}
+        height={height}
+        title={false}
+      />
+    </div>
+  );
+}
+
+function MembershipTiersFallback({
+  textPrimary,
+  textMuted,
+  fontBody,
+}: {
+  textPrimary: string;
+  textMuted: string;
+  fontBody: string;
+}) {
+  return (
+    <div className="relative w-32 h-32 mx-auto mb-6">
+      <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+        {MEMBER_STATS.reduce((acc, stat) => {
+          const offset = acc.offset;
+          const dashArray = stat.percentage;
+          const dashOffset = 100 - offset;
+          acc.elements.push(
+            <circle
+              key={stat.label}
+              cx="18"
+              cy="18"
+              r="14"
+              fill="none"
+              stroke={stat.color}
+              strokeWidth="4"
+              strokeDasharray={`${dashArray} ${100 - dashArray}`}
+              strokeDashoffset={-dashOffset}
+            />,
+          );
+          acc.offset = offset + stat.percentage;
+          return acc;
+        }, { elements: [] as JSX.Element[], offset: 0 }).elements}
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl font-bold tracking-[-0.02em]" style={{
+            color: textPrimary,
+            fontVariantNumeric: 'tabular-nums',
+            fontFamily: fontBody,
+          }}>
+            1,284
+          </p>
+          <p className="text-[11px] font-medium" style={{
+            color: textMuted,
+            fontFamily: fontBody,
+          }}>
+            Total
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ============================================================================
@@ -654,7 +812,7 @@ function SectionHeader({
   fontBody: string;
 }) {
   return (
-    <div className="flex items-center justify-between mb-5">
+    <div className="flex items-center justify-between mb-6">
       <h2 className="text-base font-semibold tracking-[-0.01em] leading-snug" style={{
         color: textPrimary,
         fontFamily: fontBody,
@@ -736,8 +894,8 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
 
   const isDarkTheme = organization?.theme.prefersDark || false;
 
-  const fontDisplay = organization?.theme.fontDisplay || "'Inter', system-ui, sans-serif";
-  const fontBody = organization?.theme.fontBody || "'Inter', system-ui, sans-serif";
+  const fontDisplay = organization?.theme.fontDisplay || "'DM Serif Display', 'Playfair Display', serif";
+  const fontBody = organization?.theme.fontBody || "'Sora', 'DM Sans', system-ui, sans-serif";
 
   // Zinc-based color system
   const borderColor = organization?.theme.borderColor || (isDarkTheme ? '#27272A' : '#E4E4E7');
@@ -748,7 +906,7 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
   const textSecondary = organization?.theme.textSecondary || (isDarkTheme ? '#A1A1AA' : '#71717A');
   const textMuted = organization?.theme.textMuted || (isDarkTheme ? '#71717A' : '#A1A1AA');
 
-  return (
+  const content = (
     <div
       className="min-h-full p-8"
       style={{ background: bgPrimary }}
@@ -785,6 +943,57 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
           </motion.p>
         </div>
 
+        {/* Metabase Status Banner */}
+        {(!METABASE_AUTH_CONFIG || METABASE_DASHBOARD_MISSING_LABELS.length > 0) && (
+          <div
+            className="mb-6 rounded-2xl border p-4"
+            style={{
+              borderColor,
+              background: bgCard,
+              boxShadow: '0 4px 12px -6px rgba(0,0,0,0.08)',
+            }}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold" style={{ color: textPrimary }}>
+                  Metabase embeds are not fully configured
+                </p>
+                <p className="text-xs mt-1" style={{ color: textSecondary }}>
+                  Set VITE_METABASE_* values in .env (see reports/metabase-graph-mapping.md) to display live charts.
+                </p>
+              </div>
+              <span
+                className="text-[11px] uppercase tracking-[0.2em]"
+                style={{ color: textMuted }}
+              >
+                Analytics
+              </span>
+            </div>
+            {METABASE_DASHBOARD_MISSING_LABELS.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {METABASE_DASHBOARD_MISSING_LABELS.map((label) => (
+                  <span
+                    key={label}
+                    className="px-2.5 py-1 rounded-full text-[11px] font-medium"
+                    style={{
+                      background: 'var(--theme-bg-muted, #F4F4F5)',
+                      border: `1px solid ${borderColor}`,
+                      color: textMuted,
+                    }}
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            )}
+            {!METABASE_AUTH_CONFIG && (
+              <p className="mt-2 text-[11px]" style={{ color: textMuted }}>
+                Missing Metabase instance URL or API key.
+              </p>
+            )}
+          </div>
+        )}
+
         {/* KPI Cards -- 4-column grid, 24px gap, GSAP staggered entrance */}
         <div ref={kpiGridRef} className="grid grid-cols-4 gap-6 mb-8">
           {MOCK_KPI_CARDS.map((card) => (
@@ -794,6 +1003,7 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
             >
               <KpiCardComponent
                 card={card}
+                metabaseQuestionId={METABASE_DASHBOARD_KPI_QUESTION_IDS[card.id]}
                 primaryColor={primaryColor}
                 primaryRgb={primaryRgb}
                 borderColor={borderColor}
@@ -896,46 +1106,18 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
             />
 
             {/* Donut Chart */}
-            <div className="relative w-32 h-32 mx-auto mb-5">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                {MEMBER_STATS.reduce((acc, stat) => {
-                  const offset = acc.offset;
-                  const dashArray = stat.percentage;
-                  const dashOffset = 100 - offset;
-                  acc.elements.push(
-                    <circle
-                      key={stat.label}
-                      cx="18"
-                      cy="18"
-                      r="14"
-                      fill="none"
-                      stroke={stat.color}
-                      strokeWidth="4"
-                      strokeDasharray={`${dashArray} ${100 - dashArray}`}
-                      strokeDashoffset={-dashOffset}
-                    />
-                  );
-                  acc.offset = offset + stat.percentage;
-                  return acc;
-                }, { elements: [] as JSX.Element[], offset: 0 }).elements}
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-xl font-bold tracking-[-0.02em]" style={{
-                    color: textPrimary,
-                    fontVariantNumeric: 'tabular-nums',
-                    fontFamily: fontBody,
-                  }}>
-                    1,284
-                  </p>
-                  <p className="text-[11px] font-medium" style={{
-                    color: textMuted,
-                    fontFamily: fontBody,
-                  }}>
-                    Total
-                  </p>
-                </div>
-              </div>
+            <div className="mb-6 h-40">
+              <DashboardMetabaseQuestion
+                questionId={METABASE_DASHBOARD_MEMBERSHIP_TIERS_QUESTION_ID}
+                height={160}
+                fallback={(
+                  <MembershipTiersFallback
+                    textPrimary={textPrimary}
+                    textMuted={textMuted}
+                    fontBody={fontBody}
+                  />
+                )}
+              />
             </div>
 
             {/* Legend */}
@@ -1139,6 +1321,12 @@ export function Dashboard({ organization, account, onNavigate, onQuickAction }: 
       </div>
     </div>
   );
+
+  if (!METABASE_AUTH_CONFIG) {
+    return content;
+  }
+
+  return <MetabaseProvider authConfig={METABASE_AUTH_CONFIG}>{content}</MetabaseProvider>;
 }
 
 export default Dashboard;

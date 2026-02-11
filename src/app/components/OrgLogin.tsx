@@ -5,13 +5,9 @@ import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { Organization, Account } from '@/app/data/themes';
 import { LottieIcon } from './lottie/LottieIcon';
 import { lottieIcons } from '../lottie';
-// GeometricOctagon available for org-themed login backgrounds
-// import { GeometricOctagon } from './GeometricOctagon';
 import {
   getOrgColors,
   getOrgFonts,
-  getMotionVariants,
-  getCardEntranceVariants,
   getCardClasses,
   getButtonClasses,
   getInputClasses,
@@ -80,52 +76,18 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
   // Theme-aware values derived from organization
   const theme = organization.theme;
-  const colors = useMemo(() => getOrgColors(organization), [organization]);
-  const fonts = useMemo(() => getOrgFonts(organization), [organization]);
-  void useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
-  const cardEntranceVariants = useMemo(() => getCardEntranceVariants(theme.animationStyle), [theme.animationStyle]);
+  const colors = getOrgColors(organization);
+  const fonts = getOrgFonts(organization);
+  const animationClasses = getAnimationClasses(theme);
 
   // CSS utility classes based on theme
-  const cardClasses = useMemo(() => getCardClasses(theme), [theme]);
-  const buttonClasses = useMemo(() => getButtonClasses(theme), [theme]);
-  const inputClasses = useMemo(() => getInputClasses(theme), [theme]);
-  const animationClasses = useMemo(() => getAnimationClasses(theme), [theme]);
+  const cardClasses = getCardClasses(theme);
+  const buttonClasses = getButtonClasses(theme);
+  const inputClasses = getInputClasses(theme);
 
-  // Animation timing based on theme
-  const animationDurations = useMemo(() => {
-    switch (theme.animationStyle) {
-      case 'elegant':
-        return { base: 1.2, delay: 0.4 };
-      case 'smooth':
-        return { base: 0.9, delay: 0.3 };
-      case 'energetic':
-        return { base: 0.5, delay: 0.15 };
-      case 'dramatic':
-        return { base: 1.0, delay: 0.35 };
-      case 'subtle':
-        return { base: 0.7, delay: 0.25 };
-      default:
-        return { base: 0.9, delay: 0.3 };
-    }
-  }, [theme.animationStyle]);
-
-  // Theme-derived easing
-  const easing = useMemo((): [number, number, number, number] => {
-    switch (theme.animationStyle) {
-      case 'elegant':
-        return [0.22, 1, 0.36, 1];
-      case 'smooth':
-        return [0.4, 0, 0.2, 1];
-      case 'energetic':
-        return [0.34, 1.56, 0.64, 1];
-      case 'dramatic':
-        return [0.6, 0.01, 0, 0.9];
-      case 'subtle':
-        return [0.4, 0, 1, 1];
-      default:
-        return [0.4, 0, 0.2, 1];
-    }
-  }, [theme.animationStyle]);
+  // Animation constants
+  const animationDurations = { base: 0.35, delay: 0.1 };
+  const easing = [0.4, 0, 0.2, 1] as const;
 
   // Generate card background based on theme colors
   const cardBg = useMemo(() => {
@@ -158,25 +120,15 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
   // Logo shape from theme (use theme.logoShape)
   const logoShape = theme.logoShape;
-  const accentNodes = useMemo(
-    () => [
-      { left: '8%', top: '24%', size: 7, driftX: -10, driftY: -16, delay: 0.15, duration: 8.2 },
-      { left: '17%', top: '71%', size: 8, driftX: 8, driftY: -20, delay: 0.3, duration: 7.5 },
-      { left: '36%', top: '18%', size: 9, driftX: -6, driftY: -14, delay: 0.7, duration: 8.8 },
-      { left: '52%', top: '82%', size: 7, driftX: 10, driftY: -18, delay: 0.35, duration: 6.9 },
-      { left: '70%', top: '22%', size: 8, driftX: -10, driftY: -15, delay: 0.9, duration: 8.1 },
-      { left: '83%', top: '66%', size: 10, driftX: 7, driftY: -21, delay: 0.5, duration: 7.4 },
-      { left: '92%', top: '38%', size: 6, driftX: -5, driftY: -13, delay: 1.2, duration: 6.4 },
-    ],
-    [],
-  );
+
+  const playLoginTransition = () => {
+    window.setTimeout(() => onLogin(), 300);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
-    setTimeout(() => {
-      onLogin();
-    }, 800);
+    playLoginTransition();
   };
 
   const handleMagicLinkSubmit = (e: React.FormEvent) => {
@@ -190,18 +142,12 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
   const handleSocialLogin = (_provider: string) => {
     setIsLoggingIn(true);
-    // Simulate social login
-    setTimeout(() => {
-      onLogin();
-    }, 1000);
+    playLoginTransition();
   };
 
   const handleMagicLinkContinue = () => {
-    // In demo mode, just proceed
     setIsLoggingIn(true);
-    setTimeout(() => {
-      onLogin();
-    }, 500);
+    playLoginTransition();
   };
 
   return (
@@ -209,86 +155,15 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: animationDurations.base, ease: easing }}
+      transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
       className="fixed inset-0 z-20 flex items-center justify-center p-4"
     >
-      {/* Org-specific cinematic aura */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full blur-[120px]"
-          style={{
-            background: `radial-gradient(circle, rgba(${theme.primaryRgb}, 0.12), transparent 70%)`,
-          }}
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.8, 1, 0.8],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-        />
-
-        <motion.div
-          className="absolute left-1/2 top-1/2 w-[730px] h-[730px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{ border: `1px solid rgba(${theme.primaryRgb}, 0.22)` }}
-          animate={{
-            scale: [0.84, 1.04, 0.88],
-            opacity: [0.16, 0.34, 0.16],
-            rotate: [0, -10, 0],
-          }}
-          transition={{ duration: 10.8, repeat: Infinity, ease: [0.22, 1, 0.36, 1] }}
-        />
-
-        <motion.div
-          className="absolute left-1/2 top-1/2 w-[520px] h-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{ border: `1px dashed rgba(${theme.primaryRgb}, 0.3)` }}
-          animate={{
-            scale: [0.9, 1.1, 0.9],
-            opacity: [0.2, 0.4, 0.2],
-            rotate: [0, 14, 0],
-          }}
-          transition={{ duration: 8.8, repeat: Infinity, ease: [0.22, 1, 0.36, 1] }}
-        />
-      </div>
-
-      {/* Floating cinematic accent nodes */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {accentNodes.map((node, index) => (
-          <motion.div
-            key={`org-login-node-${index}`}
-            className="absolute rounded-full"
-            style={{
-              width: `${node.size}px`,
-              height: `${node.size}px`,
-              background: colors.primary,
-              left: node.left,
-              top: node.top,
-              boxShadow: `0 0 24px rgba(${theme.primaryRgb}, 0.5)`,
-            }}
-            animate={{
-              y: [0, node.driftY, 0],
-              x: [0, node.driftX, 0],
-              opacity: [0.15, 0.7, 0.15],
-              scale: [0.75, 1.15, 0.75],
-            }}
-            transition={{
-              duration: node.duration,
-              repeat: Infinity,
-              delay: node.delay,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          />
-        ))}
-      </div>
-
       <motion.div
         className="w-full max-w-[420px] px-4 relative"
-        initial={cardEntranceVariants.initial}
-        animate={cardEntranceVariants.animate}
-        exit={{ y: -30, scale: 0.95, opacity: 0 }}
-        transition={{ duration: animationDurations.base, ease: easing }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -12 }}
+        transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
       >
         {/* Ornamental corners - theme-aware */}
         <div className="absolute -top-4 -left-4 w-12 h-12 border-l border-t rounded-tl-2xl"
@@ -369,7 +244,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             {/* Org Logo with theme-aware shape */}
             <motion.div
               layoutId="org-logo"
-              className={`inline-flex items-center justify-center w-18 h-18 mx-auto mb-5 rounded-2xl relative overflow-hidden ${animationClasses}`}
+              className={`inline-flex items-center justify-center w-18 h-18 mx-auto mb-6 rounded-2xl relative overflow-hidden ${animationClasses}`}
               style={{
                 background: theme.gradientBtn,
                 borderRadius: logoShape === 'diamond' ? '16px' :
@@ -483,7 +358,8 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
           {/* Login Method Tabs */}
           <motion.div
-            className="flex gap-1 mb-5 p-1 bg-gray-100 rounded-lg relative z-10"
+            className="flex gap-1 mb-6 p-2 rounded-lg relative z-10"
+            style={{ background: 'var(--theme-bg-muted, #f3f4f6)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7, duration: 0.6 }}
@@ -742,7 +618,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                           type="email"
                           value={account.email}
                           readOnly
-                          className={`w-full pl-12 pr-5 py-4 border-2 text-[15px] outline-none cursor-not-allowed transition-all ${inputClasses}`}
+                          className={`w-full pl-12 pr-6 py-4 border-2 text-[15px] outline-none cursor-not-allowed transition-all ${inputClasses}`}
                           style={{
                             background: `rgba(${theme.primaryRgb}, 0.03)`,
                             borderColor: `rgba(${theme.primaryRgb}, 0.15)`,
@@ -906,14 +782,17 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                 className="text-lg italic"
                 style={{
                   fontFamily: fonts.display,
-                  background: 'linear-gradient(135deg, #F5E6A3, #D4AF37, #8B7330)',
+                  background: `linear-gradient(135deg, ${colors.primaryLight}, ${colors.primary}, ${colors.primaryDark})`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
               >
                 L
               </span>
-              <span className="text-[9px] uppercase tracking-widest text-[rgba(212,175,55,0.5)]">
+              <span
+                className="text-[9px] uppercase tracking-widest"
+                style={{ color: `rgba(${theme.primaryRgb}, 0.5)` }}
+              >
                 Powered by The Lobbi
               </span>
             </div>

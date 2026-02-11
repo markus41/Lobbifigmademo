@@ -58,9 +58,9 @@ const COMPONENTS: ComponentCard[] = [
 ];
 
 const STATUS_COLORS: Record<string, string> = {
-  done: "#10b981",
-  "in-progress": "#f59e0b",
-  planned: "#6b7280",
+  done: 'var(--success, #059669)',
+  'in-progress': 'var(--warning, #D97706)',
+  planned: 'var(--theme-text-muted, #6b7280)',
 };
 
 export function Sprint0Showcase() {

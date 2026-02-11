@@ -1,0 +1,65 @@
+export const lobbiThemeTokens = {
+  colors: {
+    goldPrimary: '#D4AF37',
+    goldLight: '#F4D03F',
+    goldBright: '#FFD700',
+    goldDark: '#C5A028',
+    goldMuted: '#B8923A',
+    creamWarm: '#FDFCF8',
+    creamLight: '#FCF8F0',
+    white: '#FFFFFF',
+    charcoal: '#1a1a1a',
+    slate: '#2d3748',
+    gray600: '#4a5568',
+    gray500: '#6b7280',
+    gray400: '#9ca3af',
+    gray300: '#d1d5db',
+    gray200: '#e5e7eb',
+    gray100: '#f3f4f6',
+    error: '#DC2626',
+    success: '#047857',
+    warning: '#D97706',
+  },
+  fonts: {
+    display: "'Cormorant Garamond', 'Palatino Linotype', Georgia, serif",
+    body: "'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+    mono: "'JetBrains Mono', 'Fira Code', monospace",
+  },
+  gradients: {
+    button: 'linear-gradient(135deg, #D4AF37 0%, #C5A028 100%)',
+    fullGold:
+      'linear-gradient(135deg, #D4AF37 0%, #F4D03F 30%, #D4AF37 60%, #C5A028 100%)',
+    hover: 'linear-gradient(135deg, #F4D03F 0%, #FFD700 50%, #D4AF37 100%)',
+    shimmer:
+      'linear-gradient(135deg, #D4AF37 0%, #F4D03F 35%, #FFD700 50%, #F4D03F 65%, #D4AF37 100%)',
+    page: 'linear-gradient(180deg, #FCF8F0 0%, #FFFDF8 25%, #FFFFFF 50%, #FFFDF8 75%, #FCF8F0 100%)',
+  },
+  shadows: {
+    card: '0 4px 20px rgba(0, 0, 0, 0.03)',
+    md: '0 8px 30px rgba(0, 0, 0, 0.06)',
+    lg: '0 12px 40px rgba(0, 0, 0, 0.08)',
+    goldSm: '0 2px 8px rgba(212, 175, 55, 0.3)',
+    gold: '0 6px 25px rgba(212, 175, 55, 0.35)',
+    goldLg: '0 10px 40px rgba(212, 175, 55, 0.4)',
+    goldXl: '0 15px 50px rgba(212, 175, 55, 0.5)',
+    solutionHover: '0 12px 40px rgba(212, 175, 55, 0.15)',
+  },
+  radius: {
+    sm: '0.5rem',
+    md: '0.75rem',
+    lg: '1rem',
+    xl: '1.25rem',
+    x2: '1.5rem',
+    x3: '1.875rem',
+    full: '9999px',
+  },
+  transition: {
+    fast: '0.2s ease',
+    normal: '0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    smooth: '0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+    slow: '0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  focusRing: '0 0 0 4px rgba(212, 175, 55, 0.2)',
+} as const;
+
+export type LobbiThemeTokens = typeof lobbiThemeTokens;

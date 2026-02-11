@@ -59,7 +59,7 @@ export function MotionModal({
         y: 0,
         filter: 'blur(0px)',
         transition: {
-          type: 'spring',
+          type: 'spring' as const,
           stiffness: 360,
           damping: 28,
           mass: 0.7,
@@ -72,7 +72,7 @@ export function MotionModal({
         filter: 'blur(6px)',
         transition: {
           duration: 0.25,
-          ease: [0.4, 0, 0.6, 1],
+          ease: [0.4, 0, 0.6, 1] as const,
         },
       },
     },
@@ -83,7 +83,7 @@ export function MotionModal({
         y: 0,
         filter: 'blur(0px)',
         transition: {
-          type: 'spring',
+          type: 'spring' as const,
           stiffness: 320,
           damping: 30,
           mass: 0.8,
@@ -95,7 +95,7 @@ export function MotionModal({
         filter: 'blur(6px)',
         transition: {
           duration: 0.3,
-          ease: [0.4, 0, 0.6, 1],
+          ease: [0.4, 0, 0.6, 1] as const,
         },
       },
     },
@@ -104,12 +104,12 @@ export function MotionModal({
       animate: {
         opacity: 1,
         filter: 'blur(0px)',
-        transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const },
       },
       exit: {
         opacity: 0,
         filter: 'blur(6px)',
-        transition: { duration: 0.2, ease: [0.4, 0, 0.6, 1] },
+        transition: { duration: 0.2, ease: [0.4, 0, 0.6, 1] as const },
       },
     },
   }

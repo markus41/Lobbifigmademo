@@ -29,14 +29,14 @@ const presets = {
     initial: { opacity: 0, filter: 'blur(6px)' },
     animate: { opacity: 1, filter: 'blur(0px)' },
     exit: { opacity: 0, filter: 'blur(4px)' },
-    transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] as const },
   },
   scale: {
     initial: { opacity: 0, scale: 0.92, filter: 'blur(6px)' },
     animate: { opacity: 1, scale: 1, filter: 'blur(0px)' },
     exit: { opacity: 0, scale: 0.95, filter: 'blur(4px)' },
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 400,
       damping: 28,
       mass: 0.6,
@@ -47,7 +47,7 @@ const presets = {
     animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
     exit: { opacity: 0, y: -12, filter: 'blur(4px)' },
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 380,
       damping: 30,
       mass: 0.7,
@@ -58,7 +58,7 @@ const presets = {
     animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
     exit: { opacity: 0, y: 12, filter: 'blur(4px)' },
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 380,
       damping: 30,
       mass: 0.7,
@@ -69,7 +69,7 @@ const presets = {
     animate: { opacity: 1, x: 0, filter: 'blur(0px)' },
     exit: { opacity: 0, x: -20, filter: 'blur(4px)' },
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 380,
       damping: 30,
       mass: 0.7,
@@ -80,7 +80,7 @@ const presets = {
     animate: { opacity: 1, x: 0, filter: 'blur(0px)' },
     exit: { opacity: 0, x: 20, filter: 'blur(4px)' },
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 380,
       damping: 30,
       mass: 0.7,

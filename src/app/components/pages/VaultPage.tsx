@@ -134,9 +134,9 @@ const ShareIcon = ({ className }: { className?: string }) => (
 // FILE ICON COMPONENT
 // ============================================================================
 
-function getFileIcon(type: Document['type'], className?: string, color?: string) {
+function getFileIcon(type: Document['type'], className?: string) {
   const icons = {
-    folder: <FolderIcon className={className} style={{ color: color || '#F59E0B' }} />,
+    folder: <FolderIcon className={className} style={{ color: 'var(--theme-primary, #D4AF37)' }} />,
     pdf: <FileTextIcon className={`${className} text-red-600`} />,
     doc: <FileTextIcon className={`${className} text-blue-600`} />,
     xls: <FileSpreadsheetIcon className={`${className} text-green-600`} />,
@@ -159,8 +159,9 @@ interface DocumentRowProps {
   isSelected: boolean;
 }
 
-function DocumentRow({ document, organization, onSelect, onOpen, onMenuAction, isSelected }: DocumentRowProps) {
+function DocumentRow({ document, organization: _org, onSelect, onOpen, onMenuAction, isSelected }: DocumentRowProps) {
   const [showMenu, setShowMenu] = useState(false);
+  void _org;
 
   return (
     <motion.div
@@ -168,33 +169,33 @@ function DocumentRow({ document, organization, onSelect, onOpen, onMenuAction, i
         isSelected ? 'ring-2' : ''
       }`}
       style={{
-        backgroundColor: isSelected ? `rgba(${organization.theme.primaryRgb}, 0.05)` : 'transparent',
-        '--tw-ring-color': isSelected ? organization.theme.primary : undefined,
+        backgroundColor: isSelected ? 'rgba(var(--theme-primary-rgb, 212,175,55), 0.05)' : 'transparent',
+        '--tw-ring-color': isSelected ? 'var(--theme-primary, #D4AF37)' : undefined,
       } as React.CSSProperties}
       onClick={onSelect}
       onDoubleClick={onOpen}
-      whileHover={{ backgroundColor: `rgba(${organization.theme.primaryRgb}, 0.03)` }}
+      whileHover={{ backgroundColor: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.03)' }}
     >
       {/* Icon */}
       <div className="flex-shrink-0">
-        {getFileIcon(document.type, 'w-8 h-8', organization.theme.primary)}
+        {getFileIcon(document.type, 'w-8 h-8')}
       </div>
 
       {/* Name & Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-gray-900 truncate">{document.name}</span>
+          <span className="font-medium truncate" style={{ color: 'var(--theme-text-primary, #09090B)' }}>{document.name}</span>
           {document.shared && (
-            <ShareIcon className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+            <ShareIcon className="w-3.5 h-3.5 flex-shrink-0" />
           )}
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+        <div className="flex items-center gap-3 text-xs mt-0.5" style={{ color: 'var(--theme-text-muted, #A1A1AA)' }}>
           <span>{document.owner}</span>
-          <span>•</span>
+          <span>&#x2022;</span>
           <span>{new Date(document.modified).toLocaleDateString()}</span>
           {document.size && (
             <>
-              <span>•</span>
+              <span>&#x2022;</span>
               <span>{document.size}</span>
             </>
           )}
@@ -204,13 +205,16 @@ function DocumentRow({ document, organization, onSelect, onOpen, onMenuAction, i
       {/* Actions */}
       <div className="relative">
         <button
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-lg transition-colors"
+          style={{ color: 'var(--theme-text-muted, #A1A1AA)' }}
           onClick={(e) => {
             e.stopPropagation();
             setShowMenu(!showMenu);
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--theme-bg-tertiary, #F4F4F5)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
         >
-          <MoreVerticalIcon className="w-4 h-4 text-gray-400" />
+          <MoreVerticalIcon className="w-4 h-4" />
         </button>
 
         {/* Context Menu */}
@@ -221,28 +225,27 @@ function DocumentRow({ document, organization, onSelect, onOpen, onMenuAction, i
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -5 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-[#EDE8DD] z-50 py-1"
+              className="absolute right-0 top-full mt-1 w-40 rounded-lg z-50 py-1"
+              style={{
+                background: 'var(--theme-bg-card, #FFFFFF)',
+                boxShadow: 'var(--theme-shadow-lg, 0 8px 24px -4px rgba(0,0,0,0.15))',
+                border: '1px solid var(--theme-border, #E4E4E7)',
+              }}
               onClick={(e) => e.stopPropagation()}
             >
-              <button
-                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                onClick={() => { onMenuAction('download'); setShowMenu(false); }}
-              >
-                Download
-              </button>
-              <button
-                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                onClick={() => { onMenuAction('share'); setShowMenu(false); }}
-              >
-                Share
-              </button>
-              <button
-                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                onClick={() => { onMenuAction('rename'); setShowMenu(false); }}
-              >
-                Rename
-              </button>
-              <hr className="my-1 border-gray-100" />
+              {['download', 'share', 'rename'].map((action) => (
+                <button
+                  key={action}
+                  className="w-full px-4 py-2 text-left text-sm transition-colors capitalize"
+                  style={{ color: 'var(--theme-text-secondary, #71717A)' }}
+                  onClick={() => { onMenuAction(action as 'download' | 'share' | 'rename'); setShowMenu(false); }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--theme-bg-tertiary, #F4F4F5)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                >
+                  {action}
+                </button>
+              ))}
+              <hr className="my-1" style={{ borderColor: 'var(--theme-border-light, #F4F4F5)' }} />
               <button
                 className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors"
                 onClick={() => { onMenuAction('delete'); setShowMenu(false); }}
@@ -280,21 +283,22 @@ export function VaultPage({ organization, account: _account }: VaultPageProps) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1
-            className="text-3xl font-light mb-2 text-[#2C2A25]"
+            className="text-3xl font-light mb-2"
             style={{
-              fontFamily: 'Cormorant Garamond, Georgia, serif',
+              fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)',
+              color: 'var(--theme-text-primary, #2C2A25)',
             }}
           >
             The Vault
           </h1>
-          <p className="text-gray-500">
+          <p style={{ color: 'var(--theme-text-muted, #6B7280)' }}>
             Secure document storage and management
           </p>
         </div>
 
         <button
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-white font-medium text-sm cursor-pointer"
-          style={{ background: organization.theme.gradientBtn }}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium text-sm cursor-pointer"
+          style={{ background: 'var(--theme-gradient-btn)', color: 'var(--theme-text-inverse, white)' }}
           onClick={() => toast.info('File upload dialog would open here. Drag and drop or browse to select files.')}
         >
           <UploadIcon className="w-4 h-4" />
@@ -312,13 +316,17 @@ export function VaultPage({ organization, account: _account }: VaultPageProps) {
         ].map((stat, i) => (
           <motion.div
             key={i}
-            className="bg-white rounded-xl border border-[#EDE8DD] p-4"
+            className="rounded-xl border p-4"
+            style={{
+              background: 'var(--theme-bg-card, #FFFFFF)',
+              borderColor: 'var(--theme-border-light, #EDE8DD)',
+            }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
-            <p className="text-sm text-gray-500">{stat.label}</p>
-            <p className="text-2xl font-bold mt-1" style={{ color: organization.theme.primary }}>
+            <p className="text-sm" style={{ color: 'var(--theme-text-muted, #6B7280)' }}>{stat.label}</p>
+            <p className="text-2xl font-bold mt-1" style={{ color: 'var(--theme-primary, #D4AF37)' }}>
               {stat.value}
             </p>
           </motion.div>

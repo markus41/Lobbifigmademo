@@ -91,18 +91,20 @@ export const LobbiAvatar = forwardRef<HTMLDivElement, LobbiAvatarProps>(
         radius={radius}
         className={cn(
           'flex-shrink-0',
-          showBorder && 'ring-2 ring-white',
           className
         )}
         styles={{
           root: {
             '--avatar-bg': 'transparent',
+            ...(showBorder ? {
+              boxShadow: '0 0 0 2px var(--theme-bg-card, #fff)',
+            } : {}),
           },
           placeholder: {
             background:
-              'var(--t-avatar-bg, linear-gradient(135deg, #F4D03F 0%, #D4AF37 50%, #8B7330 100%))',
-            color: 'white',
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
+              'var(--theme-avatar-bg, linear-gradient(135deg, #F4D03F 0%, #D4AF37 50%, #8B7330 100%))',
+            color: 'var(--theme-text-inverse, #fff)',
+            fontFamily: 'var(--theme-font-display, "Cormorant Garamond", Georgia, serif)',
             fontWeight: 600,
             position: 'relative',
           },
@@ -168,12 +170,17 @@ export const LobbiAvatarGroup = forwardRef<
         <MantineAvatar
           size={mantineSizeMap[size]}
           radius="xl"
-          className="bg-gray-100 border-2 border-white text-gray-600 font-medium"
           styles={{
+            root: {
+              borderWidth: 2,
+              borderColor: 'var(--theme-bg-card, #fff)',
+              borderStyle: 'solid',
+            },
             placeholder: {
-              background: '#f3f4f6',
-              color: '#4b5563',
+              background: 'var(--theme-bg-muted, #f3f4f6)',
+              color: 'var(--theme-text-secondary, #4b5563)',
               fontWeight: 500,
+              fontFamily: 'var(--theme-font-body, "DM Sans", sans-serif)',
             },
           }}
         >
@@ -218,9 +225,9 @@ export const LobbiOrgAvatar = forwardRef<HTMLDivElement, LobbiOrgAvatarProps>(
           },
           placeholder: {
             background:
-              'var(--t-avatar-bg, linear-gradient(135deg, #F4D03F 0%, #D4AF37 50%, #8B7330 100%))',
-            color: 'white',
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
+              'var(--theme-avatar-bg, linear-gradient(135deg, #F4D03F 0%, #D4AF37 50%, #8B7330 100%))',
+            color: 'var(--theme-text-inverse, #fff)',
+            fontFamily: 'var(--theme-font-display, "Cormorant Garamond", Georgia, serif)',
             fontWeight: 600,
             fontStyle: 'italic',
             position: 'relative',

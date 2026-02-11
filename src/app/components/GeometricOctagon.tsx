@@ -16,7 +16,7 @@ function octagonPath(centerX: number, centerY: number, radius: number, rotation 
   return `M${points[0]} ${points.slice(1).map((point) => `L${point}`).join(' ')} Z`;
 }
 
-export function GeometricOctagon({ primaryColor = '#D4AF37' }: GeometricOctagonProps) {
+export function GeometricOctagon({ primaryColor = 'var(--theme-primary, #D4AF37)' }: GeometricOctagonProps) {
   return (
     <div className="fixed inset-0 z-[2] pointer-events-none flex items-center justify-center">
       <svg className="absolute w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">

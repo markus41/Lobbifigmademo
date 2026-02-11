@@ -103,7 +103,7 @@ function QRCodeDisplay({ value, size = 120 }: { value: string; size?: number }) 
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      <rect width={size} height={size} fill="white" rx={8} />
+      <rect width={size} height={size} fill="var(--theme-bg-card, white)" rx={8} />
       {pattern.map((row, i) =>
         row.map((cell, j) =>
           cell && (
@@ -113,7 +113,7 @@ function QRCodeDisplay({ value, size = 120 }: { value: string; size?: number }) 
               y={cellSize + i * cellSize}
               width={cellSize}
               height={cellSize}
-              fill="#1a1a2e"
+              fill="var(--theme-text-primary, #1a1a2e)"
               rx={1}
             />
           )
@@ -313,8 +313,9 @@ export function MembershipCard({
           ) : (
             <motion.div
               key="back"
-              className="absolute inset-0 rounded-[24px] overflow-hidden shadow-2xl bg-white"
+              className="absolute inset-0 rounded-[24px] overflow-hidden shadow-2xl"
               style={{
+                background: 'var(--theme-bg-card, #FFFFFF)',
                 rotateX,
                 rotateY,
                 transformStyle: 'preserve-3d',
@@ -340,7 +341,7 @@ export function MembershipCard({
                   <QRCodeDisplay value={memberId} size={140} />
                 </div>
 
-                <p className="text-xs text-gray-500 mt-4 font-mono">
+                <p className="text-xs mt-4 font-mono" style={{ color: 'var(--theme-text-secondary, #6B7280)' }}>
                   {memberId}
                 </p>
               </div>
@@ -352,7 +353,7 @@ export function MembershipCard({
       {/* Action Buttons - 44px minimum touch targets */}
       <div className="flex items-center justify-center gap-4 mt-6">
         <motion.button
-          className="flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-5 py-3 rounded-xl text-sm font-medium transition-colors"
+          className="flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-4 py-4 rounded-xl text-sm font-medium transition-colors"
           style={{
             background: `rgba(${primaryRgb}, 0.1)`,
             color: primaryColor,
@@ -366,7 +367,7 @@ export function MembershipCard({
         </motion.button>
 
         <motion.button
-          className="flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-5 py-3 rounded-xl text-sm font-medium transition-colors"
+          className="flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-4 py-4 rounded-xl text-sm font-medium transition-colors"
           style={{
             background: `rgba(${primaryRgb}, 0.1)`,
             color: primaryColor,
@@ -380,7 +381,7 @@ export function MembershipCard({
         </motion.button>
 
         <motion.button
-          className="flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-5 py-3 rounded-xl text-sm font-medium text-white transition-colors"
+          className="flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-4 py-4 rounded-xl text-sm font-medium text-white transition-colors"
           style={{ background: gradientBtn }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -392,7 +393,7 @@ export function MembershipCard({
       </div>
 
       {/* Swipe hint */}
-      <p className="text-center text-xs text-gray-400 mt-4">
+      <p className="text-center text-xs mt-4" style={{ color: 'var(--theme-text-muted, #9CA3AF)' }}>
         Swipe or tap Flip to see QR code
       </p>
     </div>

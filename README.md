@@ -1,63 +1,121 @@
-# The Lobbi - Premium Member Management Platform
+# Lobbifigmademo
 
-The Lobbi is a premium white-label membership management platform designed for luxury clubs, private communities, and exclusive organizations. This demo showcases the beautiful design and powerful functionality of The Lobbi platform.
+Vite + React + TypeScript demo app for themed, multi-tenant Lobbi UI flows.
 
-## Features
+## No-Config Quickstart
 
-- **Admin Dashboard** - Comprehensive management interface with real-time analytics
-- **Member Portal** - Mobile-first member experience for on-the-go access
-- **Multi-tenant Architecture** - Switch between different organizations seamlessly
-- **White-label Branding** - Each organization has its own custom theme and branding
-- **Interactive Wizards** - Email templates, event planning, class scheduling, and reports
-- **AI Assistant (Bellhop)** - Intelligent help system for members and administrators
-
-## Running the Demo
-
-### Prerequisites
-- Node.js 20 or higher
-- npm
-
-### Installation
+Works without `.env` setup (Metabase widgets fall back to local demo previews).
 
 ```bash
-# Install dependencies
 npm install
-
-# Start the development server
 npm run dev
-
-# Build for production
-npm run build
 ```
 
-The development server will start at `http://localhost:5173/Lobbifigmademo/`
+Open the app from the Vite URL printed in terminal.
+
+## Setup
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Optional Metabase Env Setup
+
+Only required if you want live Metabase embedded chart/KPI data.
+
+```bash
+cp .env.example .env
+```
+
+Fill these in `.env`:
+
+- `VITE_METABASE_INSTANCE_URL`
+- `VITE_METABASE_API_KEY`
+- `VITE_METABASE_REPORT_*`
+- `VITE_METABASE_DASHBOARD_*`
+
+If these are missing, report/dashboard widgets use demo preview data.
+
+## Doctor Checks
+
+Run from repo root to validate local setup:
+
+```bash
+node -v
+npm -v
+npm run typecheck
+npm run build:check
+npm run theme:qa:strict
+```
+
+Notes:
+
+- `theme:qa:strict` writes `reports/theme-qa-report.md`.
+- If no baseline exists yet, initialize it once with `npm run theme:qa:update-baseline`.
+
+## Visual QA Prerequisites
+
+`npm run theme:qa:visual` is optional and Playwright-based.
+
+Install prerequisites once:
+
+```bash
+npm i -D playwright
+npx playwright install chromium
+```
+
+Then run:
+
+```bash
+npm run theme:qa:visual
+```
+
+What it does:
+
+- Starts a local dev server at `127.0.0.1:4173`.
+- Captures screenshots for `dashboard`, `login`, and `member` on each org.
+- Compares against `reports/theme-visual/baseline` (unless updating baseline).
+
+Useful commands:
+
+```bash
+npm run theme:qa:visual:update-baseline
+npm run theme:qa:all
+```
+
+If `playwright` is not installed, visual QA exits successfully and reports that it was skipped.
+
+## Key Commands
+
+- `npm run dev`: start local dev server.
+- `npm run build`: production bundle.
+- `npm run build:check`: TypeScript compile check + production build.
+- `npm run typecheck`: strict TS checks (`tsc --noEmit`).
+- `npm run theme:qa`: token/contrast regression check against baseline.
+- `npm run theme:qa:strict`: CI-grade strict theme QA.
+- `npm run theme:qa:visual`: visual snapshot QA (Playwright).
+- `npm run theme:qa:all`: strict token QA + visual QA.
 
 ## Project Structure
 
-- `src/app` - Main application components and routing
-- `src/components` - Reusable UI components
-- `src/theme` - Theme system and customization
-- `src/styles` - Global styles and Tailwind configuration
+- `src/app/`: app pages, flows, feature components.
+- `src/components/`: reusable UI blocks (`lobbi/`, `demo/`, `motion/`).
+- `src/theme/`: theme registry, provider, org theme JSON files, schema/types.
+- `src/styles/`: global CSS, org theme variables, Tailwind entry styles.
+- `scripts/`: theme QA automation scripts.
+- `reports/`: generated QA outputs and snapshots.
 
-## Demo Organizations
+## QA Artifacts
 
-The demo includes several pre-configured organizations showcasing different themes:
-- The Hamptons Country Club
-- Manhattan Members Club
-- Royal Oak Society
-- And more...
+- `reports/theme-qa-report.md`
+- `reports/theme-snapshots/latest.json`
+- `reports/theme-snapshots/baseline.json`
+- `reports/theme-visual-report.md`
+- `reports/theme-visual/latest/**`
 
-## Deployment
+## Prompt & Workflow Docs
 
-This project is configured to deploy to GitHub Pages automatically via GitHub Actions when changes are pushed to the main branch.
-
-## Technology Stack
-
-- React 18.3
-- TypeScript
-- Vite 6.3
-- Tailwind CSS 4.1
-- Motion (Framer Motion)
-- Radix UI Components
-- Material-UI Icons
+- `guidelines/PromptLibrary.md`
+- `guidelines/AgentWorkflows.md`
   

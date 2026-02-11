@@ -8,11 +8,11 @@
   --theme-primary-dark: #8B7330;
   --theme-primary-rgb: 212,175,55;
   
-  /* The Lobbi Brand Colors - Gold (The Signature) */
-  --gold-primary: #D4AF37;
-  --gold-dark: #C5A028;
-  --gold-light: #E5C76B;
-  --gold-50: #FDF9EF;
+  /* Map legacy "gold" tokens to active org brand tokens */
+  --gold-primary: var(--theme-primary);
+  --gold-dark: var(--theme-primary-dark);
+  --gold-light: var(--theme-primary-light);
+  --gold-50: var(--theme-primary-pale);
   
   /* Warm Grays - Never pure gray, always slightly warm */
   --gray-50: #FAFAF9;
@@ -54,8 +54,8 @@
   --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.12), 0 4px 8px -2px rgb(0 0 0 / 0.06);
   --shadow-xl: 0 24px 48px -8px rgb(0 0 0 / 0.15), 0 8px 16px -4px rgb(0 0 0 / 0.08);
   --shadow-2xl: 0 32px 64px -12px rgb(0 0 0 / 0.18), 0 16px 32px -8px rgb(0 0 0 / 0.10);
-  --shadow-gold: 0 0 60px -12px rgba(212, 175, 55, 0.45), 0 0 20px -6px rgba(212, 175, 55, 0.25);
-  --shadow-gold-sm: 0 0 20px -6px rgba(212, 175, 55, 0.3);
+  --shadow-gold: 0 0 60px -12px rgba(var(--theme-primary-rgb, 212,175,55), 0.45), 0 0 20px -6px rgba(var(--theme-primary-rgb, 212,175,55), 0.25);
+  --shadow-gold-sm: 0 0 20px -6px rgba(var(--theme-primary-rgb, 212,175,55), 0.3);
   --shadow-glow: 0 0 40px -10px var(--theme-primary, #D4AF37);
   
   /* Glassmorphism */
@@ -65,8 +65,8 @@
   --glass-border: rgba(255, 255, 255, 0.18);
   
   /* Premium Gradients */
-  --gradient-gold: linear-gradient(135deg, #D4AF37 0%, #F4D03F 50%, #D4AF37 100%);
-  --gradient-gold-shimmer: linear-gradient(110deg, #D4AF37 0%, #F4E4A1 45%, #F4D03F 65%, #D4AF37 100%);
+  --gradient-gold: linear-gradient(135deg, var(--theme-primary, #D4AF37) 0%, var(--theme-primary-light, #F4D03F) 50%, var(--theme-primary, #D4AF37) 100%);
+  --gradient-gold-shimmer: linear-gradient(110deg, var(--theme-primary, #D4AF37) 0%, var(--theme-primary-pale, #F4E4A1) 45%, var(--theme-primary-light, #F4D03F) 65%, var(--theme-primary, #D4AF37) 100%);
   --gradient-surface: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(250,250,249,1) 100%);
   --gradient-surface-elevated: linear-gradient(180deg, #FFFFFF 0%, #FAFAF9 50%, #F5F5F4 100%);
   
@@ -77,9 +77,9 @@
   --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   
   /* Typography - Refined luxury fonts */
-  --font-display: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'DM Sans', 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-display: 'DM Serif Display', 'Playfair Display', Georgia, serif;
+  --font-body: 'Sora', 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
   --font-accent: 'Cormorant Garamond', Georgia, serif;
   
   /* Typography Scale - More dramatic */
@@ -120,8 +120,8 @@
   --font-weight-medium: 500;
   --font-weight-normal: 400;
   --ring: var(--gold-primary);
-  --chart-1: var(--gold-primary);
-  --chart-2: var(--success);
+  --chart-1: var(--theme-primary);
+  --chart-2: var(--theme-accent);
   --chart-3: var(--info);
   --chart-4: var(--warning);
   --chart-5: var(--error);
@@ -248,7 +248,7 @@
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: -0.025em;
-    color: var(--gray-900);
+    color: var(--theme-text-primary, var(--gray-900));
   }
 
   h2 {
@@ -257,7 +257,7 @@
     font-weight: 600;
     line-height: 1.2;
     letter-spacing: -0.02em;
-    color: var(--gray-900);
+    color: var(--theme-text-primary, var(--gray-900));
   }
 
   h3 {
@@ -266,7 +266,7 @@
     font-weight: 600;
     line-height: 1.3;
     letter-spacing: -0.01em;
-    color: var(--gray-900);
+    color: var(--theme-text-primary, var(--gray-900));
   }
 
   h4 {
@@ -275,21 +275,21 @@
     font-weight: 600;
     line-height: 1.4;
     letter-spacing: -0.01em;
-    color: var(--gray-900);
+    color: var(--theme-text-primary, var(--gray-900));
   }
 
   p {
     font-size: 16px;
     font-weight: 400;
     line-height: 1.5;
-    color: var(--gray-800);
+    color: var(--theme-text-secondary, var(--gray-800));
   }
 
   label {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.5;
-    color: var(--gray-900);
+    color: var(--theme-text-primary, var(--gray-900));
   }
 
   button {
@@ -946,19 +946,19 @@ html.theme-transitioning * {
 
 /* Typography that uses theme fonts */
 .text-display {
-  font-family: var(--theme-font-display, 'Playfair Display', Georgia, serif);
+  font-family: var(--theme-font-display, var(--font-display));
   font-weight: var(--theme-font-weight-heading, 600);
   letter-spacing: var(--theme-letter-spacing, 0);
 }
 
 .text-body {
-  font-family: var(--theme-font-body, 'Inter', system-ui, sans-serif);
+  font-family: var(--theme-font-body, var(--font-body));
   font-weight: var(--theme-font-weight-body, 400);
   letter-spacing: var(--theme-letter-spacing, 0);
 }
 
 .text-mono {
-  font-family: var(--theme-font-mono, 'JetBrains Mono', monospace);
+  font-family: var(--theme-font-mono, var(--font-mono));
 }
 
 /* Theme colors */
@@ -1002,7 +1002,7 @@ html.theme-transitioning * {
   color: var(--theme-text-inverse, #FFFFFF);
   border-radius: var(--theme-button-radius, 0.375rem);
   box-shadow: var(--theme-button-shadow, none);
-  font-family: var(--theme-font-body, 'Inter', system-ui, sans-serif);
+  font-family: var(--theme-font-body, var(--font-body));
   transition: all var(--theme-transition-duration, 250ms) ease;
 }
 
@@ -1016,7 +1016,7 @@ html.theme-transitioning * {
   color: var(--theme-primary, #D4AF37);
   border: 2px solid var(--theme-primary, #D4AF37);
   border-radius: var(--theme-button-radius, 0.375rem);
-  font-family: var(--theme-font-body, 'Inter', system-ui, sans-serif);
+  font-family: var(--theme-font-body, var(--font-body));
   transition: all var(--theme-transition-duration, 250ms) ease;
 }
 
@@ -1857,4 +1857,58 @@ html {
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================================================
+   THEME UTILITY CLASSES - For wizard/form pseudo-state theming
+   ============================================================================= */
+
+/* Focus ring: themed outline for inputs, selects, textareas */
+.theme-focus-ring:focus {
+  outline: none;
+  border-color: var(--theme-primary, #D4AF37);
+  box-shadow: 0 0 0 3px rgba(var(--theme-primary-rgb, 212,175,55), 0.3);
+}
+
+/* Selected button/card state */
+.theme-selected {
+  border-color: var(--theme-primary, #D4AF37);
+  background-color: var(--theme-primary-pale, #FDF9EF);
+}
+
+/* Active/filled button state */
+.theme-active {
+  background: var(--theme-gradient-btn, linear-gradient(to right, #e2c76b, #D4AF37, #8B7330));
+  color: var(--theme-text-inverse, #fff);
+}
+
+/* Hover border state */
+.theme-hover-border:hover {
+  border-color: var(--theme-primary-light, #F4D03F);
+}
+
+/* Dashed add-button hover */
+.theme-hover-dashed:hover {
+  border-color: var(--theme-primary-light, #F4D03F);
+  color: var(--theme-primary-dark, #B8860B);
+}
+
+/* Themed checkbox accent */
+.theme-checkbox {
+  accent-color: var(--theme-primary, #D4AF37);
+}
+
+/* Themed text color */
+.theme-text { color: var(--theme-primary, #D4AF37); }
+.theme-text-dark { color: var(--theme-primary-dark, #B8860B); }
+.theme-text-light { color: var(--theme-primary-light, #F4D03F); }
+
+/* Themed background */
+.theme-bg-pale { background-color: var(--theme-primary-pale, #FDF9EF); }
+.theme-bg-light { background-color: rgba(var(--theme-primary-rgb, 212,175,55), 0.1); }
+
+/* Themed badge: light bg + dark text */
+.theme-badge {
+  background-color: rgba(var(--theme-primary-rgb, 212,175,55), 0.12);
+  color: var(--theme-primary-dark, #B8860B);
 }

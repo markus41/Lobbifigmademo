@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { gsap, ScrollTrigger } from '../../lib/gsap-config';
+import { LUXURY_EASE, LUXURY_TIMING } from '../../lib/motion/gsap-luxury';
 
 interface UseGsapScrollTriggerOptions {
   /** GSAP animation vars applied to the element */
@@ -14,7 +15,7 @@ interface UseGsapScrollTriggerOptions {
 }
 
 /**
- * Scroll-triggered animation hook.
+ * Luxury scroll-triggered animation hook.
  *
  * Attach the returned ref to the element you want to animate on scroll.
  * The element will animate from `from` to `to` when it enters the viewport.
@@ -26,7 +27,7 @@ export function useGsapScrollTrigger<T extends HTMLElement = HTMLDivElement>(
     from = { opacity: 0, y: 40 },
     to = { opacity: 1, y: 0 },
     trigger: triggerVars = {},
-    duration = 0.8,
+    duration = LUXURY_TIMING.elegant,
     enabled = true,
   } = options;
 
@@ -39,7 +40,7 @@ export function useGsapScrollTrigger<T extends HTMLElement = HTMLDivElement>(
       gsap.fromTo(elementRef.current!, from, {
         ...to,
         duration,
-        ease: 'power2.out',
+        ease: LUXURY_EASE.signature,
         scrollTrigger: {
           trigger: elementRef.current!,
           start: 'top 85%',

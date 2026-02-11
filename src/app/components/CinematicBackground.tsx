@@ -34,7 +34,7 @@ export function CinematicBackground({ primaryRgb = '212,175,55', stage = 'landin
       <div
         className="fixed inset-0 z-0"
         style={{
-          background: `radial-gradient(140% 110% at 50% 50%, rgba(255, 252, 243, 0.96) 0%, rgba(249, 244, 231, 0.95) 45%, rgba(238, 229, 208, 0.94) 100%)`,
+          background: `radial-gradient(120% 120% at 50% 12%, rgba(${primaryRgb}, 0.18) 0%, transparent 55%), linear-gradient(180deg, var(--theme-bg-secondary, #FCF8EF) 0%, var(--theme-bg-primary, #F6F0E2) 55%, var(--theme-bg-tertiary, #ECE3D3) 100%)`,
         }}
       />
 

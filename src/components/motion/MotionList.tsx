@@ -37,7 +37,7 @@ const directionOffsets = {
 export function MotionList({
   children,
   staggerDelay = 0.06,
-  direction = 'up',
+  direction: _direction = 'up',
   gap = 16,
   layout = 'flex',
   columns = 3,

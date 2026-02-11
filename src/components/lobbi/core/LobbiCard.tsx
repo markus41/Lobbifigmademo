@@ -36,21 +36,6 @@ const paddingMap: Record<string, CardProps['padding']> = {
   lg: 'lg',
 };
 
-const topBarColors: Record<string, string> = {
-  primary: 'bg-gradient-to-r from-gold-200 via-gold-400 to-gold-700',
-  secondary: 'bg-gradient-to-r from-gray-300 to-gray-400',
-  success: 'bg-gradient-to-r from-emerald-400 to-emerald-600',
-  warning: 'bg-gradient-to-r from-amber-400 to-amber-600',
-  info: 'bg-gradient-to-r from-sky-400 to-sky-600',
-};
-
-const variantStyles: Record<string, string> = {
-  default: 'bg-white border border-gray-200',
-  kpi: 'bg-white border border-gray-200',
-  glass: 'bg-white/80 backdrop-blur-sm border border-white/20',
-  elevated: 'bg-white shadow-lg border border-gray-100',
-};
-
 export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
   (
     {
@@ -62,13 +47,48 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
       padding = 'md',
       children,
       className,
+      style,
       ...props
     },
     ref
   ) => {
-    // Remove CSS hover since we're using motion gestures
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const hoverStyles = '';
+    const variantInlineStyles: Record<string, React.CSSProperties> = {
+      default: {
+        background: 'var(--theme-bg-card, #fff)',
+        borderColor: 'var(--theme-border-light, #e5e7eb)',
+        borderWidth: 1,
+        borderStyle: 'var(--theme-border-style, solid)',
+      },
+      kpi: {
+        background: 'var(--theme-bg-card, #fff)',
+        borderColor: 'var(--theme-border-light, #e5e7eb)',
+        borderWidth: 1,
+        borderStyle: 'var(--theme-border-style, solid)',
+      },
+      glass: {
+        background: 'var(--theme-glass-bg, rgba(255,255,255,0.8))',
+        backdropFilter: 'var(--theme-glass-blur, blur(8px))',
+        WebkitBackdropFilter: 'var(--theme-glass-blur, blur(8px))',
+        borderColor: 'var(--theme-glass-border, rgba(255,255,255,0.2))',
+        borderWidth: 1,
+        borderStyle: 'var(--theme-border-style, solid)',
+      },
+      elevated: {
+        background: 'var(--theme-bg-card, #fff)',
+        boxShadow: 'var(--theme-shadow-lg, 0 10px 15px -3px rgba(0,0,0,0.1))',
+        borderColor: 'var(--theme-border-light, #f3f4f6)',
+        borderWidth: 1,
+        borderStyle: 'var(--theme-border-style, solid)',
+      },
+    };
+
+    const topBarInlineStyles: Record<string, React.CSSProperties> = {
+      primary: { background: 'var(--theme-gradient-btn, linear-gradient(to right, #e2c76b, #D4AF37, #8B7330))' },
+      secondary: { background: 'var(--theme-secondary, linear-gradient(to right, #d1d5db, #9ca3af))' },
+      success: { background: 'linear-gradient(to right, #34d399, #059669)' },
+      warning: { background: 'linear-gradient(to right, #fbbf24, #d97706)' },
+      info: { background: 'linear-gradient(to right, #38bdf8, #0284c7)' },
+    };
 
     return (
       <Card
@@ -76,17 +96,17 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
         component={motion.div as any}
         padding={paddingMap[padding]}
         radius="md"
-        className={cn(
-          'relative overflow-hidden',
-          variantStyles[variant],
-          className
-        )}
+        className={cn('relative overflow-hidden', className)}
         styles={{
           root: {
             '--card-bg': 'transparent',
             transformStyle: 'preserve-3d',
             perspective: '1200px',
           },
+        }}
+        style={{
+          ...variantInlineStyles[variant],
+          ...style,
         }}
         // Enhanced entrance animation with spring physics
         initial={{ opacity: 0, y: 16, scale: 0.96, filter: 'blur(6px)' }}
@@ -104,7 +124,7 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
                 y: -8,
                 scale: 1.02,
                 rotateX: 1,
-                boxShadow: '0 28px 56px rgba(0,0,0,0.14), 0 14px 28px rgba(0,0,0,0.1)',
+                boxShadow: 'var(--theme-shadow-xl, 0 28px 56px rgba(0,0,0,0.14), 0 14px 28px rgba(0,0,0,0.1))',
                 filter: 'brightness(1.03)',
                 transition: {
                   type: 'spring',
@@ -121,7 +141,7 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
                 y: -3,
                 scale: 0.99,
                 rotateX: 0.5,
-                boxShadow: '0 10px 20px rgba(0,0,0,0.12)',
+                boxShadow: 'var(--theme-shadow-md, 0 10px 20px rgba(0,0,0,0.12))',
                 transition: {
                   type: 'spring',
                   stiffness: 500,
@@ -137,10 +157,8 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
         {/* KPI Top Bar */}
         {(hasTopBar || variant === 'kpi') && (
           <div
-            className={cn(
-              'absolute top-0 left-0 right-0 h-[3px]',
-              topBarColors[topBarColor]
-            )}
+            className="absolute top-0 left-0 right-0 h-[3px]"
+            style={topBarInlineStyles[topBarColor]}
           />
         )}
 
@@ -148,7 +166,8 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
         {hasOrnaments && (
           <>
             <svg
-              className="absolute top-3 left-3 w-6 h-6 text-gold-400/20"
+              className="absolute top-3 left-3 w-6 h-6"
+              style={{ color: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.2)' }}
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -156,7 +175,8 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
               <path d="M3,3 L7,3 L7,4 L4,4 L4,7 L3,7 Z" />
             </svg>
             <svg
-              className="absolute top-3 right-3 w-6 h-6 text-gold-400/20"
+              className="absolute top-3 right-3 w-6 h-6"
+              style={{ color: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.2)' }}
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -164,7 +184,8 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
               <path d="M21,3 L17,3 L17,4 L20,4 L20,7 L21,7 Z" />
             </svg>
             <svg
-              className="absolute bottom-3 left-3 w-6 h-6 text-gold-400/20"
+              className="absolute bottom-3 left-3 w-6 h-6"
+              style={{ color: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.2)' }}
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -172,7 +193,8 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
               <path d="M3,21 L7,21 L7,20 L4,20 L4,17 L3,17 Z" />
             </svg>
             <svg
-              className="absolute bottom-3 right-3 w-6 h-6 text-gold-400/20"
+              className="absolute bottom-3 right-3 w-6 h-6"
+              style={{ color: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.2)' }}
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -216,9 +238,11 @@ export const LobbiCardTitle = forwardRef<
     component="h3"
     size="sm"
     fw={600}
-    c="dark"
-    ff="'DM Sans', sans-serif"
     className={cn('text-[15px]', className)}
+    style={{
+      color: 'var(--theme-text-primary, #1a1a2e)',
+      fontFamily: 'var(--theme-font-display, "DM Sans", sans-serif)',
+    }}
     {...props}
   />
 ));
@@ -232,9 +256,9 @@ export const LobbiCardDescription = forwardRef<
     ref={ref}
     component="p"
     size="xs"
-    c="dimmed"
     mt={4}
     className={cn('text-[13px]', className)}
+    style={{ color: 'var(--theme-text-muted, #6b7280)' }}
     {...props}
   />
 ));
@@ -251,11 +275,15 @@ LobbiCardContent.displayName = 'LobbiCardContent';
 export const LobbiCardFooter = forwardRef<
   HTMLDivElement,
   HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(({ className, style, ...props }, ref) => (
   <Group
     ref={ref}
     gap="sm"
-    className={cn('mt-4 pt-4 border-t border-gray-100', className)}
+    className={cn('mt-4 pt-4', className)}
+    style={{
+      borderTop: '1px solid var(--theme-border-light, #f3f4f6)',
+      ...style,
+    }}
     {...props}
   />
 ));

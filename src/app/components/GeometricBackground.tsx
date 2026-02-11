@@ -5,7 +5,7 @@ interface GeometricBackgroundProps {
   primaryRgb?: string;
 }
 
-export function GeometricBackground({ stage, primaryRgb: _primaryRgb = '212,175,55' }: GeometricBackgroundProps) {
+export function GeometricBackground({ stage, primaryRgb: _primaryRgb = 'var(--theme-primary-rgb, 212,175,55)' }: GeometricBackgroundProps) {
   const shouldFade = stage === 'landing' || stage === 'email';
   const shouldHide = stage === 'orgLogin' || stage === 'welcome' || stage === 'dashboardEntry' || stage === 'dashboard';
 
@@ -26,8 +26,8 @@ export function GeometricBackground({ stage, primaryRgb: _primaryRgb = '212,175,
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 400">
           <defs>
             <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#8B7330" stopOpacity="0.7" />
+              <stop offset="0%" stopColor="var(--theme-primary, #D4AF37)" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="var(--theme-primary-dark, #8B7330)" stopOpacity="0.7" />
             </linearGradient>
             
             <filter id="glow">

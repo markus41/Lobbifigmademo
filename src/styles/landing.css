@@ -1,0 +1,982 @@
+:root {
+  --lobbi-gold-primary: #d4af37;
+  --lobbi-gold-light: #f4d03f;
+  --lobbi-gold-bright: #ffd700;
+  --lobbi-gold-dark: #c5a028;
+  --lobbi-gold-muted: #b8923a;
+
+  --lobbi-cream-warm: #fdfcf8;
+  --lobbi-cream-light: #fcf8f0;
+  --lobbi-white: #ffffff;
+
+  --lobbi-charcoal: #1a1a1a;
+  --lobbi-slate: #2d3748;
+  --lobbi-gray-600: #4a5568;
+  --lobbi-gray-500: #6b7280;
+  --lobbi-gray-400: #9ca3af;
+  --lobbi-gray-300: #d1d5db;
+  --lobbi-gray-200: #e5e7eb;
+  --lobbi-gray-100: #f3f4f6;
+
+  --lobbi-error: #dc2626;
+  --lobbi-success: #047857;
+  --lobbi-warning: #d97706;
+
+  --lobbi-font-display: 'Cormorant Garamond', 'Palatino Linotype', Georgia, serif;
+  --lobbi-font-body: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --lobbi-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --lobbi-gradient-gold-button: linear-gradient(135deg, #d4af37 0%, #c5a028 100%);
+  --lobbi-gradient-gold-full: linear-gradient(135deg, #d4af37 0%, #f4d03f 30%, #d4af37 60%, #c5a028 100%);
+  --lobbi-gradient-gold-hover: linear-gradient(135deg, #f4d03f 0%, #ffd700 50%, #d4af37 100%);
+  --lobbi-gradient-gold-shimmer: linear-gradient(135deg, #d4af37 0%, #f4d03f 35%, #ffd700 50%, #f4d03f 65%, #d4af37 100%);
+  --lobbi-gradient-page: linear-gradient(180deg, #fcf8f0 0%, #fffdf8 25%, #ffffff 50%, #fffdf8 75%, #fcf8f0 100%);
+
+  --lobbi-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --lobbi-shadow-md: 0 8px 30px rgba(0, 0, 0, 0.06);
+  --lobbi-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+  --lobbi-shadow-gold-sm: 0 2px 8px rgba(212, 175, 55, 0.3);
+  --lobbi-shadow-gold: 0 6px 25px rgba(212, 175, 55, 0.35);
+  --lobbi-shadow-gold-lg: 0 10px 40px rgba(212, 175, 55, 0.4);
+  --lobbi-shadow-gold-xl: 0 15px 50px rgba(212, 175, 55, 0.5);
+  --lobbi-shadow-solution-hover: 0 12px 40px rgba(212, 175, 55, 0.15);
+
+  --lobbi-radius-sm: 0.5rem;
+  --lobbi-radius-md: 0.75rem;
+  --lobbi-radius-lg: 1rem;
+  --lobbi-radius-xl: 1.25rem;
+  --lobbi-radius-2xl: 1.5rem;
+  --lobbi-radius-3xl: 1.875rem;
+  --lobbi-radius-full: 9999px;
+
+  --lobbi-transition-fast: 0.2s ease;
+  --lobbi-transition-normal: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --lobbi-transition-smooth: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --lobbi-transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --lobbi-focus-ring: 0 0 0 4px rgba(212, 175, 55, 0.2);
+
+  --font-display: var(--lobbi-font-display);
+  --font-body: var(--lobbi-font-body);
+  --font-mono: var(--lobbi-font-mono);
+  --theme-primary: var(--lobbi-gold-primary);
+  --theme-primary-light: var(--lobbi-gold-light);
+  --theme-primary-dark: var(--lobbi-gold-dark);
+  --theme-primary-pale: #f5e3a0;
+  --theme-primary-rgb: 212, 175, 55;
+  --theme-bg-primary: var(--lobbi-cream-warm);
+  --theme-bg-secondary: var(--lobbi-cream-light);
+  --theme-bg-card: var(--lobbi-white);
+  --theme-text-primary: var(--lobbi-charcoal);
+  --theme-text-secondary: var(--lobbi-gray-600);
+  --theme-text-muted: var(--lobbi-gray-500);
+  --theme-gradient-btn: var(--lobbi-gradient-gold-button);
+  --theme-gradient-hero: var(--lobbi-gradient-page);
+}
+
+@theme inline {
+  --color-lobbi-gold-primary: var(--lobbi-gold-primary);
+  --color-lobbi-gold-light: var(--lobbi-gold-light);
+  --color-lobbi-gold-bright: var(--lobbi-gold-bright);
+  --color-lobbi-gold-dark: var(--lobbi-gold-dark);
+  --color-lobbi-gold-muted: var(--lobbi-gold-muted);
+  --color-lobbi-cream-warm: var(--lobbi-cream-warm);
+  --color-lobbi-cream-light: var(--lobbi-cream-light);
+  --color-lobbi-charcoal: var(--lobbi-charcoal);
+  --color-lobbi-slate: var(--lobbi-slate);
+  --color-lobbi-gray-600: var(--lobbi-gray-600);
+  --color-lobbi-gray-500: var(--lobbi-gray-500);
+  --font-lobbi-display: var(--lobbi-font-display);
+  --font-lobbi-body: var(--lobbi-font-body);
+  --shadow-lobbi-card: var(--lobbi-shadow-card);
+  --shadow-lobbi-gold: var(--lobbi-shadow-gold);
+  --radius-lobbi-3xl: var(--lobbi-radius-3xl);
+}
+
+@keyframes lobbi-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes lobbi-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lobbi-scroll-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+@keyframes lobbi-flow-dot {
+  0% {
+    transform: translateX(0);
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100% - 16px));
+    opacity: 0.2;
+  }
+}
+
+.lobbi-gold-text {
+  background: var(--lobbi-gradient-gold-shimmer);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: lobbi-shimmer 8s linear infinite;
+}
+
+.lobbi-landing {
+  background: var(--lobbi-gradient-page);
+  color: var(--lobbi-charcoal);
+  font-family: var(--lobbi-font-body);
+}
+
+.lobbi-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 999;
+  background: var(--lobbi-gold-primary);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: var(--lobbi-radius-md);
+}
+
+.lobbi-skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+.lobbi-focusable:focus-visible {
+  outline: none;
+  box-shadow: var(--lobbi-focus-ring);
+}
+
+.lobbi-container {
+  margin: 0 auto;
+  width: min(1200px, calc(100% - 2rem));
+}
+
+.lobbi-section {
+  padding: 6rem 0;
+}
+
+.lobbi-section-cream {
+  background: var(--lobbi-cream-light);
+}
+
+.lobbi-section-white {
+  background: var(--lobbi-white);
+}
+
+.lobbi-section-cta {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(244, 208, 63, 0.06) 100%);
+}
+
+.lobbi-section-header {
+  margin: 0 auto;
+  max-width: 760px;
+  text-align: center;
+}
+
+.lobbi-section-header h2 {
+  margin-top: 1rem;
+  font-family: var(--lobbi-font-display);
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  line-height: 1.2;
+  color: var(--lobbi-charcoal);
+}
+
+.lobbi-section-header p {
+  margin-top: 1rem;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--lobbi-gray-600);
+}
+
+.lobbi-section-label {
+  font-family: var(--lobbi-font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--lobbi-gold-primary);
+}
+
+.lobbi-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  height: 72px;
+  align-items: center;
+  border-bottom: 1px solid rgba(209, 213, 219, 0.7);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  transition: height var(--lobbi-transition-normal), box-shadow var(--lobbi-transition-normal);
+}
+
+.lobbi-nav-scrolled {
+  height: 64px;
+  box-shadow: var(--lobbi-shadow-md);
+}
+
+.lobbi-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.lobbi-logo-mark {
+  display: inline-flex;
+  height: 40px;
+  width: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.65rem;
+  background: var(--lobbi-gradient-gold-button);
+  color: #fff;
+  font-family: var(--lobbi-font-display);
+  font-size: 1.5rem;
+  box-shadow: var(--lobbi-shadow-gold-sm);
+}
+
+.lobbi-logo-wordmark {
+  font-family: var(--lobbi-font-display);
+  font-size: 1.65rem;
+  font-weight: 600;
+  color: var(--lobbi-charcoal);
+}
+
+.lobbi-nav-link {
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--lobbi-gray-600);
+  cursor: pointer;
+  transition: color var(--lobbi-transition-fast);
+}
+
+.lobbi-nav-link:hover {
+  color: var(--lobbi-gold-dark);
+}
+
+.lobbi-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--lobbi-gray-300);
+  border-radius: var(--lobbi-radius-md);
+  height: 2.5rem;
+  width: 2.5rem;
+  background: #fff;
+}
+
+.lobbi-mobile-menu {
+  position: fixed;
+  inset: 64px 0 0;
+  z-index: 45;
+  background: rgba(253, 252, 248, 0.97);
+  backdrop-filter: blur(12px);
+}
+
+.lobbi-mobile-menu-accent {
+  height: 3px;
+  width: 100%;
+  background: var(--lobbi-gradient-gold-full);
+}
+
+.lobbi-mobile-menu-content {
+  display: flex;
+  height: calc(100vh - 70px);
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.lobbi-mobile-nav-link {
+  border: none;
+  border-bottom: 1px solid rgba(209, 213, 219, 0.8);
+  background: transparent;
+  padding: 0 0 0.9rem;
+  text-align: left;
+  font-size: 1.1rem;
+  color: var(--lobbi-charcoal);
+}
+
+.lobbi-hero-section {
+  position: relative;
+  display: flex;
+  min-height: calc(100vh - 72px);
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 6rem 1rem 4.5rem;
+}
+
+.lobbi-hero-pattern {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.07) 0%, transparent 40%),
+    repeating-linear-gradient(
+      45deg,
+      rgba(212, 175, 55, 0.04) 0,
+      rgba(212, 175, 55, 0.04) 1px,
+      transparent 1px,
+      transparent 24px
+    );
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.lobbi-hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  width: min(860px, 100%);
+}
+
+.lobbi-hero-headline {
+  margin: 1.25rem auto 0;
+  max-width: 800px;
+  font-family: var(--lobbi-font-display);
+  font-size: clamp(2.75rem, 6vw, 4.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--lobbi-charcoal);
+}
+
+.lobbi-hero-subheadline {
+  margin: 1.5rem auto 0;
+  max-width: 640px;
+  color: var(--lobbi-gray-600);
+  font-size: 1.25rem;
+  line-height: 1.65;
+}
+
+.lobbi-hero-cta-row {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.lobbi-social-proof {
+  margin: 4rem auto 0;
+  color: var(--lobbi-gray-500);
+  font-size: 0.875rem;
+  max-width: 460px;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+}
+
+.lobbi-scroll-indicator {
+  position: absolute;
+  bottom: 1.25rem;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--lobbi-gold-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.lobbi-scroll-chevron {
+  animation: lobbi-scroll-bounce 1.8s ease-in-out infinite;
+}
+
+.lobbi-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border: 1px solid transparent;
+  border-radius: 1.25rem;
+  font-weight: 600;
+  transition:
+    transform var(--lobbi-transition-smooth),
+    box-shadow var(--lobbi-transition-smooth),
+    background var(--lobbi-transition-normal),
+    color var(--lobbi-transition-fast),
+    border-color var(--lobbi-transition-fast);
+  cursor: pointer;
+}
+
+.lobbi-btn-md {
+  min-height: 2.75rem;
+  padding: 0.65rem 1.15rem;
+}
+
+.lobbi-btn-lg {
+  min-height: 3.15rem;
+  padding: 0.9rem 1.7rem;
+}
+
+.lobbi-btn-primary {
+  background: var(--lobbi-gradient-gold-button);
+  color: #fff;
+  box-shadow: var(--lobbi-shadow-gold);
+}
+
+.lobbi-btn-primary:hover {
+  background: var(--lobbi-gradient-gold-hover);
+  transform: translateY(-3px);
+  box-shadow: var(--lobbi-shadow-gold-lg);
+}
+
+.lobbi-btn-ghost {
+  background: transparent;
+  color: var(--lobbi-gold-dark);
+  border-color: var(--lobbi-gold-primary);
+}
+
+.lobbi-btn-ghost:hover {
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateY(-2px);
+}
+
+.lobbi-btn-text {
+  background: transparent;
+  color: var(--lobbi-gold-dark);
+  padding: 0;
+  border-radius: 0;
+}
+
+.lobbi-btn-text:hover {
+  text-decoration: underline;
+}
+
+.lobbi-card {
+  border-radius: var(--lobbi-radius-3xl);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid transparent;
+  box-shadow: var(--lobbi-shadow-card);
+  backdrop-filter: blur(10px);
+  transition:
+    transform var(--lobbi-transition-smooth),
+    border-color var(--lobbi-transition-smooth),
+    box-shadow var(--lobbi-transition-smooth);
+}
+
+.lobbi-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212, 175, 55, 0.6);
+  box-shadow: var(--lobbi-shadow-solution-hover);
+}
+
+.lobbi-stat-grid {
+  margin-top: 3rem;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.lobbi-stat-card {
+  padding: 1.8rem 1.6rem;
+  border-top: 3px solid var(--lobbi-gold-primary);
+}
+
+.lobbi-stat-icon {
+  display: inline-flex;
+  color: var(--lobbi-gold-dark);
+}
+
+.lobbi-stat-value {
+  margin-top: 0.85rem;
+  font-family: var(--lobbi-font-display);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--lobbi-gold-primary);
+}
+
+.lobbi-stat-label {
+  margin-top: 0.65rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--lobbi-gray-600);
+}
+
+.lobbi-art-deco-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.lobbi-art-deco-line {
+  height: 1px;
+  width: min(220px, 28vw);
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.95), transparent);
+}
+
+.lobbi-art-deco-diamond {
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border: 1px solid rgba(212, 175, 55, 0.75);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.lobbi-feature-grid {
+  margin-top: 3rem;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lobbi-feature-card {
+  padding: 1.8rem;
+  border-color: var(--lobbi-gray-200);
+}
+
+.lobbi-feature-icon {
+  display: inline-flex;
+  height: 56px;
+  width: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--lobbi-gradient-gold-button);
+  box-shadow: var(--lobbi-shadow-gold-sm);
+}
+
+.lobbi-feature-eyebrow {
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--lobbi-gold-muted);
+  font-weight: 700;
+}
+
+.lobbi-feature-title {
+  margin-top: 0.35rem;
+  font-family: var(--lobbi-font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--lobbi-charcoal);
+}
+
+.lobbi-feature-description {
+  margin-top: 0.55rem;
+  color: var(--lobbi-gray-600);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.lobbi-metrics-section {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.06) 0%, rgba(244, 208, 63, 0.03) 100%);
+}
+
+.lobbi-metrics-grid {
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.lobbi-metric-item {
+  position: relative;
+  text-align: center;
+}
+
+.lobbi-metric-value {
+  font-family: var(--lobbi-font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--lobbi-charcoal);
+}
+
+.lobbi-metric-label {
+  margin-top: 0.45rem;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--lobbi-gray-500);
+}
+
+.lobbi-metric-separator {
+  position: absolute;
+  top: 1.45rem;
+  right: -0.75rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--lobbi-gold-primary);
+}
+
+.lobbi-step-flow {
+  position: relative;
+  margin-top: 3rem;
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.lobbi-step-connector {
+  position: absolute;
+  top: 2.2rem;
+  left: 5%;
+  width: 90%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.9), rgba(212, 175, 55, 0.2));
+}
+
+.lobbi-step-dot {
+  position: absolute;
+  top: -7px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--lobbi-gradient-gold-button);
+  box-shadow: var(--lobbi-shadow-gold-sm);
+  animation: lobbi-flow-dot 5s linear infinite;
+}
+
+.lobbi-step-card {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--lobbi-radius-2xl);
+  border: 1px solid var(--lobbi-gray-200);
+  background: var(--lobbi-white);
+  padding: 1.5rem;
+  box-shadow: var(--lobbi-shadow-card);
+}
+
+.lobbi-step-number {
+  font-family: var(--lobbi-font-display);
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--lobbi-gold-primary);
+}
+
+.lobbi-step-card h3 {
+  margin-top: 0.75rem;
+  font-family: var(--lobbi-font-display);
+  font-size: 1.45rem;
+  color: var(--lobbi-charcoal);
+}
+
+.lobbi-step-card p {
+  margin-top: 0.6rem;
+  color: var(--lobbi-gray-600);
+  line-height: 1.65;
+}
+
+.lobbi-comparison-table {
+  margin-top: 3rem;
+  border-radius: var(--lobbi-radius-3xl);
+  overflow: hidden;
+  background: var(--lobbi-white);
+  box-shadow: var(--lobbi-shadow-md);
+}
+
+.lobbi-comparison-row {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.3rem;
+}
+
+.lobbi-comparison-head {
+  border-bottom: 1px solid var(--lobbi-gray-300);
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--lobbi-slate);
+}
+
+.lobbi-comparison-even {
+  background: var(--lobbi-white);
+}
+
+.lobbi-comparison-odd {
+  background: var(--lobbi-cream-light);
+}
+
+.lobbi-comparison-feature {
+  font-weight: 600;
+  color: var(--lobbi-charcoal);
+}
+
+.lobbi-column-legacy {
+  color: var(--lobbi-gray-500);
+}
+
+.lobbi-column-lobbi {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--lobbi-charcoal);
+  border-left: 2px solid rgba(212, 175, 55, 0.5);
+  padding-left: 0.75rem;
+}
+
+.lobbi-column-lobbi svg {
+  color: var(--lobbi-gold-dark);
+  flex: 0 0 auto;
+}
+
+.lobbi-testimonial-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.lobbi-testimonial {
+  position: relative;
+  max-width: 860px;
+  text-align: center;
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 3rem 2rem;
+}
+
+.lobbi-testimonial blockquote {
+  font-family: var(--lobbi-font-display);
+  font-size: 1.75rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--lobbi-charcoal);
+}
+
+.lobbi-testimonial p {
+  margin-top: 1rem;
+  color: var(--lobbi-gray-500);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.lobbi-quote-mark {
+  position: absolute;
+  font-family: var(--lobbi-font-display);
+  font-size: 4rem;
+  color: rgba(212, 175, 55, 0.7);
+  line-height: 1;
+}
+
+.lobbi-quote-start {
+  top: 0.5rem;
+  left: 1rem;
+}
+
+.lobbi-quote-end {
+  bottom: 0.5rem;
+  right: 1rem;
+}
+
+.lobbi-cta-content {
+  text-align: center;
+}
+
+.lobbi-cta-buttons {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.lobbi-cta-trust {
+  margin-top: 2rem;
+  font-size: 0.8125rem;
+  color: var(--lobbi-gray-500);
+}
+
+.lobbi-footer {
+  background: var(--lobbi-charcoal);
+  color: #f2eee4;
+  padding: 4rem 0 2rem;
+}
+
+.lobbi-footer-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.lobbi-footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.lobbi-footer-wordmark {
+  font-family: var(--lobbi-font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--lobbi-gold-light);
+}
+
+.lobbi-footer-tagline {
+  margin-top: 0.9rem;
+  color: var(--lobbi-gray-400);
+  font-size: 0.875rem;
+}
+
+.lobbi-footer h3 {
+  font-family: var(--lobbi-font-body);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--lobbi-gold-primary);
+}
+
+.lobbi-footer ul {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.lobbi-footer a {
+  color: var(--lobbi-gray-400);
+  text-decoration: none;
+  transition: color var(--lobbi-transition-fast);
+}
+
+.lobbi-footer a:hover {
+  color: #fff;
+}
+
+.lobbi-footer-bottom {
+  margin-top: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.lobbi-footer-bottom p {
+  color: var(--lobbi-gray-500);
+  font-size: 0.8125rem;
+}
+
+.lobbi-footer-social {
+  display: inline-flex;
+  gap: 0.75rem;
+}
+
+.lobbi-footer-social a {
+  color: var(--lobbi-gold-primary);
+}
+
+.lobbi-section-skeleton {
+  height: 240px;
+  margin: 0 auto;
+  width: min(1200px, calc(100% - 2rem));
+  border-radius: var(--lobbi-radius-2xl);
+  background: linear-gradient(
+    90deg,
+    rgba(212, 175, 55, 0.08) 0%,
+    rgba(212, 175, 55, 0.18) 35%,
+    rgba(212, 175, 55, 0.08) 70%
+  );
+  background-size: 200% 100%;
+  animation: lobbi-shimmer 2s linear infinite;
+}
+
+@media (max-width: 1279px) {
+  .lobbi-stat-grid,
+  .lobbi-feature-grid,
+  .lobbi-metrics-grid,
+  .lobbi-step-flow,
+  .lobbi-footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lobbi-comparison-row {
+    grid-template-columns: 1fr;
+  }
+
+  .lobbi-step-connector,
+  .lobbi-metric-separator {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .lobbi-section {
+    padding: 4rem 0;
+  }
+
+  .lobbi-hero-section {
+    min-height: calc(100vh - 64px);
+    padding-top: 4.5rem;
+  }
+
+  .lobbi-section-header p,
+  .lobbi-hero-subheadline {
+    font-size: 1rem;
+  }
+
+  .lobbi-stat-grid,
+  .lobbi-feature-grid,
+  .lobbi-metrics-grid,
+  .lobbi-step-flow,
+  .lobbi-footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lobbi-testimonial {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .lobbi-testimonial blockquote {
+    font-size: 1.35rem;
+  }
+
+  .lobbi-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

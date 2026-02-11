@@ -17,10 +17,10 @@
  *
  * The element will smoothly morph between the two states.
  */
-import type { ReactNode, HTMLAttributes } from 'react'
+import type { ReactNode } from 'react'
 import { motion, type Transition } from 'motion/react'
 
-interface SharedElementProps extends HTMLAttributes<HTMLDivElement> {
+interface SharedElementProps {
   children: ReactNode
   /** Unique ID shared between elements */
   layoutId: string
@@ -28,6 +28,8 @@ interface SharedElementProps extends HTMLAttributes<HTMLDivElement> {
   transition?: Transition
   /** Element type (div, span, etc.) */
   as?: keyof JSX.IntrinsicElements
+  className?: string
+  style?: React.CSSProperties
 }
 
 const defaultTransition: Transition = {
@@ -42,12 +44,13 @@ export function SharedElement({
   layoutId,
   transition = defaultTransition,
   as = 'div',
-  ...props
+  className,
+  style,
 }: SharedElementProps) {
-  const MotionComponent = motion[as] as typeof motion.div
+  const MotionComponent = (motion as unknown as Record<string, typeof motion.div>)[as] ?? motion.div
 
   return (
-    <MotionComponent layoutId={layoutId} transition={transition} {...props}>
+    <MotionComponent layoutId={layoutId} transition={transition} className={className} style={style}>
       {children}
     </MotionComponent>
   )
@@ -56,11 +59,13 @@ export function SharedElement({
 /**
  * SharedImage - Specialized shared element for images with aspect ratio preservation
  */
-interface SharedImageProps extends HTMLAttributes<HTMLImageElement> {
+interface SharedImageProps {
   layoutId: string
   src: string
   alt: string
   transition?: Transition
+  className?: string
+  style?: React.CSSProperties
 }
 
 export function SharedImage({
@@ -68,7 +73,8 @@ export function SharedImage({
   src,
   alt,
   transition = defaultTransition,
-  ...props
+  className,
+  style,
 }: SharedImageProps) {
   return (
     <motion.img
@@ -76,8 +82,8 @@ export function SharedImage({
       src={src}
       alt={alt}
       transition={transition}
-      style={{ width: '100%', height: 'auto' }}
-      {...props}
+      className={className}
+      style={{ width: '100%', height: 'auto', ...style }}
     />
   )
 }
@@ -85,27 +91,30 @@ export function SharedImage({
 /**
  * SharedBackground - Shared element for background colors/gradients
  */
-interface SharedBackgroundProps extends HTMLAttributes<HTMLDivElement> {
+interface SharedBackgroundProps {
   layoutId: string
   children: ReactNode
   transition?: Transition
+  className?: string
+  style?: React.CSSProperties
 }
 
 export function SharedBackground({
   layoutId,
   children,
   transition = defaultTransition,
-  ...props
+  className,
+  style,
 }: SharedBackgroundProps) {
   return (
     <motion.div
       layoutId={layoutId}
+      className={className}
+      style={style}
       transition={{
         ...transition,
-        // Smoother background transitions
-        backgroundColor: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+        backgroundColor: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const },
       }}
-      {...props}
     >
       {children}
     </motion.div>

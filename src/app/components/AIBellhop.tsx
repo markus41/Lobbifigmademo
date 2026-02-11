@@ -110,7 +110,8 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-black/40 z-[100]"
+            className="fixed inset-0 z-[100]"
+            style={{ background: 'var(--theme-bg-overlay, rgba(0,0,0,0.4))' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -119,7 +120,11 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
 
           {/* Panel */}
           <motion.div
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-[101] flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-md z-[101] flex flex-col"
+            style={{
+              background: 'var(--theme-bg-card, #FFFFFF)',
+              boxShadow: 'var(--theme-shadow-xl, -8px 0 30px rgba(0,0,0,0.15))',
+            }}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -129,16 +134,26 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
             }}
           >
             {/* Header */}
-            <div className="p-6 border-b border-gray-200">
+            <div
+              className="p-6"
+              style={{ borderBottom: '1px solid var(--theme-border, #E4E4E7)' }}
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-10 h-10 rounded-full flex items-center justify-center"
                     style={{
-                      background: 'linear-gradient(135deg, #F5E6A3, #D4AF37, #8B7330)',
+                      background: 'var(--theme-gradient-btn, var(--theme-primary, #D4AF37))',
                     }}
                   >
-                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      className="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      style={{ color: 'var(--theme-text-inverse, #FFFFFF)' }}
+                    >
                       <path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
                       <path d="M19 9H5a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2Z" />
                       <path d="M12 14v8" />
@@ -147,37 +162,65 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
                   </div>
                   <div>
                     <h2
-                      className="text-xl font-semibold text-[#1A1815]"
+                      className="text-xl font-semibold"
                       style={{
-                        fontFamily: 'Cormorant Garamond, Georgia, serif',
+                        color: 'var(--theme-text-primary, #1A1815)',
+                        fontFamily: 'var(--theme-font-display, inherit)',
                       }}
                     >
                       AI Concierge
                     </h2>
-                    <p className="text-xs text-[#8A8578]">
+                    <p
+                      className="text-xs"
+                      style={{ color: 'var(--theme-text-muted, #8A8578)' }}
+                    >
                       Always at your service
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 rounded-lg transition-colors"
+                  style={{ color: 'var(--theme-text-muted, #8A8578)' }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
                 >
-                  <XIcon className="w-5 h-5" style={{ color: '#8A8578' }} />
+                  <XIcon className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
             {/* Quick Suggestions */}
-            <div className="px-4 py-3 border-b border-gray-100 bg-[#FAFAF8]">
+            <div
+              className="px-4 py-3"
+              style={{
+                borderBottom: '1px solid var(--theme-border-light, #F4F4F5)',
+                background: 'var(--theme-bg-muted, #FAFAF8)',
+              }}
+            >
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {quickSuggestions.map((suggestion) => (
                   <button
                     key={suggestion.label}
                     onClick={() => handleSend(suggestion.query)}
-                    className="flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full border transition-all hover:border-[#D4AF37] hover:bg-[#D4AF37]/5 border-[#E5E0D5] text-[#5A5247]"
+                    className="flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-all"
                     style={{
-                      fontFamily: 'DM Sans, sans-serif',
+                      border: '1px solid var(--theme-border-light, #E5E0D5)',
+                      color: 'var(--theme-text-secondary, #5A5247)',
+                      fontFamily: 'var(--theme-font-body, inherit)',
+                      background: 'transparent',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--theme-primary, #D4AF37)';
+                      e.currentTarget.style.background = 'rgba(var(--theme-primary-rgb, 212,175,55), 0.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--theme-border-light, #E5E0D5)';
+                      e.currentTarget.style.background = 'transparent';
                     }}
                   >
                     {suggestion.label}
@@ -199,20 +242,32 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
                   <div
                     className={`max-w-[85%] rounded-2xl p-4 ${
                       msg.type === 'user'
-                        ? 'rounded-br-sm bg-gradient-to-br from-[#D4AF37] to-[#8B7330] text-white'
-                        : 'rounded-bl-sm bg-[#F7F4EE]'
+                        ? 'rounded-br-sm'
+                        : 'rounded-bl-sm'
                     }`}
+                    style={{
+                      background: msg.type === 'user'
+                        ? 'var(--theme-gradient-btn, var(--theme-primary, #D4AF37))'
+                        : 'var(--theme-bg-muted, #F7F4EE)',
+                    }}
                   >
                     <p
                       className="text-sm leading-relaxed"
-                      style={{ color: msg.type === 'user' ? '#fff' : '#2C2A25' }}
+                      style={{
+                        color: msg.type === 'user'
+                          ? 'var(--theme-text-inverse, #FFFFFF)'
+                          : 'var(--theme-text-primary, #2C2A25)',
+                      }}
                     >
                       {formatMessage(msg.content)}
                     </p>
                     <p
-                      className={`text-[10px] mt-2 ${
-                        msg.type === 'user' ? 'text-white/70' : 'text-[#B8B0A0]'
-                      }`}
+                      className="text-[10px] mt-2"
+                      style={{
+                        color: msg.type === 'user'
+                          ? 'rgba(255,255,255,0.7)'
+                          : 'var(--theme-text-muted, #B8B0A0)',
+                      }}
                     >
                       {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
@@ -227,12 +282,16 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex justify-start"
                 >
-                  <div className="bg-[#F7F4EE] rounded-2xl rounded-bl-sm p-4">
+                  <div
+                    className="rounded-2xl rounded-bl-sm p-4"
+                    style={{ background: 'var(--theme-bg-muted, #F7F4EE)' }}
+                  >
                     <div className="flex gap-1">
                       {[0, 1, 2].map((i) => (
                         <motion.div
                           key={i}
-                          className="w-2 h-2 rounded-full bg-[#D4AF37]"
+                          className="w-2 h-2 rounded-full"
+                          style={{ background: 'var(--theme-primary, #D4AF37)' }}
                           animate={{
                             y: [0, -6, 0],
                           }}
@@ -251,7 +310,13 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t border-gray-200 bg-white">
+            <div
+              className="p-4"
+              style={{
+                borderTop: '1px solid var(--theme-border, #E4E4E7)',
+                background: 'var(--theme-bg-card, #FFFFFF)',
+              }}
+            >
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -259,28 +324,36 @@ export function AIBellhop({ isOpen, onClose }: AIBellhopProps) {
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me anything..."
-                  className="flex-1 px-4 py-3 bg-[#F7F4EE] border border-transparent rounded-xl text-sm outline-none transition-all text-[#2C2A25]"
+                  className="flex-1 px-4 py-3 border border-transparent rounded-xl text-sm outline-none transition-all"
+                  style={{
+                    background: 'var(--theme-bg-muted, #F7F4EE)',
+                    color: 'var(--theme-text-primary, #2C2A25)',
+                  }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = 'rgba(212,175,55,0.3)';
-                    e.target.style.background = '#fff';
+                    e.target.style.borderColor = 'rgba(var(--theme-primary-rgb, 212,175,55), 0.3)';
+                    e.target.style.background = 'var(--theme-bg-card, #FFFFFF)';
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = 'transparent';
-                    e.target.style.background = '#F7F4EE';
+                    e.target.style.background = 'var(--theme-bg-muted, #F7F4EE)';
                   }}
                 />
                 <button
                   onClick={() => handleSend(message)}
                   disabled={!message.trim()}
-                  className="px-4 py-3 rounded-xl text-white transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                  className="px-4 py-3 rounded-xl transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                   style={{
-                    background: 'linear-gradient(135deg, #F5E6A3, #D4AF37, #8B7330)',
+                    background: 'var(--theme-gradient-btn, var(--theme-primary, #D4AF37))',
+                    color: 'var(--theme-text-inverse, #FFFFFF)',
                   }}
                 >
                   <SendIcon className="w-5 h-5" />
                 </button>
               </div>
-              <p className="text-[10px] text-center mt-2 text-[#B8B0A0]">
+              <p
+                className="text-[10px] text-center mt-2"
+                style={{ color: 'var(--theme-text-muted, #B8B0A0)' }}
+              >
                 AI responses are simulated for demo purposes
               </p>
             </div>

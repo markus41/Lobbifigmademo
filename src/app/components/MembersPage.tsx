@@ -24,13 +24,26 @@ export function MembersPage() {
       >
         <div>
           <h1 className="mb-2">The Registry</h1>
-          <p className="text-gray-600">Your member community at a glance</p>
+          <p style={{ color: 'var(--theme-text-secondary, #71717A)' }}>
+            Your member community at a glance
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+            className="px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+            style={{
+              border: '1px solid var(--theme-border-light, #E4E4E7)',
+              color: 'var(--theme-text-secondary, #71717A)',
+              background: 'transparent',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}
             onClick={() => {
               console.log('Import CSV clicked');
               toast.info('CSV import wizard coming soon!');
@@ -42,7 +55,18 @@ export function MembersPage() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+            className="px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+            style={{
+              border: '1px solid var(--theme-border-light, #E4E4E7)',
+              color: 'var(--theme-text-secondary, #71717A)',
+              background: 'transparent',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}
             onClick={() => {
               console.log('Export members clicked');
               toast.success('Generating CSV export...');
@@ -54,7 +78,11 @@ export function MembersPage() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="px-6 py-2 bg-gold-primary text-white rounded-lg hover:bg-gold-dark transition-colors flex items-center gap-2 font-medium"
+            className="px-6 py-2 rounded-lg transition-colors flex items-center gap-2 font-medium"
+            style={{
+              background: 'var(--theme-gradient-btn, var(--theme-primary, #D4AF37))',
+              color: 'var(--theme-text-inverse, #FFFFFF)',
+            }}
             onClick={() => {
               console.log('Add Member clicked');
               toast.info('Member registration form coming soon!');
@@ -71,19 +99,50 @@ export function MembersPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white rounded-xl border border-gray-200 p-4"
+        className="rounded-xl p-4"
+        style={{
+          background: 'var(--theme-bg-card, #FFFFFF)',
+          border: '1px solid var(--theme-border-light, #E4E4E7)',
+        }}
       >
         <div className="flex items-center gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5"
+              style={{ color: 'var(--theme-text-muted, #A1A1AA)' }}
+            />
             <input
               type="text"
               placeholder="Search by name, email, or membership type..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-primary/20 focus:border-gold-primary transition-all"
+              className="w-full pl-10 pr-4 py-2 rounded-lg transition-all outline-none"
+              style={{
+                border: '1px solid var(--theme-border-light, #E4E4E7)',
+                background: 'var(--theme-bg-card, #FFFFFF)',
+                color: 'var(--theme-text-primary, #09090B)',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'var(--theme-border-focus, var(--theme-primary, #D4AF37))';
+                e.target.style.boxShadow = '0 0 0 3px rgba(var(--theme-primary-rgb, 212,175,55), 0.1)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'var(--theme-border-light, #E4E4E7)';
+                e.target.style.boxShadow = 'none';
+              }}
             />
           </div>
           <button
-            className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+            className="px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+            style={{
+              border: '1px solid var(--theme-border-light, #E4E4E7)',
+              color: 'var(--theme-text-secondary, #71717A)',
+              background: 'transparent',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+            }}
             onClick={() => {
               console.log('Filters toggled');
               setShowFilters(!showFilters);
@@ -101,41 +160,86 @@ export function MembersPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+        className="rounded-xl overflow-hidden"
+        style={{
+          background: 'var(--theme-bg-card, #FFFFFF)',
+          border: '1px solid var(--theme-border-light, #E4E4E7)',
+        }}
       >
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead
+            style={{
+              background: 'var(--theme-bg-secondary, #F9FAFB)',
+              borderBottom: '1px solid var(--theme-border-light, #E4E4E7)',
+            }}
+          >
             <tr>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900">Member</th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900">Email</th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900">Type</th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900">Status</th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900">Join Date</th>
-              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900">Actions</th>
+              {['Member', 'Email', 'Type', 'Status', 'Join Date', 'Actions'].map((header) => (
+                <th
+                  key={header}
+                  className="text-left px-6 py-4 text-sm font-semibold"
+                  style={{ color: 'var(--theme-text-primary, #09090B)' }}
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody>
             {members.map((member, index) => (
               <motion.tr
                 key={member.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: 0.3 + index * 0.05 }}
-                className="hover:bg-gray-50 transition-colors group cursor-pointer"
+                className="transition-colors group cursor-pointer"
+                style={{
+                  borderBottom: '1px solid var(--theme-border-light, rgba(0,0,0,0.04))',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                }}
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold-light to-gold-primary flex items-center justify-center flex-shrink-0">
-                      <span className="text-white text-sm font-semibold">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{
+                        background: 'var(--theme-avatar-bg, var(--theme-gradient-btn, var(--theme-primary, #D4AF37)))',
+                      }}
+                    >
+                      <span
+                        className="text-sm font-semibold"
+                        style={{ color: 'var(--theme-text-inverse, #FFFFFF)' }}
+                      >
                         {member.name.split(' ').map(n => n[0]).join('')}
                       </span>
                     </div>
-                    <div className="font-medium text-gray-900">{member.name}</div>
+                    <div
+                      className="font-medium"
+                      style={{ color: 'var(--theme-text-primary, #09090B)' }}
+                    >
+                      {member.name}
+                    </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{member.email}</td>
+                <td
+                  className="px-6 py-4 text-sm"
+                  style={{ color: 'var(--theme-text-secondary, #71717A)' }}
+                >
+                  {member.email}
+                </td>
                 <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gold-50 text-gold-primary">
+                  <span
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    style={{
+                      background: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.1)',
+                      color: 'var(--theme-primary, #D4AF37)',
+                    }}
+                  >
                     {member.type}
                   </span>
                 </td>
@@ -146,9 +250,23 @@ export function MembersPage() {
                     {member.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{member.joinDate}</td>
+                <td
+                  className="px-6 py-4 text-sm"
+                  style={{ color: 'var(--theme-text-secondary, #71717A)' }}
+                >
+                  {member.joinDate}
+                </td>
                 <td className="px-6 py-4">
-                  <button className="text-sm text-gold-primary hover:text-gold-dark font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    className="text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+                    style={{ color: 'var(--theme-primary, #D4AF37)' }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = 'var(--theme-primary-dark, var(--theme-primary, #B8941F))';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = 'var(--theme-primary, #D4AF37)';
+                    }}
+                  >
                     View Details
                   </button>
                 </td>

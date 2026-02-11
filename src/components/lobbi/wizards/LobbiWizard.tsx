@@ -273,10 +273,12 @@ function WizardStepList({ allowClick = false }: WizardStepListProps) {
                     'relative flex items-center justify-center',
                     'w-10 h-10 rounded-full',
                     'border-2 transition-all duration-300',
-                    isCompleted && 'bg-gold-500 border-gold-500',
-                    isActive && 'bg-white border-gold-500',
                     !isActive && !isCompleted && 'bg-white border-gray-300'
                   )}
+                  style={{
+                    ...(isCompleted ? { backgroundColor: 'var(--theme-primary, #D4AF37)', borderColor: 'var(--theme-primary, #D4AF37)' } : {}),
+                    ...(isActive && !isCompleted ? { backgroundColor: 'white', borderColor: 'var(--theme-primary, #D4AF37)' } : {}),
+                  }}
                   animate={isActive ? { scale: [1, 1.05, 1] } : {}}
                   transition={{ duration: 0.4 }}
                 >
@@ -284,18 +286,14 @@ function WizardStepList({ allowClick = false }: WizardStepListProps) {
                     <Check className="w-5 h-5 text-white" strokeWidth={3} />
                   ) : step.icon ? (
                     <span
-                      className={cn(
-                        isActive ? 'text-gold-600' : 'text-gray-400'
-                      )}
+                      style={isActive ? { color: 'var(--theme-primary-dark, #B8860B)' } : { color: '#9ca3af' }}
                     >
                       {step.icon}
                     </span>
                   ) : (
                     <span
-                      className={cn(
-                        'text-sm font-semibold',
-                        isActive ? 'text-gold-600' : 'text-gray-400'
-                      )}
+                      className="text-sm font-semibold"
+                      style={isActive ? { color: 'var(--theme-primary-dark, #B8860B)' } : { color: '#9ca3af' }}
                     >
                       {index + 1}
                     </span>
@@ -304,7 +302,8 @@ function WizardStepList({ allowClick = false }: WizardStepListProps) {
                   {/* Active ring animation */}
                   {isActive && (
                     <motion.div
-                      className="absolute inset-0 rounded-full border-2 border-gold-400"
+                      className="absolute inset-0 rounded-full border-2"
+                      style={{ borderColor: 'var(--theme-primary-light, #F4D03F)' }}
                       initial={{ scale: 1, opacity: 1 }}
                       animate={{ scale: 1.3, opacity: 0 }}
                       transition={{
@@ -321,13 +320,10 @@ function WizardStepList({ allowClick = false }: WizardStepListProps) {
                   <p
                     className={cn(
                       'text-sm font-medium transition-colors',
-                      isActive
-                        ? 'text-gold-600'
-                        : isCompleted
-                        ? 'text-gray-700'
-                        : 'text-gray-400',
-                      isClickable && 'group-hover:text-gold-600'
+                      !isActive && isCompleted && 'text-gray-700',
+                      !isActive && !isCompleted && 'text-gray-400'
                     )}
+                    style={isActive || isClickable ? { color: 'var(--theme-primary-dark, #B8860B)' } : undefined}
                   >
                     {step.title}
                     {step.isOptional && (
@@ -349,7 +345,8 @@ function WizardStepList({ allowClick = false }: WizardStepListProps) {
                 <div className="flex-1 mx-4">
                   <div className="h-[2px] bg-gray-200 relative overflow-hidden rounded-full">
                     <motion.div
-                      className="absolute inset-y-0 left-0 bg-gradient-to-r from-gold-400 to-gold-500"
+                      className="absolute inset-y-0 left-0"
+                      style={{ background: 'linear-gradient(to right, var(--theme-primary-light, #F4D03F), var(--theme-primary, #D4AF37))' }}
                       initial={{ width: '0%' }}
                       animate={{
                         width: index < currentStep ? '100%' : '0%',
@@ -472,7 +469,7 @@ export function WizardCard({
     >
       {/* Header with Art Deco accent */}
       <div className="relative px-6 py-4 border-b border-gray-100">
-        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-gold-200 via-gold-400 to-gold-700" />
+        <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: 'var(--theme-gradient, linear-gradient(to right, var(--theme-primary-pale, #F4E4A1), var(--theme-primary-light, #F4D03F), var(--theme-primary-dark, #B8860B)))' }} />
         <h3
           className="text-lg font-semibold text-gray-900"
           style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}

@@ -117,8 +117,8 @@ const QrCodeIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const ChevronRightIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const ChevronRightIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <polyline points="9 18 15 12 9 6" />
   </svg>
 );
@@ -232,21 +232,21 @@ function GlassCard({ children, className = '', glow, glowColor, interactive, onC
     <motion.div
       className={`
         relative overflow-hidden
-        bg-white/70 backdrop-blur-xl
-        border border-white/40
-        shadow-xl shadow-black/5
+        backdrop-blur-xl
         ${className}
       `}
       onClick={onClick}
       whileTap={interactive ? { scale: 0.98 } : undefined}
       style={{
+        background: 'var(--theme-glass-bg, rgba(255,255,255,0.7))',
+        border: '1px solid var(--theme-glass-border, rgba(255,255,255,0.4))',
         boxShadow: glow && glowColor
           ? `0 8px 32px ${glowColor}, 0 0 0 1px rgba(255,255,255,0.2) inset`
-          : undefined,
+          : 'var(--theme-shadow-xl, 0 20px 25px -5px rgba(0,0,0,0.05))',
       }}
     >
       {/* Shimmer overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-transparent opacity-50 pointer-events-none" />
+      <div className="absolute inset-0 opacity-50 pointer-events-none" style={{ background: 'linear-gradient(to bottom right, var(--theme-glass-shimmer, rgba(255,255,255,0.4)), transparent, transparent)' }} />
 
       {/* Content */}
       <div className="relative z-10">
@@ -356,7 +356,12 @@ function BottomNav({ activeTab, onTabChange, primaryColor, primaryRgb }: BottomN
   return (
     <nav className="fixed bottom-4 left-4 right-4 z-50">
       <motion.div
-        className="relative bg-white/80 backdrop-blur-2xl rounded-3xl border border-white/50 shadow-2xl shadow-black/10 overflow-hidden"
+        className="relative backdrop-blur-2xl rounded-3xl overflow-hidden"
+        style={{
+          background: 'var(--theme-glass-bg, rgba(255,255,255,0.8))',
+          border: '1px solid var(--theme-glass-border, rgba(255,255,255,0.5))',
+          boxShadow: 'var(--theme-shadow-2xl, 0 25px 50px -12px rgba(0,0,0,0.1))',
+        }}
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
@@ -403,11 +408,11 @@ function BottomNav({ activeTab, onTabChange, primaryColor, primaryRgb }: BottomN
                     <Icon
                       className={`w-6 h-6 transition-colors duration-300`}
                       filled={isActive}
-                      style={{ color: isActive ? primaryColor : '#9CA3AF' }}
+                      style={{ color: isActive ? primaryColor : 'var(--theme-text-muted, #9CA3AF)' }}
                     />
                   </motion.div>
 
-                  {/* Badge */}
+                  {/* Badge - semantic red for alerts */}
                   {tab.badge && (
                     <motion.span
                       className="absolute -top-1 -right-2 min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center text-white shadow-lg bg-gradient-to-br from-red-500 to-red-600 shadow-[0_2px_8px_rgba(239,68,68,0.4)]"
@@ -422,7 +427,7 @@ function BottomNav({ activeTab, onTabChange, primaryColor, primaryRgb }: BottomN
 
                 <motion.span
                   className={`relative z-10 text-[11px] mt-1.5 font-semibold tracking-wide transition-colors duration-300`}
-                  style={{ color: isActive ? primaryColor : '#9CA3AF' }}
+                  style={{ color: isActive ? primaryColor : 'var(--theme-text-muted, #9CA3AF)' }}
                   animate={{ opacity: isActive ? 1 : 0.7 }}
                 >
                   {tab.label}
@@ -560,7 +565,7 @@ function MembershipCard({ organization, account }: MembershipCardProps) {
               >
                 <span
                   className="text-xl italic font-semibold"
-                  style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+                  style={{ fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)' }}
                 >
                   {organization.logoLetter}
                 </span>
@@ -572,8 +577,8 @@ function MembershipCard({ organization, account }: MembershipCardProps) {
             </div>
             <div className="text-right">
               <div className="flex items-center gap-1 justify-end mb-1">
-                <SparklesIcon className="w-4 h-4 text-yellow-300" />
-                <span className="text-[10px] uppercase tracking-widest font-semibold text-yellow-200">Premium</span>
+                <SparklesIcon className="w-4 h-4 text-white/80" />
+                <span className="text-[10px] uppercase tracking-widest font-semibold text-white/70">Premium</span>
               </div>
               <p className="text-sm font-semibold">Active</p>
             </div>
@@ -583,7 +588,7 @@ function MembershipCard({ organization, account }: MembershipCardProps) {
           <div className="mb-6">
             <motion.p
               className="text-3xl font-light tracking-tight"
-              style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+              style={{ fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)' }}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -627,7 +632,12 @@ interface QuickLinkCardProps {
 function QuickLinkCard({ link, primaryColor, primaryRgb, index, onClick }: QuickLinkCardProps) {
   return (
     <motion.button
-      className="relative flex flex-col items-center justify-center p-4 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/40 shadow-lg shadow-black/5 overflow-hidden"
+      className="relative flex flex-col items-center justify-center p-4 rounded-2xl backdrop-blur-xl overflow-hidden"
+      style={{
+        background: 'var(--theme-glass-bg, rgba(255,255,255,0.6))',
+        border: '1px solid var(--theme-glass-border, rgba(255,255,255,0.4))',
+        boxShadow: 'var(--theme-shadow-lg, 0 10px 15px -3px rgba(0,0,0,0.05))',
+      }}
       onClick={onClick}
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -657,7 +667,7 @@ function QuickLinkCard({ link, primaryColor, primaryRgb, index, onClick }: Quick
         {link.icon}
       </motion.div>
 
-      <span className="relative z-10 text-xs font-semibold text-gray-700">{link.label}</span>
+      <span className="relative z-10 text-xs font-semibold" style={{ color: 'var(--theme-text-secondary, #374151)' }}>{link.label}</span>
 
       {/* Badge */}
       {link.badge && (
@@ -716,8 +726,8 @@ function EventCard({ event, organization, index }: EventCardProps) {
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 leading-tight">{event.title}</h3>
-            <p className="text-sm text-gray-500 mt-0.5">{event.time} • {event.location}</p>
+            <h3 className="font-semibold leading-tight" style={{ color: 'var(--theme-text-primary, #111827)' }}>{event.title}</h3>
+            <p className="text-sm mt-0.5" style={{ color: 'var(--theme-text-secondary, #6B7280)' }}>{event.time} • {event.location}</p>
 
             {/* Attendees */}
             <div className="flex items-center gap-2 mt-2">
@@ -725,12 +735,16 @@ function EventCard({ event, organization, index }: EventCardProps) {
                 {[...Array(3)].map((_, i) => (
                   <div
                     key={i}
-                    className="w-6 h-6 rounded-full border-2 border-white bg-gradient-to-br from-gray-200 to-gray-300"
-                    style={{ zIndex: 3 - i }}
+                    className="w-6 h-6 rounded-full"
+                    style={{
+                      zIndex: 3 - i,
+                      border: '2px solid var(--theme-bg-card, #FFFFFF)',
+                      background: 'var(--theme-avatar-placeholder, linear-gradient(to bottom right, #E5E7EB, #D1D5DB))',
+                    }}
                   />
                 ))}
               </div>
-              <span className="text-xs text-gray-400 font-medium">
+              <span className="text-xs font-medium" style={{ color: 'var(--theme-text-muted, #9CA3AF)' }}>
                 +{event.attendees} attending
               </span>
             </div>
@@ -799,7 +813,8 @@ function HomeTab({ organization, account, onQuickLinkClick, onViewAllEvents }: H
       >
         <div>
           <motion.p
-            className="text-gray-500 text-sm font-medium"
+            className="text-sm font-medium"
+            style={{ color: 'var(--theme-text-secondary, #6B7280)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
@@ -807,8 +822,8 @@ function HomeTab({ organization, account, onQuickLinkClick, onViewAllEvents }: H
             Welcome back,
           </motion.p>
           <motion.h1
-            className="text-3xl font-light tracking-tight text-gray-800"
-            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+            className="text-3xl font-light tracking-tight"
+            style={{ fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)', color: 'var(--theme-text-primary, #1F2937)' }}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -819,16 +834,20 @@ function HomeTab({ organization, account, onQuickLinkClick, onViewAllEvents }: H
 
         {/* Points badge */}
         <motion.div
-          className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-100"
+          className="flex items-center gap-2 px-4 py-2 rounded-2xl border"
+          style={{
+            background: `linear-gradient(to right, rgba(${primaryRgb}, 0.06), rgba(${primaryRgb}, 0.03))`,
+            borderColor: `rgba(${primaryRgb}, 0.15)`,
+          }}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
           whileHover={{ scale: 1.02 }}
         >
-          <StarIcon className="w-5 h-5 text-yellow-500" />
+          <StarIcon className="w-5 h-5" style={{ color: primaryColor }} />
           <div className="text-right">
-            <p className="text-sm font-bold text-yellow-700">2,450</p>
-            <p className="text-[10px] text-yellow-600 font-medium">Points</p>
+            <p className="text-sm font-bold" style={{ color: primaryColor }}>2,450</p>
+            <p className="text-[10px] font-medium" style={{ color: `rgba(${primaryRgb}, 0.7)` }}>Points</p>
           </div>
         </motion.div>
       </motion.div>
@@ -857,7 +876,7 @@ function HomeTab({ organization, account, onQuickLinkClick, onViewAllEvents }: H
         transition={{ delay: 0.4 }}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Upcoming Events</h2>
+          <h2 className="text-lg font-semibold" style={{ color: 'var(--theme-text-primary, #111827)' }}>Upcoming Events</h2>
           <motion.button
             className="text-sm font-semibold flex items-center gap-1"
             style={{ color: primaryColor }}
@@ -914,7 +933,7 @@ function NotificationsTab({ organization }: NotificationsTabProps) {
     <div className="space-y-6">
       <motion.h1
         className="text-3xl font-light tracking-tight"
-        style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1F2937' }}
+        style={{ fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)', color: 'var(--theme-text-primary, #1F2937)' }}
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
       >
@@ -957,13 +976,13 @@ function NotificationsTab({ organization }: NotificationsTabProps) {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="font-semibold text-gray-900">{notification.title}</p>
-                    <span className="text-xs text-gray-400 font-medium">{notification.time}</span>
+                    <p className="font-semibold" style={{ color: 'var(--theme-text-primary, #111827)' }}>{notification.title}</p>
+                    <span className="text-xs font-medium" style={{ color: 'var(--theme-text-muted, #9CA3AF)' }}>{notification.time}</span>
                   </div>
-                  <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">{notification.message}</p>
+                  <p className="text-sm mt-0.5 line-clamp-2" style={{ color: 'var(--theme-text-secondary, #6B7280)' }}>{notification.message}</p>
                 </div>
 
-                <ChevronRightIcon className="w-5 h-5 text-gray-300 flex-shrink-0" />
+                <ChevronRightIcon className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--theme-text-muted, #D1D5DB)' }} />
               </div>
 
               {/* Unread indicator dot */}
@@ -1038,13 +1057,13 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
 
         <div className="flex-1">
           <h1
-            className="text-2xl font-light tracking-tight text-gray-800"
-            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+            className="text-2xl font-light tracking-tight"
+            style={{ fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)', color: 'var(--theme-text-primary, #1F2937)' }}
           >
             {account.name}
           </h1>
-          <p className="text-sm text-gray-500 font-medium">{account.role}</p>
-          <p className="text-xs text-gray-400 mt-0.5">{account.email}</p>
+          <p className="text-sm font-medium" style={{ color: 'var(--theme-text-secondary, #6B7280)' }}>{account.role}</p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--theme-text-muted, #9CA3AF)' }}>{account.email}</p>
         </div>
       </motion.div>
 
@@ -1062,8 +1081,8 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
         ].map((stat) => (
           <GlassCard key={stat.label} className="rounded-2xl p-4 text-center">
             <stat.icon className="w-5 h-5 mx-auto mb-2" style={{ color: primaryColor }} />
-            <p className="text-xl font-bold text-gray-900">{stat.value}</p>
-            <p className="text-xs text-gray-500 font-medium">{stat.label}</p>
+            <p className="text-xl font-bold" style={{ color: 'var(--theme-text-primary, #111827)' }}>{stat.value}</p>
+            <p className="text-xs font-medium" style={{ color: 'var(--theme-text-secondary, #6B7280)' }}>{stat.label}</p>
           </GlassCard>
         ))}
       </motion.div>
@@ -1075,9 +1094,10 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
           return (
             <motion.button
               key={item.id}
-              className={`w-full flex items-center gap-4 p-4 text-left ${
-                index < menuItems.length - 1 ? 'border-b border-gray-100' : ''
-              }`}
+              className="w-full flex items-center gap-4 p-4 text-left"
+              style={{
+                borderBottom: index < menuItems.length - 1 ? '1px solid var(--theme-border-light, #F3F4F6)' : undefined,
+              }}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 + index * 0.05 }}
@@ -1092,10 +1112,10 @@ function ProfileTab({ organization, account, onSwitchToAdmin }: ProfileTabProps)
                 <Icon className="w-5 h-5" style={{ color: primaryColor }} />
               </div>
               <div className="flex-1">
-                <span className="text-gray-800 font-medium">{item.label}</span>
-                <p className="text-xs text-gray-400">{item.description}</p>
+                <span className="font-medium" style={{ color: 'var(--theme-text-primary, #1F2937)' }}>{item.label}</span>
+                <p className="text-xs" style={{ color: 'var(--theme-text-muted, #9CA3AF)' }}>{item.description}</p>
               </div>
-              <ChevronRightIcon className="w-5 h-5 text-gray-300" />
+              <ChevronRightIcon className="w-5 h-5" style={{ color: 'var(--theme-text-muted, #D1D5DB)' }} />
             </motion.button>
           );
         })}
@@ -1162,7 +1182,7 @@ function EventsTab({ organization }: EventsTabProps) {
       >
         <h1
           className="text-3xl font-light tracking-tight"
-          style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', color: '#1F2937' }}
+          style={{ fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)', color: 'var(--theme-text-primary, #1F2937)' }}
         >
           Events
         </h1>
@@ -1191,10 +1211,11 @@ function EventsTab({ organization }: EventsTabProps) {
         {['All Events', 'Registered', 'Upcoming', 'Past'].map((filter, index) => (
           <motion.button
             key={filter}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
-              index === 0 ? 'text-white' : 'bg-white/60 text-gray-600 border border-white/40'
-            }`}
-            style={index === 0 ? { background: organization.theme.gradientBtn } : undefined}
+            className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap"
+            style={index === 0
+              ? { background: organization.theme.gradientBtn, color: 'var(--theme-text-inverse, #FFFFFF)' }
+              : { background: 'var(--theme-glass-bg, rgba(255,255,255,0.6))', color: 'var(--theme-text-secondary, #4B5563)', border: '1px solid var(--theme-glass-border, rgba(255,255,255,0.4))' }
+            }
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => toast.info(`Filtering: showing ${filter.toLowerCase()} events.`)}
@@ -1230,14 +1251,15 @@ function Header({ organization, primaryRgb, onSwitchToAdmin }: HeaderProps) {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <div className="bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-lg shadow-black/5 px-4 py-3">
+      <div className="backdrop-blur-2xl rounded-2xl px-4 py-3" style={{ background: 'var(--theme-glass-bg, rgba(255,255,255,0.7))', border: '1px solid var(--theme-glass-border, rgba(255,255,255,0.4))', boxShadow: 'var(--theme-shadow-lg, 0 10px 15px -3px rgba(0,0,0,0.05))' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Back to Admin Button */}
             {onSwitchToAdmin && (
               <motion.button
                 onClick={onSwitchToAdmin}
-                className="p-2 rounded-xl bg-white/60 border border-white/40 text-gray-600 hover:text-gray-900"
+                className="p-2 rounded-xl"
+                style={{ background: 'var(--theme-glass-bg, rgba(255,255,255,0.6))', border: '1px solid var(--theme-glass-border, rgba(255,255,255,0.4))', color: 'var(--theme-text-secondary, #4B5563)' }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 title="Back to Admin"
@@ -1258,17 +1280,18 @@ function Header({ organization, primaryRgb, onSwitchToAdmin }: HeaderProps) {
               {organization.logoLetter}
             </motion.div>
             <div>
-              <span className="font-semibold text-gray-900">{organization.short}</span>
-              <p className="text-[10px] text-gray-400 font-medium">Member Portal</p>
+              <span className="font-semibold" style={{ color: 'var(--theme-text-primary, #111827)' }}>{organization.short}</span>
+              <p className="text-[10px] font-medium" style={{ color: 'var(--theme-text-muted, #9CA3AF)' }}>Member Portal</p>
             </div>
           </div>
 
           <motion.button
-            className="relative p-2.5 rounded-xl bg-white/60 border border-white/40"
+            className="relative p-2.5 rounded-xl"
+            style={{ background: 'var(--theme-glass-bg, rgba(255,255,255,0.6))', border: '1px solid var(--theme-glass-border, rgba(255,255,255,0.4))' }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <BellIcon className="w-5 h-5 text-gray-600" />
+            <BellIcon className="w-5 h-5" style={{ color: 'var(--theme-text-secondary, #4B5563)' }} />
             <motion.span
               className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full"
               style={{
@@ -1305,7 +1328,7 @@ export function MemberPortal({ organization, account, onSwitchToAdmin }: MemberP
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-stone-100 relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'var(--theme-bg-primary, linear-gradient(to bottom right, #f8fafc, #f9fafb, #f5f5f4))' }}>
       {/* Floating ambient orbs */}
       <FloatingOrbs primaryRgb={primaryRgb} count={5} />
 

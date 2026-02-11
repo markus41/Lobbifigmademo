@@ -102,34 +102,38 @@ interface ServiceCardProps {
   organization: Organization;
 }
 
-function ServiceCard({ title, description, icon, stats, actions, organization }: ServiceCardProps) {
+function ServiceCard({ title, description, icon, stats, actions }: ServiceCardProps) {
   return (
     <motion.div
-      className="bg-white rounded-xl border border-[#EDE8DD] p-6"
-      whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}
+      className="rounded-xl p-6"
+      style={{
+        background: 'var(--theme-bg-card, #ffffff)',
+        border: '1px solid var(--theme-border-light, #EDE8DD)',
+      }}
+      whileHover={{ y: -2, boxShadow: 'var(--theme-shadow-md, 0 8px 24px rgba(0,0,0,0.08))' }}
       transition={{ duration: 0.2 }}
     >
       {/* Header */}
       <div className="flex items-start gap-4 mb-4">
         <div
           className="w-12 h-12 rounded-xl flex items-center justify-center"
-          style={{ background: `rgba(${organization.theme.primaryRgb}, 0.1)` }}
+          style={{ background: `rgba(var(--theme-primary-rgb), 0.1)` }}
         >
           {icon}
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-900">{title}</h3>
-          <p className="text-sm text-gray-500 mt-1">{description}</p>
+          <h3 className="font-semibold" style={{ color: 'var(--theme-text-primary)' }}>{title}</h3>
+          <p className="text-sm mt-1" style={{ color: 'var(--theme-text-muted)' }}>{description}</p>
         </div>
       </div>
 
       {/* Stats */}
       {stats && stats.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 mb-4 pt-4 border-t border-[#EDE8DD]">
+        <div className="grid grid-cols-2 gap-4 mb-4 pt-4 border-t" style={{ borderColor: 'var(--theme-border-light, #EDE8DD)' }}>
           {stats.map((stat, i) => (
             <div key={i}>
-              <p className="text-xs text-gray-500">{stat.label}</p>
-              <p className="text-lg font-semibold" style={{ color: organization.theme.primary }}>
+              <p className="text-xs" style={{ color: 'var(--theme-text-muted)' }}>{stat.label}</p>
+              <p className="text-lg font-semibold" style={{ color: 'var(--theme-primary)' }}>
                 {stat.value}
               </p>
             </div>
@@ -139,16 +143,16 @@ function ServiceCard({ title, description, icon, stats, actions, organization }:
 
       {/* Actions */}
       {actions && actions.length > 0 && (
-        <div className="flex gap-2 pt-4 border-t border-[#EDE8DD]">
+        <div className="flex gap-2 pt-4 border-t" style={{ borderColor: 'var(--theme-border-light, #EDE8DD)' }}>
           {actions.map((action, i) => (
             <button
               key={i}
               onClick={action.onClick}
               className="flex-1 py-2 text-sm font-medium rounded-lg transition-colors"
               style={{
-                background: i === 0 ? organization.theme.gradientBtn : 'transparent',
-                color: i === 0 ? 'white' : organization.theme.primary,
-                border: i === 0 ? 'none' : `1px solid rgba(${organization.theme.primaryRgb}, 0.3)`,
+                background: i === 0 ? 'var(--theme-gradient-btn)' : 'transparent',
+                color: i === 0 ? 'var(--theme-text-inverse, white)' : 'var(--theme-primary)',
+                border: i === 0 ? 'none' : `1px solid rgba(var(--theme-primary-rgb), 0.3)`,
               }}
             >
               {action.label}
@@ -181,7 +185,7 @@ const ROOM_SERVICE_ITEMS: RoomServiceItem[] = [
   { id: 'rs5', name: 'Catering Order', category: 'Food & Beverage', description: 'Custom menu for events', price: 0, eta: 'Custom' },
 ];
 
-function RoomServicePanel({ organization }: { organization: Organization }) {
+function RoomServicePanel({ organization: _organization }: { organization: Organization }) {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const toggleItem = (id: string) => {
@@ -195,16 +199,16 @@ function RoomServicePanel({ organization }: { organization: Organization }) {
   ).reduce((sum, item) => sum + item.price, 0);
 
   return (
-    <div className="bg-white rounded-xl border border-[#EDE8DD]">
-      <div className="p-4 border-b border-[#EDE8DD]">
-        <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-          <CoffeeIcon className="w-5 h-5" style={{ color: organization.theme.primary }} />
+    <div className="rounded-xl" style={{ background: 'var(--theme-bg-card, #ffffff)', border: '1px solid var(--theme-border-light, #EDE8DD)' }}>
+      <div className="p-4 border-b" style={{ borderColor: 'var(--theme-border-light, #EDE8DD)' }}>
+        <h3 className="font-semibold flex items-center gap-2" style={{ color: 'var(--theme-text-primary)' }}>
+          <CoffeeIcon className="w-5 h-5" style={{ color: 'var(--theme-primary)' }} />
           Room Service
         </h3>
         <p className="text-sm text-gray-500 mt-1">Request services and support</p>
       </div>
 
-      <div className="divide-y divide-[#EDE8DD]">
+      <div className="divide-y" style={{ '--tw-divide-color': 'var(--theme-border-light, #EDE8DD)' } as React.CSSProperties}>
         {ROOM_SERVICE_ITEMS.map((item) => (
           <div
             key={item.id}
@@ -213,7 +217,7 @@ function RoomServicePanel({ organization }: { organization: Organization }) {
             }`}
             style={{
               backgroundColor: selectedItems.includes(item.id)
-                ? `rgba(${organization.theme.primaryRgb}, 0.05)`
+                ? `rgba(var(--theme-primary-rgb), 0.05)`
                 : 'transparent',
             }}
             onClick={() => toggleItem(item.id)}
@@ -229,7 +233,7 @@ function RoomServicePanel({ organization }: { organization: Organization }) {
                 <p className="text-sm text-gray-500 mt-0.5">{item.description}</p>
               </div>
               <div className="text-right">
-                <p className="font-semibold" style={{ color: organization.theme.primary }}>
+                <p className="font-semibold" style={{ color: 'var(--theme-primary)' }}>
                   {item.price > 0 ? `$${item.price}` : 'Quote'}
                 </p>
                 <p className="text-xs text-gray-500">{item.eta}</p>
@@ -241,10 +245,10 @@ function RoomServicePanel({ organization }: { organization: Organization }) {
                   }`}
                   style={{
                     borderColor: selectedItems.includes(item.id)
-                      ? organization.theme.primary
+                      ? 'var(--theme-primary)'
                       : undefined,
                     backgroundColor: selectedItems.includes(item.id)
-                      ? organization.theme.primary
+                      ? 'var(--theme-primary)'
                       : 'transparent',
                   }}
                 >
@@ -261,16 +265,16 @@ function RoomServicePanel({ organization }: { organization: Organization }) {
       </div>
 
       {selectedItems.length > 0 && (
-        <div className="p-4 border-t border-[#EDE8DD] bg-gray-50">
+        <div className="p-4 border-t" style={{ borderColor: 'var(--theme-border-light, #EDE8DD)', background: 'var(--theme-bg-muted, #f9fafb)' }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-gray-600">{selectedItems.length} service(s) selected</span>
-            <span className="text-lg font-bold" style={{ color: organization.theme.primary }}>
+            <span style={{ color: 'var(--theme-text-secondary)' }}>{selectedItems.length} service(s) selected</span>
+            <span className="text-lg font-bold" style={{ color: 'var(--theme-primary)' }}>
               ${totalPrice}
             </span>
           </div>
           <button
-            className="w-full py-3 rounded-lg text-white font-medium transition-transform hover:-translate-y-0.5"
-            style={{ background: organization.theme.gradientBtn }}
+            className="w-full py-3 rounded-lg font-medium transition-transform hover:-translate-y-0.5"
+            style={{ background: 'var(--theme-gradient-btn)', color: 'var(--theme-text-inverse, white)' }}
             onClick={() => {
               toast.success(`Requesting ${selectedItems.length} service(s) for $${totalPrice}. A concierge will contact you shortly!`);
               setSelectedItems([]);
@@ -307,12 +311,15 @@ export function BusinessCenterPage({ organization, account: _account }: Business
       {/* Header */}
       <div className="mb-6">
         <h1
-          className="text-3xl font-light mb-2 text-[#2C2A25]"
-          style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}
+          className="text-3xl font-light mb-2"
+          style={{
+            fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)',
+            color: 'var(--theme-text-primary, #2C2A25)',
+          }}
         >
           Business Center
         </h1>
-        <p className="text-gray-500">
+        <p style={{ color: 'var(--theme-text-muted)' }}>
           Manage your organization's business operations and services
         </p>
       </div>
@@ -327,17 +334,21 @@ export function BusinessCenterPage({ organization, account: _account }: Business
         ].map((stat, i) => (
           <motion.div
             key={i}
-            className="bg-white rounded-xl border border-[#EDE8DD] p-4"
+            className="rounded-xl p-4"
+            style={{
+              background: 'var(--theme-bg-card, #ffffff)',
+              border: '1px solid var(--theme-border-light, #EDE8DD)',
+            }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-500">{stat.label}</span>
-              <stat.icon className="w-4 h-4" style={{ color: organization.theme.primary }} />
+              <span className="text-sm" style={{ color: 'var(--theme-text-muted)' }}>{stat.label}</span>
+              <stat.icon className="w-4 h-4" style={{ color: 'var(--theme-primary)' }} />
             </div>
             <div className="flex items-end gap-2">
-              <span className="text-2xl font-bold text-gray-900">{stat.value}</span>
+              <span className="text-2xl font-bold" style={{ color: 'var(--theme-text-primary)' }}>{stat.value}</span>
               <span
                 className="text-sm font-medium mb-1"
                 style={{ color: stat.change.startsWith('+') ? '#047857' : '#B85C4A' }}
@@ -356,7 +367,7 @@ export function BusinessCenterPage({ organization, account: _account }: Business
           <ServiceCard
             title="Invoicing & Billing"
             description="Manage member invoices and payments"
-            icon={<CreditCardIcon className="w-6 h-6" style={{ color: organization.theme.primary }} />}
+            icon={<CreditCardIcon className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />}
             stats={[
               { label: 'Outstanding', value: '$12,450' },
               { label: 'Collected', value: '$35,800' },
@@ -371,7 +382,7 @@ export function BusinessCenterPage({ organization, account: _account }: Business
           <ServiceCard
             title="Reports & Analytics"
             description="Financial and operational insights"
-            icon={<ClipboardListIcon className="w-6 h-6" style={{ color: organization.theme.primary }} />}
+            icon={<ClipboardListIcon className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />}
             stats={[
               { label: 'Reports', value: '15' },
               { label: 'Last Updated', value: 'Today' },
@@ -386,7 +397,7 @@ export function BusinessCenterPage({ organization, account: _account }: Business
           <ServiceCard
             title="Vendor Management"
             description="Track and manage vendor relationships"
-            icon={<BriefcaseIcon className="w-6 h-6" style={{ color: organization.theme.primary }} />}
+            icon={<BriefcaseIcon className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />}
             stats={[
               { label: 'Active Vendors', value: '24' },
               { label: 'Contracts', value: '18' },
@@ -401,7 +412,7 @@ export function BusinessCenterPage({ organization, account: _account }: Business
           <ServiceCard
             title="Procurement"
             description="Order supplies and equipment"
-            icon={<ShoppingBagIcon className="w-6 h-6" style={{ color: organization.theme.primary }} />}
+            icon={<ShoppingBagIcon className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />}
             stats={[
               { label: 'Open Orders', value: '8' },
               { label: 'This Month', value: '$4,250' },

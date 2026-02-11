@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Theme QA Visual Harness</title>
+    <link rel="stylesheet" href="/src/styles/theme.css" />
+    <link rel="stylesheet" href="/src/styles/org-themes.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-body, 'Sora', sans-serif);
+        background: var(--theme-bg-primary, #f8f6ef);
+        color: var(--theme-text-primary, #1f2937);
+      }
+      .wrap {
+        min-height: 100vh;
+        padding: 28px;
+        background: var(--theme-gradient-subtle, linear-gradient(180deg, rgba(0,0,0,0.03), transparent));
+      }
+      .title {
+        font-family: var(--theme-font-display, var(--font-display, serif));
+        margin: 0 0 12px 0;
+        font-size: 40px;
+        line-height: 1.1;
+      }
+      .subtitle {
+        margin: 0 0 24px 0;
+        color: var(--theme-text-secondary, #6b7280);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .card {
+        border: 1px solid var(--theme-border-light, rgba(0,0,0,0.1));
+        border-radius: 16px;
+        background: var(--theme-bg-card, #fff);
+        box-shadow: var(--theme-shadow, 0 10px 30px rgba(0,0,0,0.1));
+        padding: 18px;
+      }
+      .pill {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 6px 12px;
+        background: var(--theme-gradient, linear-gradient(135deg, #555, #999));
+        color: #fff;
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      .btn {
+        display: inline-block;
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-weight: 600;
+        color: var(--theme-text-inverse, #fff);
+        background: var(--theme-gradient-btn, var(--theme-gradient));
+      }
+      .kv {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 13px;
+      }
+      .kv span:last-child {
+        color: var(--theme-text-secondary, #6b7280);
+      }
+      .swatch {
+        margin-top: 10px;
+        border-radius: 10px;
+        height: 40px;
+        border: 1px solid var(--theme-border-accent, rgba(0,0,0,0.2));
+        background: linear-gradient(
+          90deg,
+          var(--theme-primary),
+          var(--theme-primary-light),
+          var(--theme-primary-dark),
+          var(--theme-accent)
+        );
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1 class="title" id="title">Theme QA</h1>
+      <p class="subtitle" id="subtitle"></p>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <script>
+      const params = new URLSearchParams(location.search)
+      const org = params.get('org') || 'luxe-haven'
+      const page = params.get('page') || 'dashboard'
+      document.documentElement.setAttribute('data-org', org)
+      document.documentElement.setAttribute('data-theme', 'light')
+      document.documentElement.classList.remove('dark')
+      document.documentElement.classList.add('light')
+
+      const title = document.getElementById('title')
+      const subtitle = document.getElementById('subtitle')
+      const grid = document.getElementById('grid')
+      title.textContent = `${org.replace(/-/g, ' ')}`
+      subtitle.textContent = `Visual harness page: ${page}`
+
+      const blocks = {
+        dashboard: ['KPI Card', 'Activity Feed', 'Quick Actions'],
+        login: ['Welcome Card', 'Auth Form', 'Assist Panel'],
+        member: ['Membership Pass', 'Events List', 'Profile Panel'],
+      }
+      const cards = blocks[page] || blocks.dashboard
+      cards.forEach((name) => {
+        const el = document.createElement('section')
+        el.className = 'card'
+        el.innerHTML = `
+          <span class="pill">${name}</span>
+          <div style="font-weight:700; margin-bottom:8px;">${name}</div>
+          <button class="btn">Primary Action</button>
+          <div class="swatch"></div>
+          <div class="kv"><span>Text primary</span><span style="color:var(--theme-text-primary,#111827)">Aa</span></div>
+          <div class="kv"><span>Text secondary</span><span style="color:var(--theme-text-secondary,#6b7280)">Aa</span></div>
+          <div class="kv"><span>Muted</span><span style="color:var(--theme-text-muted,#9ca3af)">Aa</span></div>
+        `
+        grid.appendChild(el)
+      })
+    </script>
+  </body>
+</html>

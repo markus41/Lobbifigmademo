@@ -8,7 +8,13 @@
     "build:check": "tsc && vite build",
     "dev": "vite",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "theme:qa": "node scripts/theme-qa.mjs",
+    "theme:qa:strict": "node scripts/theme-qa.mjs --strict",
+    "theme:qa:update-baseline": "node scripts/theme-qa.mjs --update-baseline",
+    "theme:qa:visual": "node scripts/theme-qa-visual.mjs",
+    "theme:qa:visual:update-baseline": "node scripts/theme-qa-visual.mjs --update-baseline",
+    "theme:qa:all": "npm run theme:qa:strict && npm run theme:qa:visual"
   },
   "dependencies": {
     "@mantine/carousel": "^8.3.14",
@@ -23,6 +29,7 @@
     "@mantine/notifications": "^8.3.14",
     "@mantine/nprogress": "^8.3.14",
     "@mantine/spotlight": "^8.3.14",
+    "@metabase/embedding-sdk-react": "^0.58.0",
     "clsx": "^2.1.1",
     "date-fns": "3.6.0",
     "dayjs": "^1.11.19",
@@ -44,6 +51,8 @@
     "tailwind-merge": "^2.5.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "playwright": "^1.58.2",
     "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",

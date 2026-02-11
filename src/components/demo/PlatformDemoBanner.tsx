@@ -19,7 +19,13 @@ import {
 import { Box, Flex, Text, Badge } from "@mantine/core";
 import { motion, AnimatePresence } from "motion/react";
 import gsap from "gsap";
-import { useOrgTheme, AVAILABLE_ORGS, ORG_NAMES, type OrgId } from "../../theme/LobbiMantineProvider";
+import {
+  useOrgTheme,
+  useThemeMode,
+  AVAILABLE_ORGS,
+  ORG_NAMES,
+  type OrgId,
+} from "../../theme/LobbiMantineProvider";
 
 /* --- Types -------------------------------------------------------- */
 
@@ -177,6 +183,48 @@ export const USER_ROLES: UserRole[] = [
   { id: "standard-member", label: "Standard Member", level: 1, color: "#64748b" },
 ];
 
+const DEMO_BANNER_Z_INDEX = 2147483000;
+const DEMO_BANNER_MENU_Z_INDEX = DEMO_BANNER_Z_INDEX + 10;
+const BANNER_BG = "#0B1220";
+const BANNER_PANEL = "#111A2F";
+const BANNER_PANEL_ALT = "#15213B";
+const BANNER_BORDER = "rgba(148, 163, 184, 0.4)";
+const BANNER_TEXT = "#F8FAFC";
+const BANNER_MUTED_TEXT = "#D6E1F2";
+const BANNER_SUBTLE_TEXT = "#AFC2DD";
+
+const ORG_GROUPS: Array<{
+  id: string;
+  label: string;
+  color: string;
+  orgs: OrgId[];
+}> = [
+  {
+    id: "hospitality",
+    label: "Hospitality & Clubs",
+    color: "#F59E0B",
+    orgs: ["luxe-haven", "pacific-club", "summit-group", "crown-estates", "obsidian-society", "golden-era"],
+  },
+  {
+    id: "wellness",
+    label: "Wellness & Lifestyle",
+    color: "#10B981",
+    orgs: ["verde-collective", "lavender-fields", "zen-garden", "marigold-society", "copper-oak"],
+  },
+  {
+    id: "creative",
+    label: "Creative & Heritage",
+    color: "#8B5CF6",
+    orgs: ["rose-meridian", "jade-dynasty", "flame-stone"],
+  },
+  {
+    id: "technology",
+    label: "Technology & Innovation",
+    color: "#22D3EE",
+    orgs: ["slate-modern", "neon-district", "the-forge", "pixel-pioneers", "arctic-circle", "midnight-azure"],
+  },
+];
+
 /* --- Demo Context ------------------------------------------------- */
 
 export interface DemoContextValue {
@@ -186,6 +234,8 @@ export interface DemoContextValue {
   setCurrentRole: (role: string) => void;
   isDarkMode: boolean;
   setIsDarkMode: (dark: boolean) => void;
+  isDyslexicMode: boolean;
+  setIsDyslexicMode: (enabled: boolean) => void;
   isFeatureEnabled: (sprintId: SprintPhase) => boolean;
   isRoleAuthorized: (minLevel: number) => boolean;
   bannerHeight: number;
@@ -254,18 +304,40 @@ export function PlatformDemoBanner({
   defaultPhase = "all",
   defaultRole = "org-admin",
 }: PlatformDemoBannerProps) {
-  const [currentPhase, setCurrentPhase] = useState<SprintPhase>(defaultPhase);
-  const [currentRole, setCurrentRole] = useState(defaultRole);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [currentPhase, setCurrentPhase] = useState<SprintPhase>(() => {
+    if (typeof window === "undefined") return defaultPhase;
+    const stored = localStorage.getItem("lobbi_demo_phase");
+    const validPhase = SPRINT_PHASES.find((phase) => phase.id === stored)?.id;
+    return validPhase ?? defaultPhase;
+  });
+  const [currentRole, setCurrentRole] = useState(() => {
+    if (typeof window === "undefined") return defaultRole;
+    const stored = localStorage.getItem("lobbi_demo_role");
+    const validRole = USER_ROLES.find((role) => role.id === stored)?.id;
+    return validRole ?? defaultRole;
+  });
+  const [isDyslexicMode, setIsDyslexicMode] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("lobbi_demo_dyslexic_mode") === "1";
+  });
   const [isVisible, setIsVisible] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showPhaseMenu, setShowPhaseMenu] = useState(false);
   const [showRoleMenu, setShowRoleMenu] = useState(false);
   const [showOrgMenu, setShowOrgMenu] = useState(false);
   const [bannerHeight, setBannerHeight] = useState(48);
+  const prevDefaultRoleRef = useRef(defaultRole);
 
   // Get org theme from context
   const { currentOrg, setOrg } = useOrgTheme();
+  const { setMode, resolvedMode } = useThemeMode();
+  const isDarkMode = resolvedMode === "dark";
+  const setIsDarkMode = useCallback(
+    (dark: boolean) => {
+      setMode(dark ? "dark" : "light");
+    },
+    [setMode]
+  );
 
   const bannerRef = useRef<HTMLDivElement>(null);
   const shimmerRef = useRef<HTMLDivElement>(null);
@@ -282,6 +354,27 @@ export function PlatformDemoBanner({
     () => USER_ROLES.find((r) => r.id === currentRole) ?? USER_ROLES[3],
     [currentRole]
   );
+
+  const groupedOrgs = useMemo(() => {
+    const grouped = ORG_GROUPS.map((group) => ({
+      ...group,
+      orgs: group.orgs.filter((orgId) => AVAILABLE_ORGS.includes(orgId)),
+    })).filter((group) => group.orgs.length > 0);
+
+    const groupedIds = new Set(grouped.flatMap((group) => group.orgs));
+    const ungrouped = AVAILABLE_ORGS.filter((orgId) => !groupedIds.has(orgId));
+
+    if (ungrouped.length > 0) {
+      grouped.push({
+        id: "other",
+        label: "Other Organizations",
+        color: "#94A3B8",
+        orgs: [...ungrouped],
+      });
+    }
+
+    return grouped;
+  }, []);
 
   const isFeatureEnabled = useCallback(
     (sprintId: SprintPhase): boolean => {
@@ -339,6 +432,55 @@ export function PlatformDemoBanner({
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  useEffect(() => {
+    if (prevDefaultRoleRef.current === defaultRole) return;
+    prevDefaultRoleRef.current = defaultRole;
+    if (USER_ROLES.some((role) => role.id === defaultRole)) {
+      setCurrentRole(defaultRole);
+    }
+  }, [defaultRole]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const storedDarkMode = localStorage.getItem("lobbi_demo_dark_mode");
+    if (storedDarkMode === "1" || storedDarkMode === "0") {
+      setMode(storedDarkMode === "1" ? "dark" : "light");
+    }
+  }, [setMode]);
+
+  useEffect(() => {
+    localStorage.setItem("lobbi_demo_phase", currentPhase);
+  }, [currentPhase]);
+
+  useEffect(() => {
+    localStorage.setItem("lobbi_demo_role", currentRole);
+  }, [currentRole]);
+
+  useEffect(() => {
+    localStorage.setItem("lobbi_demo_dark_mode", isDarkMode ? "1" : "0");
+    document.body.classList.toggle("dark", isDarkMode);
+    document.body.style.colorScheme = isDarkMode ? "dark" : "light";
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    localStorage.setItem("lobbi_demo_dyslexic_mode", isDyslexicMode ? "1" : "0");
+    document.documentElement.classList.toggle("dyslexic", isDyslexicMode);
+    document.body.classList.toggle("dyslexic", isDyslexicMode);
+  }, [isDyslexicMode]);
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("lobbi:demo-state", {
+        detail: {
+          phase: currentPhase,
+          role: currentRole,
+          darkMode: isDarkMode,
+          dyslexicMode: isDyslexicMode,
+        },
+      })
+    );
+  }, [currentPhase, currentRole, isDarkMode, isDyslexicMode]);
+
   const contextValue: DemoContextValue = useMemo(
     () => ({
       currentPhase,
@@ -347,13 +489,27 @@ export function PlatformDemoBanner({
       setCurrentRole,
       isDarkMode,
       setIsDarkMode,
+      isDyslexicMode,
+      setIsDyslexicMode,
       isFeatureEnabled,
       isRoleAuthorized,
       bannerHeight: isVisible ? bannerHeight : 0,
       phaseInfo,
       roleInfo,
     }),
-    [currentPhase, currentRole, isDarkMode, isFeatureEnabled, isRoleAuthorized, bannerHeight, isVisible, phaseInfo, roleInfo]
+    [
+      currentPhase,
+      currentRole,
+      isDarkMode,
+      isDyslexicMode,
+      isFeatureEnabled,
+      isRoleAuthorized,
+      bannerHeight,
+      isVisible,
+      phaseInfo,
+      roleInfo,
+      setIsDarkMode,
+    ]
   );
 
   return (
@@ -371,7 +527,7 @@ export function PlatformDemoBanner({
               top: 0,
               left: 0,
               right: 0,
-              zIndex: 10000,
+              zIndex: DEMO_BANNER_Z_INDEX,
             }}
           >
             <Box
@@ -462,7 +618,7 @@ export function PlatformDemoBanner({
                             top: "100%",
                             left: 0,
                             marginTop: "4px",
-                            zIndex: 10001,
+                            zIndex: DEMO_BANNER_MENU_Z_INDEX,
                           }}
                         >
                           <Box
@@ -569,7 +725,7 @@ export function PlatformDemoBanner({
                             top: "100%",
                             right: 0,
                             marginTop: "4px",
-                            zIndex: 10001,
+                            zIndex: DEMO_BANNER_MENU_Z_INDEX,
                           }}
                         >
                           <Box
@@ -660,7 +816,7 @@ export function PlatformDemoBanner({
                             top: "100%",
                             right: 0,
                             marginTop: "4px",
-                            zIndex: 10001,
+                            zIndex: DEMO_BANNER_MENU_Z_INDEX,
                           }}
                         >
                           <Box
@@ -733,17 +889,76 @@ export function PlatformDemoBanner({
                     p={6}
                     style={{
                       borderRadius: 6,
-                      background: "rgba(255,255,255,0.1)",
+                      background: isDarkMode ? "rgba(251, 191, 36, 0.2)" : "rgba(255,255,255,0.1)",
                       cursor: "pointer",
-                      border: "none",
+                      border: isDarkMode ? "1px solid rgba(251, 191, 36, 0.45)" : "1px solid transparent",
                       color: "white",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       transition: "all 0.15s",
                     }}
+                    title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
                   >
                     {isDarkMode ? <SunIcon size={14} /> : <MoonIcon size={14} />}
+                  </Box>
+
+                  {/* Dyslexic mode toggle */}
+                  <Box
+                    component="button"
+                    onClick={() => setIsDyslexicMode(!isDyslexicMode)}
+                    px={10}
+                    py={6}
+                    style={{
+                      borderRadius: 6,
+                      background: isDyslexicMode ? "rgba(16, 185, 129, 0.22)" : "rgba(255,255,255,0.1)",
+                      cursor: "pointer",
+                      border: isDyslexicMode ? "1px solid rgba(16, 185, 129, 0.5)" : "1px solid transparent",
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: "0.05em",
+                      transition: "all 0.15s",
+                      whiteSpace: "nowrap",
+                    }}
+                    title={isDyslexicMode ? "Disable dyslexic mode" : "Enable dyslexic mode"}
+                  >
+                    {isDyslexicMode ? "DYS ON" : "DYS"}
+                  </Box>
+
+                  {/* Reset Session Button */}
+                  <Box
+                    component="button"
+                    onClick={() => {
+                      localStorage.removeItem('lobbi_session');
+                      sessionStorage.setItem('lobbi_intro_seen', '1');
+                      sessionStorage.removeItem('lobbi_resume_session');
+                      window.location.hash = '#landing';
+                      window.location.reload();
+                    }}
+                    p={6}
+                    style={{
+                      borderRadius: 6,
+                      background: "rgba(239, 68, 68, 0.2)",
+                      cursor: "pointer",
+                      border: "1px solid rgba(239, 68, 68, 0.4)",
+                      color: "#fca5a5",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      transition: "all 0.15s",
+                      whiteSpace: "nowrap",
+                      paddingLeft: 10,
+                      paddingRight: 10,
+                    }}
+                    title="Restart from landing/auth flow"
+                  >
+                    Auth Flow
                   </Box>
 
                   {/* Expand/collapse */}
@@ -762,6 +977,7 @@ export function PlatformDemoBanner({
                       justifyContent: "center",
                       transition: "all 0.15s",
                     }}
+                    title={isExpanded ? "Collapse demo details" : "Expand demo details"}
                   >
                     {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </Box>
@@ -783,6 +999,7 @@ export function PlatformDemoBanner({
                       fontSize: 12,
                       transition: "all 0.15s",
                     }}
+                    title="Hide demo banner"
                   >
                     &#x2715;
                   </Box>
@@ -918,7 +1135,7 @@ export function PlatformDemoBanner({
               position: "fixed",
               top: 12,
               right: 12,
-              zIndex: 10000,
+              zIndex: DEMO_BANNER_Z_INDEX,
             }}
           >
             <Box
@@ -951,7 +1168,7 @@ export function PlatformDemoBanner({
       <Box
         pt={isVisible ? bannerHeight : 0}
         mih="100vh"
-        style={{ transition: "padding-top 0.3s ease" }}
+        style={{ position: "relative", zIndex: 0, transition: "padding-top 0.3s ease" }}
       >
         {children}
       </Box>

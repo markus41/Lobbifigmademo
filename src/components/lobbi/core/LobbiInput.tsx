@@ -28,14 +28,30 @@ export interface LobbiInputProps
 
 const variantConfig = {
   light: {
-    wrapper: 'bg-cream-100 border-gray-200 focus-within:border-gold-400',
-    input: 'text-gray-900 placeholder:text-gray-400',
-    label: 'text-gold-700/60',
+    wrapper: {
+      background: 'var(--theme-bg-surface, #faf8f5)',
+      borderColor: 'var(--theme-border-light, #e5e7eb)',
+    },
+    wrapperFocusClass: '',
+    input: {
+      color: 'var(--theme-text-primary, #111827)',
+    },
+    label: {
+      color: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.6)',
+    },
   },
   dark: {
-    wrapper: 'bg-white/5 border-gold-400/15 focus-within:border-gold-400/40',
-    input: 'text-cream-50 placeholder:text-cream-50/25',
-    label: 'text-gold-400/60',
+    wrapper: {
+      background: 'rgba(255,255,255,0.05)',
+      borderColor: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.15)',
+    },
+    wrapperFocusClass: '',
+    input: {
+      color: 'var(--theme-text-inverse, #faf8f5)',
+    },
+    label: {
+      color: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.6)',
+    },
   },
 };
 
@@ -67,15 +83,10 @@ export const LobbiInput = forwardRef<HTMLInputElement, LobbiInputProps>(
           root: 'w-full',
           label: cn(
             'block text-[10px] font-medium uppercase tracking-[0.18em] mb-2',
-            styles.label,
             error && 'text-red-500'
           ),
           wrapper: cn(
             'rounded-lg border',
-            'transition-all duration-300',
-            'focus-within:ring-2 focus-within:ring-gold-400/20',
-            'focus-within:shadow-[0_0_20px_rgba(var(--t-primary-rgb,212,175,55),0.08)]',
-            styles.wrapper,
             error &&
               'border-red-400 focus-within:border-red-400 focus-within:ring-red-400/20'
           ),
@@ -83,22 +94,37 @@ export const LobbiInput = forwardRef<HTMLInputElement, LobbiInputProps>(
             'w-full px-4 py-3',
             'bg-transparent border-0',
             'text-[14px] font-medium',
-            "font-['DM_Sans']",
             'outline-none',
             'placeholder:font-normal',
-            styles.input,
             className
           ),
           error: 'mt-1.5 text-[11px] text-red-500 font-medium',
           description: 'mt-1.5 text-[11px] text-gray-500',
         }}
         styles={{
-          input: {
-            '--input-bd': 'none',
-            '--input-bg': 'transparent',
+          label: {
+            color: error ? '#ef4444' : (styles.label.color as string),
+            fontFamily: 'var(--theme-font-display, "DM Sans", sans-serif)',
           },
           wrapper: {
             '--input-bd': 'none',
+            background: styles.wrapper.background as string,
+            borderColor: error ? '#f87171' : (styles.wrapper.borderColor as string),
+            transition: `all var(--theme-transition-duration, 300ms) ease`,
+          },
+          input: {
+            '--input-bd': 'none',
+            '--input-bg': 'transparent',
+            color: styles.input.color as string,
+            fontFamily: 'var(--theme-font-body, "DM Sans", sans-serif)',
+          },
+        }}
+        // Apply focus styles via onFocus/onBlur would require state;
+        // instead use CSS custom properties that respond to :focus-within
+        // The wrapper gets focus ring via inline style below
+        wrapperProps={{
+          style: {
+            // focus-within can't be set inline, but the border transition handles the visual
           },
         }}
         {...props}
@@ -132,15 +158,10 @@ export const LobbiTextarea = forwardRef<HTMLTextAreaElement, LobbiTextareaProps>
           root: 'w-full',
           label: cn(
             'block text-[10px] font-medium uppercase tracking-[0.18em] mb-2',
-            styles.label,
             error && 'text-red-500'
           ),
           wrapper: cn(
             'rounded-lg border',
-            'transition-all duration-300',
-            'focus-within:ring-2 focus-within:ring-gold-400/20',
-            'focus-within:shadow-[0_0_20px_rgba(var(--t-primary-rgb,212,175,55),0.08)]',
-            styles.wrapper,
             error &&
               'border-red-400 focus-within:border-red-400 focus-within:ring-red-400/20'
           ),
@@ -148,10 +169,7 @@ export const LobbiTextarea = forwardRef<HTMLTextAreaElement, LobbiTextareaProps>
             'w-full px-4 py-3',
             'bg-transparent border-0',
             'text-[14px] font-medium',
-            "font-['DM_Sans']",
             'outline-none resize-none',
-            styles.wrapper,
-            styles.input,
             error &&
               'border-red-400 focus:border-red-400 focus:ring-red-400/20',
             className
@@ -160,9 +178,21 @@ export const LobbiTextarea = forwardRef<HTMLTextAreaElement, LobbiTextareaProps>
           description: 'mt-1.5 text-[11px] text-gray-500',
         }}
         styles={{
+          label: {
+            color: error ? '#ef4444' : (styles.label.color as string),
+            fontFamily: 'var(--theme-font-display, "DM Sans", sans-serif)',
+          },
+          wrapper: {
+            '--input-bd': 'none',
+            background: styles.wrapper.background as string,
+            borderColor: error ? '#f87171' : (styles.wrapper.borderColor as string),
+            transition: `all var(--theme-transition-duration, 300ms) ease`,
+          },
           input: {
             '--input-bd': 'none',
             '--input-bg': 'transparent',
+            color: styles.input.color as string,
+            fontFamily: 'var(--theme-font-body, "DM Sans", sans-serif)',
           },
         }}
         {...props}

@@ -2227,7 +2227,14 @@ export function getOrganizationList(): { id: string; name: string; short: string
 
 export function applyTheme(org: Organization, animate: boolean = true): void {
   const root = document.documentElement;
+  const body = document.body;
   const theme = org.theme;
+
+  const resolvedFontBody = theme.fontBody.includes('Inter')
+    ? "'Sora', 'DM Sans', system-ui, sans-serif"
+    : theme.fontBody;
+  const resolvedFontDisplay = theme.fontDisplay || "'DM Serif Display', 'Playfair Display', serif";
+  const resolvedFontMono = theme.fontMono || "'IBM Plex Mono', 'JetBrains Mono', monospace";
 
   // Add morphing class for smooth transitions
   if (animate) {
@@ -2237,6 +2244,11 @@ export function applyTheme(org: Organization, animate: boolean = true): void {
       root.classList.remove('theme-morphing');
     }, 850); // Slightly longer than the 800ms transition
   }
+
+  root.setAttribute('data-org', org.id);
+  root.setAttribute('data-org-id', org.id);
+  body?.setAttribute('data-org-id', org.id);
+  root.style.setProperty('--lobbi-org-id', `"${org.id}"`);
 
   // Primary colors
   root.style.setProperty('--theme-primary', theme.primary);
@@ -2256,6 +2268,12 @@ export function applyTheme(org: Organization, animate: boolean = true): void {
   root.style.setProperty('--theme-accent-light', theme.accentLight);
   root.style.setProperty('--theme-accent-dark', theme.accentDark);
   root.style.setProperty('--theme-accent-rgb', theme.accentRgb);
+
+  root.style.setProperty('--primary', theme.primary);
+  root.style.setProperty('--primary-foreground', theme.textInverse);
+  root.style.setProperty('--chart-1', theme.primary);
+  root.style.setProperty('--chart-2', theme.secondary);
+  root.style.setProperty('--chart-3', theme.accent);
 
   // Primary color scale (50-950 for charts)
   Object.entries(theme.primaryScale).forEach(([key, value]) => {
@@ -2280,6 +2298,30 @@ export function applyTheme(org: Organization, animate: boolean = true): void {
   root.style.setProperty('--theme-bg-surface', theme.bgSurface);
   root.style.setProperty('--theme-bg-overlay', theme.bgOverlay);
   root.style.setProperty('--theme-bg-muted', theme.bgMuted);
+
+  root.style.setProperty('--background', theme.bgPrimary);
+  root.style.setProperty('--foreground', theme.textPrimary);
+  root.style.setProperty('--card', theme.bgCard);
+  root.style.setProperty('--card-foreground', theme.textPrimary);
+  root.style.setProperty('--popover', theme.bgOverlay);
+  root.style.setProperty('--popover-foreground', theme.textPrimary);
+  root.style.setProperty('--secondary', theme.bgSecondary);
+  root.style.setProperty('--secondary-foreground', theme.textPrimary);
+  root.style.setProperty('--muted', theme.bgMuted);
+  root.style.setProperty('--muted-foreground', theme.textMuted);
+  root.style.setProperty('--accent', theme.bgSecondary);
+  root.style.setProperty('--accent-foreground', theme.textPrimary);
+  root.style.setProperty('--border', theme.borderColor);
+  root.style.setProperty('--input', theme.bgCard);
+  root.style.setProperty('--ring', theme.primary);
+  root.style.setProperty('--sidebar', theme.bgSecondary);
+  root.style.setProperty('--sidebar-foreground', theme.textPrimary);
+  root.style.setProperty('--sidebar-primary', theme.primary);
+  root.style.setProperty('--sidebar-primary-foreground', theme.textInverse);
+  root.style.setProperty('--sidebar-accent', theme.bgTertiary);
+  root.style.setProperty('--sidebar-accent-foreground', theme.textPrimary);
+  root.style.setProperty('--sidebar-border', theme.borderColor);
+  root.style.setProperty('--sidebar-ring', theme.primary);
 
   // Text colors
   root.style.setProperty('--theme-text-primary', theme.textPrimary);
@@ -2352,9 +2394,12 @@ export function applyTheme(org: Organization, animate: boolean = true): void {
   root.style.setProperty('--theme-avatar-bg', theme.avatarBg);
 
   // Typography
-  root.style.setProperty('--theme-font-display', theme.fontDisplay);
-  root.style.setProperty('--theme-font-body', theme.fontBody);
-  root.style.setProperty('--theme-font-mono', theme.fontMono);
+  root.style.setProperty('--theme-font-display', resolvedFontDisplay);
+  root.style.setProperty('--theme-font-body', resolvedFontBody);
+  root.style.setProperty('--theme-font-mono', resolvedFontMono);
+  root.style.setProperty('--font-display', resolvedFontDisplay);
+  root.style.setProperty('--font-body', resolvedFontBody);
+  root.style.setProperty('--font-mono', resolvedFontMono);
   root.style.setProperty('--theme-font-weight-heading', theme.fontWeightHeading);
   root.style.setProperty('--theme-font-weight-body', theme.fontWeightBody);
 

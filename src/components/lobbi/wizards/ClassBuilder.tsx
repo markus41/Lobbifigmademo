@@ -322,7 +322,7 @@ function DetailsStep({
               onChange={(e) =>
                 setConfig((prev) => ({ ...prev, category: e.target.value }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm theme-focus-ring"
             >
               <option value="">Select category...</option>
               {CATEGORIES.map((cat) => (
@@ -345,7 +345,7 @@ function DetailsStep({
             }
             placeholder="Brief description for listings (max 150 chars)"
             maxLength={150}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm theme-focus-ring"
           />
         </div>
         <div className="mt-4">
@@ -359,7 +359,7 @@ function DetailsStep({
             }
             placeholder="Detailed class description..."
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gold-500/30 focus:border-gold-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm theme-focus-ring"
           />
         </div>
       </WizardCard>

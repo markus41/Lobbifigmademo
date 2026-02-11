@@ -33,7 +33,7 @@ export interface LobbiButtonProps
   children?: ReactNode;
 }
 
-// Mantine Button variant → style mapping
+// Mantine Button variant -> style mapping
 const mantineVariantMap: Record<string, ButtonProps['variant']> = {
   primary: 'filled',
   secondary: 'outline',
@@ -48,48 +48,6 @@ const sizeMap: Record<string, ButtonProps['size']> = {
   lg: 'lg',
 };
 
-const variantStyles: Record<string, string> = {
-  primary: `
-    [--button-bg:transparent]
-    bg-gradient-to-r from-gold-200 via-gold-400 to-gold-700
-    text-white font-semibold
-    border-0 relative overflow-hidden
-    hover:shadow-[0_4px_20px_rgba(212,175,55,0.15)]
-  `,
-  secondary: `
-    bg-white
-    text-gray-900
-    border border-[var(--t-primary,#D4AF37)]/40
-    hover:bg-[var(--t-primary,#D4AF37)]/5
-    hover:border-[var(--t-primary,#D4AF37)]
-    [--button-bg:white] [--button-hover:transparent]
-  `,
-  ghost: `
-    bg-transparent
-    text-[var(--t-primary,#D4AF37)]
-    border-0
-    hover:bg-[var(--t-primary,#D4AF37)]/5
-    [--button-bg:transparent] [--button-hover:transparent]
-  `,
-  icon: `
-    bg-white
-    text-gray-600
-    border border-gray-200
-    hover:border-[var(--t-primary,#D4AF37)]/40
-    hover:text-[var(--t-primary,#D4AF37)]
-    p-0
-    [--button-bg:white] [--button-hover:transparent]
-  `,
-  danger: `
-    bg-white
-    text-red-600
-    border border-red-200
-    hover:bg-red-50
-    hover:border-red-300
-    [--button-bg:white] [--button-hover:transparent]
-  `,
-};
-
 const sizeStyles: Record<string, string> = {
   sm: 'h-8 px-4 text-[11px]',
   md: 'h-10 px-6 text-[13px]',
@@ -102,6 +60,49 @@ const iconSizeStyles: Record<string, string> = {
   lg: 'h-12 w-12',
 };
 
+function getVariantInlineStyle(variant: string): React.CSSProperties {
+  switch (variant) {
+    case 'primary':
+      return {
+        background: 'var(--theme-gradient-btn, linear-gradient(to right, #e2c76b, #D4AF37, #8B7330))',
+        color: 'var(--theme-text-inverse, #fff)',
+        border: 'none',
+      };
+    case 'secondary':
+      return {
+        background: 'var(--theme-bg-card, #fff)',
+        color: 'var(--theme-text-primary, #111827)',
+        borderColor: 'rgba(var(--theme-primary-rgb, 212,175,55), 0.4)',
+        borderWidth: 1,
+        borderStyle: 'var(--theme-border-style, solid)',
+      };
+    case 'ghost':
+      return {
+        background: 'transparent',
+        color: 'var(--theme-primary, #D4AF37)',
+        border: 'none',
+      };
+    case 'icon':
+      return {
+        background: 'var(--theme-bg-card, #fff)',
+        color: 'var(--theme-text-secondary, #4b5563)',
+        borderColor: 'var(--theme-border-light, #e5e7eb)',
+        borderWidth: 1,
+        borderStyle: 'var(--theme-border-style, solid)',
+      };
+    case 'danger':
+      return {
+        background: 'var(--theme-bg-card, #fff)',
+        color: '#dc2626',
+        borderColor: '#fecaca',
+        borderWidth: 1,
+        borderStyle: 'var(--theme-border-style, solid)',
+      };
+    default:
+      return {};
+  }
+}
+
 const _LobbiButton = forwardRef<HTMLButtonElement, LobbiButtonProps>(
   (
     {
@@ -113,6 +114,7 @@ const _LobbiButton = forwardRef<HTMLButtonElement, LobbiButtonProps>(
       children,
       className,
       disabled,
+      style,
       ...props
     },
     ref
@@ -133,17 +135,23 @@ const _LobbiButton = forwardRef<HTMLButtonElement, LobbiButtonProps>(
         className={cn(
           'inline-flex items-center justify-center gap-2',
           'rounded-lg font-medium',
-          'transition-all duration-200',
-          'focus:outline-none focus:ring-2 focus:ring-[var(--t-primary,#D4AF37)]/30',
           'disabled:opacity-50 disabled:cursor-not-allowed',
-          "tracking-[0.06em] uppercase font-['DM_Sans']",
-          variantStyles[variant],
+          "tracking-[0.06em] uppercase",
+          'relative overflow-hidden',
           isIconOnly ? iconSizeStyles[size] : sizeStyles[size],
           className
         )}
+        style={{
+          ...getVariantInlineStyle(variant),
+          fontFamily: 'var(--theme-font-display, "DM Sans", sans-serif)',
+          transition: `all var(--theme-transition-duration, 200ms) ease`,
+          ...style,
+        }}
         styles={{
           root: {
             '--button-bd': 'none',
+            '--button-bg': 'transparent',
+            '--button-hover': 'transparent',
           },
           inner: {
             gap: '8px',
@@ -161,8 +169,8 @@ const _LobbiButton = forwardRef<HTMLButtonElement, LobbiButtonProps>(
                 scale: variant === 'primary' ? 1.05 : 1.03,
                 boxShadow:
                   variant === 'primary'
-                    ? '0 10px 28px rgba(0,0,0,0.18), 0 5px 14px rgba(0,0,0,0.12)'
-                    : '0 6px 20px rgba(0,0,0,0.12)',
+                    ? 'var(--theme-shadow-lg, 0 10px 28px rgba(0,0,0,0.18), 0 5px 14px rgba(0,0,0,0.12))'
+                    : 'var(--theme-shadow-md, 0 6px 20px rgba(0,0,0,0.12))',
                 filter: variant === 'primary' ? 'brightness(1.1) saturate(1.15)' : 'brightness(1.03)',
               }
             : undefined
@@ -180,7 +188,7 @@ const _LobbiButton = forwardRef<HTMLButtonElement, LobbiButtonProps>(
         whileFocus={
           !disabled
             ? {
-                boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.4)',
+                boxShadow: '0 0 0 3px rgba(var(--theme-primary-rgb, 212,175,55), 0.4)',
               }
             : undefined
         }
@@ -195,7 +203,10 @@ const _LobbiButton = forwardRef<HTMLButtonElement, LobbiButtonProps>(
         {/* Primary variant shimmer effect */}
         {variant === 'primary' && (
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent)',
+            }}
             initial={{ x: '-100%' }}
             whileHover={{ x: '100%' }}
             transition={{ duration: 0.6, ease: 'easeInOut' }}

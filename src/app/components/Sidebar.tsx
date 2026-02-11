@@ -1,7 +1,9 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DashboardIcon, RegistryIcon, EventsIcon, SettingsIcon } from './icons/LobbiIcons';
 import type { Account, Organization } from '../data/themes';
+import { useDemoContext } from '../../components/demo';
+import { PAGE_ACCESS_RULES, type AppPage } from '../navigation/accessPolicy';
 
 // Additional icons for new nav items
 const BusinessIcon = ({ className }: { className?: string }) => (
@@ -20,6 +22,12 @@ const VaultIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const InnovationIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+    <path d="M12 2l2.4 5.6L20 8l-4 4 1 6-5-3-5 3 1-6-4-4 5.6-.4L12 2z" />
+  </svg>
+);
+
 const CollapseIcon = ({ className, isCollapsed }: { className?: string; isCollapsed: boolean }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
     {isCollapsed ? (
@@ -34,13 +42,9 @@ const CollapseIcon = ({ className, isCollapsed }: { className?: string; isCollap
 function NavTooltip({
   label,
   isVisible,
-  bgColor = '#09090B',
-  textColor = '#FAFAFA',
 }: {
   label: string;
   isVisible: boolean;
-  bgColor?: string;
-  textColor?: string;
 }) {
   return (
     <AnimatePresence>
@@ -52,16 +56,16 @@ function NavTooltip({
           transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
           className="absolute left-full ml-3 px-3 py-2 rounded-lg whitespace-nowrap z-50 text-xs font-semibold"
           style={{
-            background: bgColor,
-            color: textColor,
-            boxShadow: '0 8px 24px -4px rgba(0,0,0,0.25), 0 4px 8px -2px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.05)',
+            background: 'var(--theme-bg-overlay, #09090B)',
+            color: 'var(--theme-text-inverse, #FAFAFA)',
+            boxShadow: 'var(--theme-shadow-lg, 0 8px 24px -4px rgba(0,0,0,0.25))',
           }}
         >
           {label}
           {/* Tooltip arrow */}
           <div
             className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rotate-45"
-            style={{ background: bgColor }}
+            style={{ background: 'var(--theme-bg-overlay, #09090B)' }}
           />
         </motion.div>
       )}
@@ -78,6 +82,27 @@ interface SidebarProps {
   account: Account;
 }
 
+interface NavMenuItem {
+  id: AppPage;
+  label: string;
+  icon: ({ className }: { className?: string }) => JSX.Element;
+}
+
+const mainMenuItems: NavMenuItem[] = [
+  { id: 'dashboard', label: 'The Front Desk', icon: DashboardIcon },
+  { id: 'registry', label: 'The Registry', icon: RegistryIcon },
+  { id: 'business', label: 'Business Center', icon: BusinessIcon },
+  { id: 'events', label: 'Events Pavilion', icon: EventsIcon },
+  { id: 'vault', label: 'The Vault', icon: VaultIcon },
+  { id: 'innovation', label: 'Innovation Lab', icon: InnovationIcon },
+];
+
+const bottomMenuItems: NavMenuItem[] = [
+  { id: 'settings', label: 'Settings', icon: SettingsIcon },
+];
+
+const allMenuItems: NavMenuItem[] = [...mainMenuItems, ...bottomMenuItems];
+
 export function Sidebar({
   currentPage,
   onNavigate,
@@ -87,55 +112,82 @@ export function Sidebar({
   account,
 }: SidebarProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const { isFeatureEnabled, isRoleAuthorized, roleInfo, currentPhase } = useDemoContext();
 
-  const mainMenuItems = [
-    { id: 'dashboard', label: 'The Front Desk', icon: DashboardIcon },
-    { id: 'registry', label: 'The Registry', icon: RegistryIcon },
-    { id: 'business', label: 'Business Center', icon: BusinessIcon },
-    { id: 'events', label: 'Events Pavilion', icon: EventsIcon },
-    { id: 'vault', label: 'The Vault', icon: VaultIcon },
-  ];
+  const canAccessItem = (item: NavMenuItem): boolean => {
+    const rule = PAGE_ACCESS_RULES[item.id];
+    return isFeatureEnabled(rule.requiredPhase) && isRoleAuthorized(rule.minRoleLevel);
+  };
 
-  const bottomMenuItems = [
-    { id: 'settings', label: 'Settings', icon: SettingsIcon },
-  ];
-
-  const isDarkTheme = organization.theme.prefersDark;
-
-  // Award-winning sidebar: solid surface color, proper borders, 256px width
-  const sidebarBg = isDarkTheme ? '#0C0C0E' : (organization.theme.bgCard || '#FFFFFF');
-  const sidebarBorder = isDarkTheme ? '#27272A' : (organization.theme.borderColor || '#E4E4E7');
-  const sidebarTextColor = isDarkTheme ? '#A1A1AA' : (organization.theme.textSecondary || '#71717A');
-  const sidebarTextMuted = isDarkTheme ? '#52525B' : (organization.theme.textMuted || '#A1A1AA');
-  const sidebarTextPrimary = isDarkTheme ? '#FAFAFA' : (organization.theme.textPrimary || '#09090B');
-  const sidebarActiveTextColor = isDarkTheme
-    ? (organization.theme.primaryLight || organization.theme.primary)
-    : organization.theme.primary;
-  const hoverBg = isDarkTheme ? '#18181B' : '#F4F4F5';
-  const activeBg = isDarkTheme
-    ? `rgba(${organization.theme.primaryRgb}, 0.15)`
-    : `rgba(${organization.theme.primaryRgb}, 0.08)`;
+  useEffect(() => {
+    const selectedItem = allMenuItems.find((item) => item.id === currentPage);
+    if (selectedItem && !canAccessItem(selectedItem)) {
+      const firstAllowed = allMenuItems.find((item) => canAccessItem(item));
+      if (firstAllowed && firstAllowed.id !== currentPage) {
+        onNavigate(firstAllowed.id);
+      }
+    }
+    // Include role/phase to re-evaluate access when filters change.
+  }, [currentPage, onNavigate, currentPhase, roleInfo.level]);
 
   // Render a navigation item
-  function renderNavItem(item: typeof mainMenuItems[0], layoutIdSuffix: string = '') {
+  function renderNavItem(item: NavMenuItem, layoutIdSuffix: string = '') {
     const Icon = item.icon;
     const isActive = currentPage === item.id;
     const isHovered = hoveredItem === item.id;
+    const isAvailable = canAccessItem(item);
+    const rule = PAGE_ACCESS_RULES[item.id];
 
     return (
       <div key={item.id} className="relative">
-        <button
-          onClick={() => onNavigate(item.id)}
+        <motion.button
+          onClick={() => {
+            if (isAvailable) {
+              onNavigate(item.id);
+            }
+          }}
           onMouseEnter={() => setHoveredItem(item.id)}
           onMouseLeave={() => setHoveredItem(null)}
-          className="w-full flex items-center transition-all duration-150 gap-3 h-9 px-3 rounded-lg text-sm cursor-pointer border-none outline-none relative"
+          whileHover={isAvailable ? { x: 2 } : undefined}
+          whileTap={isAvailable ? { scale: 0.98 } : undefined}
+          className="group w-full flex items-center transition-all duration-150 gap-3 h-10 px-3 rounded-xl text-sm cursor-pointer border-none outline-none relative"
           style={{
-            background: isActive ? activeBg : isHovered ? hoverBg : 'transparent',
-            color: isActive ? sidebarActiveTextColor : isHovered ? sidebarTextPrimary : sidebarTextColor,
-            fontFamily: organization.theme.fontBody,
+            background: isActive
+              ? 'rgba(var(--theme-primary-rgb, 212,175,55), 0.1)'
+              : isHovered
+                ? 'var(--sidebar-accent, #F4F4F5)'
+                : 'transparent',
+            color: isActive
+              ? 'var(--sidebar-primary, #D4AF37)'
+              : isHovered
+                ? 'var(--sidebar-foreground, #09090B)'
+                : 'var(--sidebar-muted, var(--theme-text-secondary, #71717A))',
+            fontFamily: 'var(--theme-font-body, inherit)',
             fontWeight: isActive ? 600 : 500,
+            opacity: isAvailable ? 1 : 0.45,
+            cursor: isAvailable ? 'pointer' : 'not-allowed',
           }}
+          aria-current={isActive ? 'page' : undefined}
+          aria-disabled={!isAvailable}
+          title={
+            isAvailable
+              ? item.label
+              : `${item.label} requires ${rule.requiredPhase.toUpperCase()} and role level ${rule.minRoleLevel}+`
+          }
         >
+          {isActive && (
+            <motion.div
+              layoutId={`activePill${layoutIdSuffix}`}
+              className="absolute inset-0 rounded-xl"
+              style={{
+                background:
+                  'linear-gradient(90deg, rgba(var(--theme-primary-rgb, 212,175,55), 0.16), rgba(var(--theme-primary-rgb, 212,175,55), 0.02))',
+                border: '1px solid rgba(var(--theme-primary-rgb, 212,175,55), 0.25)',
+                boxShadow: '0 6px 18px -12px rgba(var(--theme-primary-rgb, 212,175,55), 0.8)',
+              }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            />
+          )}
           {/* Active indicator - left bar */}
           {isActive && (
             <motion.div
@@ -148,22 +200,36 @@ export function Sidebar({
                 width: '3px',
                 height: '20px',
                 borderRadius: '0 4px 4px 0',
-                background: organization.theme.primary,
+                background: 'var(--sidebar-primary, #D4AF37)',
               }}
               transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
             />
           )}
-          <Icon className="w-5 h-5 flex-shrink-0" />
+          <span
+            className="relative z-10 flex items-center justify-center w-8 h-8 rounded-lg"
+            style={{
+              background: isActive
+                ? 'rgba(var(--theme-primary-rgb, 212,175,55), 0.18)'
+                : 'rgba(0,0,0,0)',
+            }}
+          >
+            <Icon className="w-5 h-5 flex-shrink-0" />
+          </span>
           {!isCollapsed && (
-            <span className="truncate">{item.label}</span>
+            <span className="relative z-10 truncate">
+              {item.label}
+              {!isAvailable ? (
+                <span className="ml-1 text-[10px] uppercase tracking-[0.06em]" style={{ color: 'var(--theme-text-muted, #A1A1AA)' }}>
+                  Locked
+                </span>
+              ) : null}
+            </span>
           )}
-        </button>
+        </motion.button>
         {isCollapsed && (
           <NavTooltip
             label={item.label}
             isVisible={isHovered}
-            bgColor={isDarkTheme ? '#27272A' : '#09090B'}
-            textColor="#FAFAFA"
           />
         )}
       </div>
@@ -176,16 +242,13 @@ export function Sidebar({
       style={{
         width: isCollapsed ? '72px' : '260px',
         minWidth: isCollapsed ? '72px' : '260px',
-        background: isDarkTheme
-          ? `linear-gradient(180deg, ${sidebarBg} 0%, rgba(0,0,0,0.1) 100%)`
-          : `linear-gradient(180deg, ${sidebarBg} 0%, rgba(0,0,0,0.02) 100%)`,
-        borderRight: `1px solid ${sidebarBorder}`,
+        background:
+          'linear-gradient(180deg, rgba(var(--theme-primary-rgb, 212,175,55), 0.08) 0%, rgba(var(--theme-primary-rgb, 212,175,55), 0.02) 40%, transparent 100%), var(--sidebar, #FFFFFF)',
+        borderRight: '1px solid var(--sidebar-border, #E4E4E7)',
         transition: 'width 0.35s cubic-bezier(0.22, 1, 0.36, 1), min-width 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
         overflow: 'hidden',
         willChange: 'width, min-width',
-        boxShadow: isDarkTheme
-          ? '4px 0 24px -4px rgba(0,0,0,0.5)'
-          : '4px 0 24px -4px rgba(0,0,0,0.06)',
+        boxShadow: 'var(--theme-shadow-md, 4px 0 24px -4px rgba(0,0,0,0.06))',
       }}
       initial={{ x: -260 }}
       animate={{ x: 0 }}
@@ -199,24 +262,23 @@ export function Sidebar({
       <div
         className="flex items-center h-14 px-4"
         style={{
-          borderBottom: `1px solid ${sidebarBorder}`,
+          borderBottom: '1px solid var(--sidebar-border, #E4E4E7)',
         }}
       >
         <motion.div
           layoutId="org-logo"
           className="flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-xl"
           style={{
-            background: organization.theme.gradientBtn,
-            boxShadow: `0 4px 12px -2px rgba(${organization.theme.primaryRgb}, 0.35), inset 0 1px 0 rgba(255,255,255,0.2)`,
+            background: 'var(--sidebar-primary, var(--theme-gradient-btn, #D4AF37))',
+            boxShadow: 'var(--theme-shadow-md, 0 4px 12px -2px rgba(0,0,0,0.15))',
           }}
           transition={{ type: 'spring', stiffness: 200, damping: 24 }}
         >
           <span
             className="text-base font-bold"
             style={{
-              fontFamily: organization.theme.fontDisplay,
-              color: organization.theme.textInverse,
-              fontStyle: organization.theme.fontDisplay?.includes('Cormorant') ? 'italic' : 'normal',
+              fontFamily: 'var(--theme-font-display, inherit)',
+              color: 'var(--theme-text-inverse, #FFFFFF)',
               textShadow: '0 1px 2px rgba(0,0,0,0.2)',
             }}
           >
@@ -228,9 +290,9 @@ export function Sidebar({
             <p
               className="text-sm font-semibold truncate"
               style={{
-                color: sidebarTextPrimary,
+                color: 'var(--sidebar-foreground, #09090B)',
                 letterSpacing: '-0.01em',
-                fontFamily: organization.theme.fontDisplay,
+                fontFamily: 'var(--theme-font-display, inherit)',
               }}
             >
               {organization.short}
@@ -246,7 +308,7 @@ export function Sidebar({
           <p
             className="text-[11px] font-semibold tracking-[0.08em] uppercase px-3 mb-2"
             style={{
-              color: sidebarTextMuted,
+              color: 'var(--sidebar-muted, var(--theme-text-muted, #A1A1AA))',
             }}
           >
             Main Menu
@@ -261,7 +323,7 @@ export function Sidebar({
         <div
           className="mx-3 my-4 h-px"
           style={{
-            background: sidebarBorder,
+            background: 'var(--sidebar-border, #E4E4E7)',
           }}
         />
 
@@ -277,15 +339,15 @@ export function Sidebar({
           onClick={onToggleCollapse}
           className="w-full flex items-center justify-center transition-all duration-150 h-8 rounded-lg cursor-pointer border-none bg-transparent"
           style={{
-            color: sidebarTextMuted,
+            color: 'var(--sidebar-muted, var(--theme-text-muted, #A1A1AA))',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = hoverBg;
-            e.currentTarget.style.color = sidebarTextColor;
+            e.currentTarget.style.background = 'var(--sidebar-accent, #F4F4F5)';
+            e.currentTarget.style.color = 'var(--sidebar-foreground, #71717A)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.color = sidebarTextMuted;
+            e.currentTarget.style.color = 'var(--sidebar-muted, var(--theme-text-muted, #A1A1AA))';
           }}
         >
           <CollapseIcon className="w-4 h-4" isCollapsed={isCollapsed} />
@@ -296,15 +358,15 @@ export function Sidebar({
       <div
         className="flex items-center px-4 py-3 gap-3"
         style={{
-          borderTop: `1px solid ${sidebarBorder}`,
+          borderTop: '1px solid var(--sidebar-border, #E4E4E7)',
         }}
       >
         <div
           className="flex items-center justify-center flex-shrink-0 rounded-full w-10 h-10 text-sm font-bold"
           style={{
-            background: organization.theme.gradientBtn,
-            color: organization.theme.textInverse,
-            boxShadow: `0 4px 12px -2px rgba(${organization.theme.primaryRgb}, 0.35), inset 0 1px 0 rgba(255,255,255,0.15)`,
+            background: 'var(--theme-avatar-bg, var(--sidebar-primary, #D4AF37))',
+            color: 'var(--theme-text-inverse, #FFFFFF)',
+            boxShadow: 'var(--theme-shadow-md, 0 4px 12px -2px rgba(0,0,0,0.15))',
           }}
         >
           {account?.first?.[0] || 'U'}{account?.last?.[0] || 'U'}
@@ -314,8 +376,8 @@ export function Sidebar({
             <p
               className="truncate text-[13px] font-semibold leading-tight"
               style={{
-                color: sidebarTextPrimary,
-                fontFamily: organization.theme.fontBody,
+                color: 'var(--sidebar-foreground, #09090B)',
+                fontFamily: 'var(--theme-font-body, inherit)',
               }}
             >
               {account?.first || 'User'} {account?.last || 'Name'}
@@ -323,7 +385,7 @@ export function Sidebar({
             <p
               className="truncate text-xs leading-tight"
               style={{
-                color: sidebarTextMuted,
+                color: 'var(--sidebar-muted, var(--theme-text-muted, #A1A1AA))',
               }}
             >
               {account?.role || 'Member'}

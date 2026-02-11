@@ -12,6 +12,7 @@ interface TopNavProps {
   organization: Organization;
   account: Account;
   onNavigate?: (page: string) => void;
+  canNavigateToPage?: (page: string) => boolean;
 }
 
 // Org logo with proper 32px avatar sizing
@@ -20,10 +21,9 @@ function OrgLogo({ organization }: { organization: Organization }) {
     <div
       className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-semibold"
       style={{
-        background: organization.theme.gradientBtn,
-        color: organization.theme.textInverse,
-        fontFamily: organization.theme.fontDisplay || "'Cormorant Garamond', Georgia, serif",
-        fontStyle: 'italic',
+        background: 'var(--theme-gradient-btn, var(--theme-primary, #D4AF37))',
+        color: 'var(--theme-text-inverse, #FFFFFF)',
+        fontFamily: 'var(--theme-font-display, inherit)',
       }}
     >
       {organization.logoLetter || organization.short[0]}
@@ -37,6 +37,7 @@ export function TopNav({
   organization,
   account,
   onNavigate,
+  canNavigateToPage,
 }: TopNavProps) {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -53,21 +54,14 @@ export function TopNav({
     }
   }, [organization]);
 
-  // Theme-aware values
-  const borderColor = organization.theme.borderColor || '#E4E4E7';
-  const textPrimary = organization.theme.textPrimary || '#09090B';
-  const textSecondary = organization.theme.textSecondary || '#71717A';
-  const textMuted = organization.theme.textMuted || '#A1A1AA';
-  const bgSecondary = organization.theme.bgSecondary || '#F4F4F5';
-
   return (
     <motion.header
       className="flex items-center justify-between px-6 h-14 sticky top-0 z-50"
       style={{
-        borderBottom: `1px solid ${borderColor}`,
-        background: `rgba(255, 255, 255, 0.82)`,
-        backdropFilter: 'blur(12px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+        borderBottom: '1px solid var(--theme-border-light, #E4E4E7)',
+        background: 'var(--theme-glass-bg, rgba(255, 255, 255, 0.82))',
+        backdropFilter: 'var(--theme-glass-blur, blur(12px) saturate(180%))',
+        WebkitBackdropFilter: 'var(--theme-glass-blur, blur(12px) saturate(180%))',
       }}
       initial={{ y: -56, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -82,14 +76,14 @@ export function TopNav({
         <button
           onClick={onMenuClick}
           className="p-2 rounded-lg transition-all duration-150 lg:hidden"
-          style={{ color: textMuted }}
+          style={{ color: 'var(--theme-text-muted, #A1A1AA)' }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = bgSecondary;
-            e.currentTarget.style.color = textPrimary;
+            e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+            e.currentTarget.style.color = 'var(--theme-text-primary, #09090B)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.color = textMuted;
+            e.currentTarget.style.color = 'var(--theme-text-muted, #A1A1AA)';
           }}
         >
           <MenuIcon className="w-5 h-5" />
@@ -98,15 +92,15 @@ export function TopNav({
         {/* Organization Branding */}
         <div
           className="hidden lg:flex items-center gap-3 pr-4"
-          style={{ borderRight: `1px solid ${borderColor}` }}
+          style={{ borderRight: '1px solid var(--theme-border-light, #E4E4E7)' }}
         >
           <OrgLogo organization={organization} />
           <div className="flex flex-col">
             <span
               className="text-sm font-semibold leading-tight -tracking-[0.01em]"
               style={{
-                color: textPrimary,
-                fontFamily: organization.theme.fontDisplay || "'Cormorant Garamond', Georgia, serif",
+                color: 'var(--theme-text-primary, #09090B)',
+                fontFamily: 'var(--theme-font-display, inherit)',
               }}
             >
               {organization.short}
@@ -114,7 +108,7 @@ export function TopNav({
             <span
               className="leading-tight text-[11px] font-medium tracking-[0.02em]"
               style={{
-                color: textMuted,
+                color: 'var(--theme-text-muted, #A1A1AA)',
               }}
             >
               Member Portal
@@ -126,7 +120,7 @@ export function TopNav({
         <div className="relative max-w-md flex-1">
           <SearchIcon
             className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 z-10"
-            style={{ color: textMuted }}
+            style={{ color: 'var(--theme-text-muted, #A1A1AA)' }}
           />
           <input
             type="text"
@@ -135,14 +129,14 @@ export function TopNav({
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 text-[13px] outline-none transition-all duration-200 h-9 border border-transparent rounded-lg"
             style={{
-              color: textPrimary,
-              background: bgSecondary,
-              fontFamily: `var(--theme-font-body, 'Inter', system-ui, sans-serif)`,
+              color: 'var(--theme-text-primary, #09090B)',
+              background: 'var(--theme-bg-secondary, #F4F4F5)',
+              fontFamily: 'var(--theme-font-body, inherit)',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = `rgba(${organization.theme.primaryRgb}, 0.3)`;
-              e.target.style.background = '#FFFFFF';
-              e.target.style.boxShadow = `0 0 0 3px rgba(${organization.theme.primaryRgb}, 0.08)`;
+              e.target.style.borderColor = 'rgba(var(--theme-primary-rgb, 212,175,55), 0.3)';
+              e.target.style.background = 'var(--theme-bg-card, #FFFFFF)';
+              e.target.style.boxShadow = '0 0 0 3px rgba(var(--theme-primary-rgb, 212,175,55), 0.08)';
               setIsSearchOpen(true);
               setIsNotificationsOpen(false);
               setIsProfileOpen(false);
@@ -150,7 +144,7 @@ export function TopNav({
             onBlur={(e) => {
               setTimeout(() => {
                 e.target.style.borderColor = 'transparent';
-                e.target.style.background = bgSecondary;
+                e.target.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
                 e.target.style.boxShadow = 'none';
               }, 200);
             }}
@@ -165,6 +159,7 @@ export function TopNav({
             primaryColor={organization.theme.primary}
             primaryRgb={organization.theme.primaryRgb}
             onNavigate={onNavigate}
+            canNavigateToPage={canNavigateToPage}
           />
         </div>
       </div>
@@ -174,19 +169,20 @@ export function TopNav({
         {/* AI Bellhop Button */}
         <button
           onClick={onBellhopClick}
-          className="flex items-center gap-2 px-4 text-[13px] font-medium transition-all duration-200 h-[34px] rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] -tracking-[0.01em]"
+          className="flex items-center gap-2 px-4 text-[13px] font-medium transition-all duration-200 h-[34px] rounded-lg -tracking-[0.01em]"
           style={{
-            background: organization.theme.gradientBtn,
-            fontFamily: organization.theme.fontBody,
-            color: organization.theme.textInverse,
+            background: 'var(--theme-gradient-btn, var(--theme-primary, #D4AF37))',
+            fontFamily: 'var(--theme-font-body, inherit)',
+            color: 'var(--theme-text-inverse, #FFFFFF)',
+            boxShadow: 'var(--theme-shadow-sm, 0 1px 3px rgba(0,0,0,0.08))',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-1px)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06)';
+            e.currentTarget.style.boxShadow = 'var(--theme-shadow-md, 0 4px 12px rgba(0,0,0,0.12))';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)';
+            e.currentTarget.style.boxShadow = 'var(--theme-shadow-sm, 0 1px 3px rgba(0,0,0,0.08))';
           }}
         >
           <ConciergeIcon className="w-4 h-4" />
@@ -202,20 +198,21 @@ export function TopNav({
             }}
             className="relative flex items-center justify-center rounded-lg transition-all duration-150 w-[34px] h-[34px]"
             style={{
-              color: textSecondary,
+              color: 'var(--theme-text-secondary, #71717A)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = bgSecondary;
-              e.currentTarget.style.color = textPrimary;
+              e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+              e.currentTarget.style.color = 'var(--theme-text-primary, #09090B)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = textSecondary;
+              e.currentTarget.style.color = 'var(--theme-text-secondary, #71717A)';
             }}
           >
             <BellIcon className="w-[18px] h-[18px]" />
             <span
-              className="absolute rounded-full top-1.5 right-[7px] w-[7px] h-[7px] bg-red-500 border-[1.5px] border-white"
+              className="absolute rounded-full top-1.5 right-[7px] w-[7px] h-[7px] bg-red-500 border-[1.5px]"
+              style={{ borderColor: 'var(--theme-bg-card, #FFFFFF)' }}
             />
           </button>
 
@@ -236,11 +233,11 @@ export function TopNav({
             }}
             className="flex items-center justify-center rounded-full font-medium transition-all duration-200 w-8 h-8 text-xs -tracking-[0.01em]"
             style={{
-              background: organization.theme.gradientBtn,
-              color: organization.theme.textInverse,
+              background: 'var(--theme-gradient-btn, var(--theme-primary, #D4AF37))',
+              color: 'var(--theme-text-inverse, #FFFFFF)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = `0 0 0 2px white, 0 0 0 4px rgba(${organization.theme.primaryRgb}, 0.3)`;
+              e.currentTarget.style.boxShadow = '0 0 0 2px var(--theme-bg-card, white), 0 0 0 4px rgba(var(--theme-primary-rgb, 212,175,55), 0.3)';
               e.currentTarget.style.transform = 'scale(1.05)';
             }}
             onMouseLeave={(e) => {
@@ -256,6 +253,8 @@ export function TopNav({
             onClose={() => setIsProfileOpen(false)}
             account={account}
             organization={organization}
+            onNavigate={onNavigate}
+            canNavigateToPage={canNavigateToPage}
           />
         </div>
       </div>

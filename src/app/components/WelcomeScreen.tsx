@@ -1,18 +1,6 @@
 import { motion } from 'motion/react';
-import { useEffect, useMemo, useRef } from 'react';
-import { gsap, SplitText } from '../../lib/gsap-config';
-import { GeometricOctagon } from './GeometricOctagon';
-import { LottieIcon } from './lottie/LottieIcon';
-import { lottieIcons } from '../lottie';
+import { useEffect } from 'react';
 import type { Account, Organization } from '../data/themes';
-import {
-  getOrgColors,
-  getOrgFonts,
-  getMotionVariants,
-  getPageTransitionVariants,
-  getCardClasses,
-  getAnimationClasses,
-} from '../utils/themeMapper';
 
 interface WelcomeScreenProps {
   account: Account;
@@ -21,400 +9,125 @@ interface WelcomeScreenProps {
 }
 
 export function WelcomeScreen({ account, organization, onComplete }: WelcomeScreenProps) {
-  // Theme-aware values derived from organization
-  const theme = organization.theme;
-  const colors = useMemo(() => getOrgColors(organization), [organization]);
-  const fonts = useMemo(() => getOrgFonts(organization), [organization]);
-  // motionVariants/pageTransition kept for potential gesture use by motion-polisher
-  void useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
-  void useMemo(() => getPageTransitionVariants(theme.animationStyle), [theme.animationStyle]);
-
-  // Get CSS utility classes from theme
-  const cardClasses = useMemo(() => getCardClasses(theme), [theme]);
-  const animationClasses = useMemo(() => getAnimationClasses(theme), [theme]);
-
-  // Animation timing based on theme
-  const animationDurations = useMemo(() => {
-    switch (theme.animationStyle) {
-      case 'elegant':
-        return { base: 1.2, delay: 0.3, stagger: 0.2 };
-      case 'smooth':
-        return { base: 0.9, delay: 0.25, stagger: 0.15 };
-      case 'energetic':
-        return { base: 0.5, delay: 0.1, stagger: 0.08 };
-      case 'dramatic':
-        return { base: 1.0, delay: 0.3, stagger: 0.18 };
-      case 'subtle':
-        return { base: 0.7, delay: 0.2, stagger: 0.12 };
-      default:
-        return { base: 0.9, delay: 0.25, stagger: 0.15 };
-    }
-  }, [theme.animationStyle]);
-
-  // Theme-derived easing
-  const easing = useMemo((): [number, number, number, number] => {
-    switch (theme.animationStyle) {
-      case 'elegant':
-        return [0.22, 1, 0.36, 1];
-      case 'smooth':
-        return [0.4, 0, 0.2, 1];
-      case 'energetic':
-        return [0.34, 1.56, 0.64, 1];
-      case 'dramatic':
-        return [0.6, 0.01, 0, 0.9];
-      case 'subtle':
-        return [0.4, 0, 1, 1];
-      default:
-        return [0.4, 0, 0.2, 1];
-    }
-  }, [theme.animationStyle]);
-
-  // Particle behavior based on animation style
-  const particleConfig = useMemo(() => {
-    switch (theme.animationStyle) {
-      case 'elegant':
-        return { count: 30, duration: 3.5, distance: 40 };
-      case 'smooth':
-        return { count: 25, duration: 3, distance: 35 };
-      case 'energetic':
-        return { count: 40, duration: 2, distance: 60 };
-      case 'dramatic':
-        return { count: 35, duration: 3.2, distance: 50 };
-      case 'subtle':
-        return { count: 20, duration: 4, distance: 30 };
-      default:
-        return { count: 30, duration: 3, distance: 40 };
-    }
-  }, [theme.animationStyle]);
-
-  const welcomeNodes = useMemo(
-    () =>
-      Array.from({ length: particleConfig.count }).map((_, index) => {
-        const baseX = 10 + ((index * 19) % 80);
-        const baseY = 12 + ((index * 23) % 76);
-        const magnitude = (index % 5) + 1;
-        return {
-          key: `welcome-node-${index}`,
-          left: `${baseX}%`,
-          top: `${baseY}%`,
-          duration: particleConfig.duration + (index % 4) * 0.75,
-          delay: animationDurations.delay + (index % 8) * 0.12,
-          swayY: particleConfig.distance * (0.45 + magnitude * 0.08),
-          swayX: (index % 2 === 0 ? 1 : -1) * (4 + magnitude * 1.5),
-        };
-      }),
-    [animationDurations.delay, particleConfig.count, particleConfig.distance, particleConfig.duration],
-  );
-
-  // Auto-advance timing based on animation style (faster for energetic, slower for elegant)
-  const autoAdvanceTime = useMemo(() => {
-    switch (theme.animationStyle) {
-      case 'elegant':
-        return 5000;
-      case 'energetic':
-        return 2500;
-      case 'dramatic':
-        return 4500;
-      default:
-        return 4000;
-    }
-  }, [theme.animationStyle]);
-
-  // Auto-advance after calculated time
+  // Auto-advance after 1.5s
   useEffect(() => {
     const timer = setTimeout(() => {
       onComplete();
-    }, autoAdvanceTime);
-
+    }, 1500);
     return () => clearTimeout(timer);
-  }, [onComplete, autoAdvanceTime]);
-
-  // GSAP: SplitText typewriter effect for "Welcome back," greeting
-  const greetingRef = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    if (!greetingRef.current) return;
-    const split = new SplitText(greetingRef.current, { type: 'chars' });
-    gsap.set(split.chars, { opacity: 0 });
-    const tween = gsap.to(split.chars, {
-      opacity: 1,
-      duration: 0.03,
-      stagger: 0.06,
-      delay: animationDurations.delay + 0.2,
-      ease: 'none',
-    });
-    return () => {
-      tween.kill();
-      split.revert();
-    };
-  }, [animationDurations.delay]);
-
-  // GSAP: SplitText wave effect for user name
-  const nameRef = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    if (!nameRef.current) return;
-    const split = new SplitText(nameRef.current, { type: 'chars' });
-    const tween = gsap.fromTo(
-      split.chars,
-      { opacity: 0, y: 30, rotateX: -45 },
-      {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        duration: 0.6,
-        stagger: { each: 0.04, from: 'start' },
-        delay: animationDurations.delay + animationDurations.stagger + 0.3,
-        ease: 'back.out(1.7)',
-      },
-    );
-    return () => {
-      tween.kill();
-      split.revert();
-    };
-  }, [animationDurations.delay, animationDurations.stagger]);
-
-  // GSAP: Motto word-by-word fade
-  const mottoRef = useRef<HTMLParagraphElement>(null);
-  useEffect(() => {
-    if (!mottoRef.current) return;
-    const split = new SplitText(mottoRef.current, { type: 'words' });
-    const tween = gsap.fromTo(
-      split.words,
-      { opacity: 0, y: 8 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        stagger: 0.08,
-        delay: animationDurations.delay + animationDurations.stagger * 4.5,
-        ease: 'power2.out',
-      },
-    );
-    return () => {
-      tween.kill();
-      split.revert();
-    };
-  }, [animationDurations.delay, animationDurations.stagger]);
+  }, [onComplete]);
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
-      style={{ background: colors.bgPrimary }}
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 1.02 }}
-      transition={{ duration: animationDurations.base, ease: easing }}
+      className="fixed inset-0 z-30 flex items-center justify-center"
+      style={{
+        background: `var(--theme-gradient-hero, linear-gradient(180deg, rgba(${organization.theme.primaryRgb}, 0.02) 0%, rgba(${organization.theme.primaryRgb}, 0.06) 100%))`,
+      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
     >
-      {/* Animated Octagon Background */}
-      <div className="absolute inset-0">
-        <GeometricOctagon primaryColor={colors.primary} />
-      </div>
-
-      {/* Ambient Glow - with theme-aware glow effect */}
-      {theme.hasGlowEffects && (
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
+      <div className="text-center px-8 max-w-2xl">
+        {/* Welcome Back */}
+        <motion.h2
+          className="text-[28px] md:text-[32px] mb-4 font-normal"
+          style={{
+            fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)',
+            color: 'var(--theme-text-primary, #2C2A25)',
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: animationDurations.base * 1.5, ease: easing }}
+          transition={{ duration: 0.3, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
         >
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px]"
-            style={{
-              background: `radial-gradient(circle, rgba(${theme.primaryRgb}, 0.12), transparent 70%)`,
-            }}
-          />
-        </motion.div>
-      )}
+          Welcome back,
+        </motion.h2>
 
-      {/* Floating Particles - with theme-aware behavior */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {welcomeNodes.map((node) => (
-          <motion.div
-            key={node.key}
-            className="absolute w-1 h-1 rounded-full"
-            style={{
-              background: colors.primary,
-              left: node.left,
-              top: node.top,
-              boxShadow: `0 0 16px rgba(${theme.primaryRgb}, 0.4)`,
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-              opacity: [0, 0.4, 0.6, 0.4, 0],
-              scale: [0, 1, 1.5, 1, 0],
-              y: [0, -node.swayY * 0.55, -node.swayY],
-              x: [0, node.swayX, 0],
-            }}
-            transition={{
-              duration: node.duration,
-              delay: node.delay,
-              ease: easing,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 text-center px-8 max-w-2xl">
-        {/* Welcome Greeting - GSAP SplitText typewriter */}
-        <div>
-          <h2
-            ref={greetingRef}
-            className="text-xl mb-2 font-medium tracking-[0.05em]"
-            style={{
-              fontFamily: fonts.body,
-              color: colors.textSecondary,
-            }}
-          >
-            Welcome back,
-          </h2>
-        </div>
-
-        {/* Name with Gradient - GSAP SplitText wave */}
-        <div>
-          <h1
-            ref={nameRef}
-            className={`text-6xl mb-6 ${animationClasses}`}
-            style={{
-              fontFamily: fonts.display,
-              fontWeight: parseInt(fonts.weightHeading),
-              background: theme.hasGradientText
-                ? `linear-gradient(135deg, ${colors.primary}, ${colors.primaryLight})`
-                : colors.primary,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              perspective: '400px',
-            }}
-          >
-            {account.first} {account.last}
-          </h1>
-        </div>
+        {/* User Name */}
+        <motion.h1
+          className="text-[clamp(2.2rem,6vw,4rem)] mb-6 font-normal"
+          style={{
+            fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)',
+            color: `var(--theme-primary, ${organization.theme.primary})`,
+            textShadow: `0 2px 12px rgba(${organization.theme.primaryRgb}, 0.15)`,
+          }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+        >
+          {account.first}
+        </motion.h1>
 
         {/* Organization Badge */}
         <motion.div
-          className={`inline-flex items-center gap-3 px-6 py-3 rounded-full mb-4 ${cardClasses}`}
-          style={{
-            background: `rgba(${theme.primaryRgb}, 0.08)`,
-            border: `1px solid rgba(${theme.primaryRgb}, 0.15)`,
-          }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 2.5, ease: easing }}
+          className="flex items-center justify-center gap-3 mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
         >
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm"
+            className="w-12 h-12 rounded-xl flex items-center justify-center shadow-md"
             style={{
-              background: theme.gradientBtn,
+              background: organization.theme.gradientBtn,
             }}
           >
             <span
+              className="text-[20px] font-semibold text-white"
               style={{
-                fontFamily: fonts.display,
-                fontStyle: 'italic',
-                fontWeight: 300,
+                fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)',
               }}
             >
               {organization.logoLetter}
             </span>
           </div>
-          <LottieIcon
-            animationData={lottieIcons.conciergeOrb}
-            size={20}
-            speed={1}
-            glowRgb={theme.primaryRgb}
-            ariaLabel="Welcome accent icon"
+          <div className="text-left">
+            <div
+              className="text-[14px] font-medium"
+              style={{ color: organization.theme.primary }}
+            >
+              {organization.name}
+            </div>
+            <div className="text-[12px] opacity-70" style={{ color: 'var(--theme-text-secondary, #8A8578)' }}>
+              {account.role || 'Member'}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Motto */}
+        <motion.p
+          className="text-[15px] italic mb-8"
+          style={{
+            color: `rgba(${organization.theme.primaryRgb}, 0.8)`,
+            fontFamily: 'var(--theme-font-display, Cormorant Garamond, Georgia, serif)',
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.4, ease: [0.4, 0, 0.2, 1] }}
+        >
+          {organization.motto}
+        </motion.p>
+
+        {/* Loading Dots */}
+        <div className="flex items-center justify-center gap-2">
+          <motion.div
+            className="w-2 h-2 rounded-full"
+            style={{ background: organization.theme.primary }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.2, repeat: Infinity, delay: 0 }}
           />
-          <span
-            className="text-lg font-semibold"
-            style={{
-              fontFamily: fonts.display,
-              color: colors.textPrimary,
-            }}
-          >
-            {organization.name}
-          </span>
-        </motion.div>
-
-        {/* Role */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 3.5, ease: easing }}
-        >
-          <p
-            className="text-sm mb-3 font-medium"
-            style={{
-              color: colors.textSecondary,
-              fontFamily: fonts.body,
-            }}
-          >
-            {account.role}
-          </p>
-        </motion.div>
-
-        {/* Motto - GSAP SplitText word-by-word */}
-        <div>
-          <p
-            ref={mottoRef}
-            className="text-base italic mb-6 opacity-95 font-medium"
-            style={{
-              fontFamily: fonts.display,
-              color: colors.primary,
-            }}
-          >
-            &ldquo;{organization.motto}&rdquo;
-          </p>
+          <motion.div
+            className="w-2 h-2 rounded-full"
+            style={{ background: organization.theme.primary }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.2, repeat: Infinity, delay: 0.4 }}
+          />
+          <motion.div
+            className="w-2 h-2 rounded-full"
+            style={{ background: organization.theme.primary }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1.2, repeat: Infinity, delay: 0.8 }}
+          />
         </div>
-
-        {/* Timestamp */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: animationDurations.base * 0.7, delay: animationDurations.delay + animationDurations.stagger * 5.5, ease: easing }}
-        >
-          <p
-            className="text-xs font-medium tracking-[0.05em]"
-            style={{
-              color: colors.textMuted,
-              fontFamily: fonts.body,
-            }}
-          >
-            {new Date().toLocaleString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </p>
-        </motion.div>
-
-        {/* Loading Indicator - with theme-aware animation speed */}
-        <motion.div
-          className="mt-12 flex items-center justify-center gap-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: animationDurations.base * 0.5, delay: animationDurations.delay + animationDurations.stagger * 6 }}
-        >
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="w-2 h-2 rounded-full"
-              style={{ background: colors.primary }}
-              animate={{
-                opacity: [0.3, 1, 0.3],
-                scale: [0.8, 1.2, 0.8],
-              }}
-              transition={{
-                duration: theme.animationStyle === 'energetic' ? 1 : 1.5,
-                repeat: Infinity,
-                delay: i * (theme.animationStyle === 'energetic' ? 0.1 : 0.2),
-                ease: easing,
-              }}
-            />
-          ))}
-        </motion.div>
       </div>
     </motion.div>
   );
