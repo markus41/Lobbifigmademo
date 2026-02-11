@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { LandingPage } from './components/LandingPage';
 import { EmailSelection } from './components/EmailSelection';
@@ -14,6 +14,13 @@ import { StageCinematicTransition } from './components/StageCinematicTransition'
 import { ACCOUNTS, ORGANIZATIONS, applyTheme, type Account, type Organization } from './data/themes';
 import { useOrgTheme } from '../theme/LobbiMantineProvider';
 import { cn } from '@/lib/utils';
+
+// Command Palette & Mobile Shell
+import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
+import { useIsMobile } from '@/hooks/useMediaQuery';
+import { MobileDrawer } from '@/components/lobbi/layout/MobileDrawer';
+import { CommandPalette } from '@/components/lobbi/navigation/CommandPalette';
+import { DashboardIcon, RegistryIcon, EventsIcon, SettingsIcon } from './components/icons/LobbiIcons';
 
 // Page components
 import { RegistryPage } from './components/pages/RegistryPage';
@@ -87,6 +94,9 @@ export default function App() {
   const [demoRole, setDemoRole] = useState(() => readStoredDemoRole());
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isBellhopOpen, setIsBellhopOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
   const [showDashboard, setShowDashboard] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionCue, setTransitionCue] = useState<{ id: number; to: Stage } | null>(null);
@@ -139,6 +149,35 @@ export default function App() {
     },
     [canNavigateToPage, demoPhase, demoRole]
   );
+
+  // Ctrl+K / Cmd+K to toggle command palette (only when dashboard is visible)
+  useKeyboardShortcut([
+    {
+      key: 'k',
+      ctrl: true,
+      handler: () => setIsCommandPaletteOpen((prev) => !prev),
+      enabled: stage === 'dashboard' && showDashboard,
+    },
+  ]);
+
+  // Close mobile drawer when switching to desktop
+  useEffect(() => {
+    if (!isMobile) setIsMobileDrawerOpen(false);
+  }, [isMobile]);
+
+  // Build command palette page list from sidebar nav items
+  const commandPalettePages = useMemo(() => {
+    const iconClass = 'w-5 h-5';
+    return [
+      { id: 'dashboard', label: 'The Front Desk', icon: <DashboardIcon className={iconClass} />, group: 'Operations' },
+      { id: 'registry', label: 'The Registry', icon: <RegistryIcon className={iconClass} />, group: 'Operations' },
+      { id: 'events', label: 'Events Pavilion', icon: <EventsIcon className={iconClass} />, group: 'Services' },
+      { id: 'business', label: 'Business Center', icon: <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" /></svg>, group: 'Finance' },
+      { id: 'vault', label: 'The Vault', icon: <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>, group: 'Services' },
+      { id: 'innovation', label: 'Innovation Lab', icon: <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M12 2l2.4 5.6L20 8l-4 4 1 6-5-3-5 3 1-6-4-4 5.6-.4L12 2z" /></svg>, group: 'Admin' },
+      { id: 'settings', label: 'Settings', icon: <SettingsIcon className={iconClass} />, group: 'Admin' },
+    ].filter((page) => canNavigateToPage(page.id));
+  }, [canNavigateToPage]);
 
   // Cleanup transition timeout
   useEffect(() => {
@@ -452,19 +491,49 @@ export default function App() {
           >
             {/* Main Layout */}
             <div className="flex flex-1 min-h-0">
-              <Sidebar
-                currentPage={currentPage}
-                onNavigate={navigateToPage}
-                isCollapsed={isSidebarCollapsed}
-                onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                organization={selectedOrg}
-                account={selectedAccount}
-              />
+              {/* Desktop: persistent sidebar */}
+              {!isMobile && (
+                <Sidebar
+                  currentPage={currentPage}
+                  onNavigate={navigateToPage}
+                  isCollapsed={isSidebarCollapsed}
+                  onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                  organization={selectedOrg}
+                  account={selectedAccount}
+                />
+              )}
+
+              {/* Mobile: drawer sidebar */}
+              {isMobile && (
+                <MobileDrawer
+                  isOpen={isMobileDrawerOpen}
+                  onClose={() => setIsMobileDrawerOpen(false)}
+                >
+                  <Sidebar
+                    currentPage={currentPage}
+                    onNavigate={(page) => {
+                      navigateToPage(page);
+                      setIsMobileDrawerOpen(false);
+                    }}
+                    isCollapsed={false}
+                    onToggleCollapse={() => setIsMobileDrawerOpen(false)}
+                    organization={selectedOrg}
+                    account={selectedAccount}
+                  />
+                </MobileDrawer>
+              )}
 
               <div className="flex-1 flex flex-col min-w-0">
                 <TopNav
-                  onMenuClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                  onMenuClick={() => {
+                    if (isMobile) {
+                      setIsMobileDrawerOpen(!isMobileDrawerOpen);
+                    } else {
+                      setIsSidebarCollapsed(!isSidebarCollapsed);
+                    }
+                  }}
                   onBellhopClick={() => setIsBellhopOpen(true)}
+                  onCommandPaletteOpen={() => setIsCommandPaletteOpen(true)}
                   organization={selectedOrg}
                   account={selectedAccount}
                   onNavigate={navigateToPage}
@@ -491,6 +560,17 @@ export default function App() {
                 onClose={() => setIsBellhopOpen(false)}
               />
             </div>
+
+            {/* Command Palette overlay */}
+            <CommandPalette
+              isOpen={isCommandPaletteOpen}
+              onClose={() => setIsCommandPaletteOpen(false)}
+              onNavigate={(page) => {
+                navigateToPage(page);
+                setIsCommandPaletteOpen(false);
+              }}
+              pages={commandPalettePages}
+            />
           </motion.div>
         )}
       </AnimatePresence>

@@ -9,6 +9,7 @@ import type { Account, Organization } from '../data/themes';
 interface TopNavProps {
   onMenuClick: () => void;
   onBellhopClick: () => void;
+  onCommandPaletteOpen?: () => void;
   organization: Organization;
   account: Account;
   onNavigate?: (page: string) => void;
@@ -34,6 +35,7 @@ function OrgLogo({ organization }: { organization: Organization }) {
 export function TopNav({
   onMenuClick,
   onBellhopClick,
+  onCommandPaletteOpen,
   organization,
   account,
   onNavigate,
@@ -117,7 +119,7 @@ export function TopNav({
         </div>
 
         {/* Search bar - with visible border and proper sizing */}
-        <div className="relative max-w-md flex-1">
+        <div className="relative max-w-md flex-1 hidden sm:block">
           <SearchIcon
             className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 z-10"
             style={{ color: 'var(--theme-text-muted, #A1A1AA)' }}
@@ -127,7 +129,7 @@ export function TopNav({
             placeholder="Search members, events, documents..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 text-[13px] outline-none transition-all duration-200 h-9 border border-transparent rounded-lg"
+            className="w-full pl-10 pr-16 text-[13px] outline-none transition-all duration-200 h-9 border border-transparent rounded-lg"
             style={{
               color: 'var(--theme-text-primary, #09090B)',
               background: 'var(--theme-bg-secondary, #F4F4F5)',
@@ -149,6 +151,24 @@ export function TopNav({
               }, 200);
             }}
           />
+          {/* Ctrl+K shortcut badge */}
+          {onCommandPaletteOpen && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onCommandPaletteOpen();
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium transition-opacity hover:opacity-80"
+              style={{
+                background: 'var(--theme-bg-card, #FFFFFF)',
+                border: '1px solid var(--theme-border-light, #E4E4E7)',
+                color: 'var(--theme-text-muted, #A1A1AA)',
+              }}
+            >
+              <span>{typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.userAgent) ? '\u2318' : 'Ctrl+'}</span>
+              <span>K</span>
+            </button>
+          )}
           <SearchDropdown
             isOpen={isSearchOpen}
             onClose={() => {
@@ -166,10 +186,29 @@ export function TopNav({
 
       {/* Right: Concierge + Notifications + Avatar */}
       <div className="flex items-center gap-2">
+        {/* Mobile: Search button opens command palette */}
+        {onCommandPaletteOpen && (
+          <button
+            onClick={onCommandPaletteOpen}
+            className="sm:hidden flex items-center justify-center rounded-lg transition-all duration-150 w-[34px] h-[34px]"
+            style={{ color: 'var(--theme-text-secondary, #71717A)' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--theme-bg-secondary, #F4F4F5)';
+              e.currentTarget.style.color = 'var(--theme-text-primary, #09090B)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--theme-text-secondary, #71717A)';
+            }}
+          >
+            <SearchIcon className="w-[18px] h-[18px]" />
+          </button>
+        )}
+
         {/* AI Bellhop Button */}
         <button
           onClick={onBellhopClick}
-          className="flex items-center gap-2 px-4 text-[13px] font-medium transition-all duration-200 h-[34px] rounded-lg -tracking-[0.01em]"
+          className="hidden sm:flex items-center gap-2 px-4 text-[13px] font-medium transition-all duration-200 h-[34px] rounded-lg -tracking-[0.01em]"
           style={{
             background: 'var(--theme-gradient-btn, var(--theme-primary, #D4AF37))',
             fontFamily: 'var(--theme-font-body, inherit)',
