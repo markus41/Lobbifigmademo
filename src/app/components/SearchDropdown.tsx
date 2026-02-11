@@ -318,6 +318,16 @@ export function SearchDropdown({ isOpen, onClose, query, primaryColor, primaryRg
                       <button
                         key={search}
                         className="px-3 py-1.5 text-xs rounded-full border transition-colors hover:bg-gray-50 border-[#E5E0D5] text-[#5A5247]"
+                        onClick={() => {
+                          // In a real app, this would trigger a search
+                          // For now, we'll simulate clicking on a matching result
+                          const matchingResult = sampleResults.find(r =>
+                            r.title.toLowerCase().includes(search.toLowerCase())
+                          );
+                          if (matchingResult) {
+                            handleResultClick(matchingResult);
+                          }
+                        }}
                       >
                         {search}
                       </button>

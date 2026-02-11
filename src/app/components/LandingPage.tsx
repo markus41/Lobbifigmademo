@@ -1,7 +1,8 @@
 import { motion } from 'motion/react';
-import { ArrowRight } from 'lucide-react';
 import { useMemo, useRef, useEffect } from 'react';
 import { gsap, SplitText } from '../../lib/gsap-config';
+import { LottieIcon } from './lottie/LottieIcon';
+import { lottieIcons } from '../lottie';
 import type { Organization } from '../data/themes';
 import { ORGANIZATIONS } from '../data/themes';
 import {
@@ -30,7 +31,7 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
 
   // Get animation variants based on theme style
   const motionVariants = useMemo(() => getMotionVariants(theme.animationStyle), [theme.animationStyle]);
-  const letterVariants = useMemo(() => getLetterVariants(theme.animationStyle), [theme.animationStyle]);
+  void useMemo(() => getLetterVariants(theme.animationStyle), [theme.animationStyle]);
 
   // Get CSS utility classes from theme
   const buttonClasses = useMemo(() => getButtonClasses(theme), [theme]);
@@ -152,10 +153,69 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
     return () => { tl.kill(); };
   }, [animationDurations.delay, colors.primaryRgb]);
 
+  // GSAP: ScrollTrigger parallax on hero container and ornaments
+  const heroRef = useRef<HTMLDivElement>(null);
+  const ornamentsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!heroRef.current) return;
+    const ctx = gsap.context(() => {
+      // Parallax on ornaments
+      if (ornamentsRef.current) {
+        gsap.to(ornamentsRef.current, {
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1,
+          },
+          y: 100,
+          opacity: 0.5,
+        });
+      }
+      // Parallax on hero content
+      gsap.to('.hero-content', {
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.5,
+        },
+        y: -50,
+        opacity: 0.8,
+      });
+    }, heroRef);
+    return () => ctx.revert();
+  }, []);
+
+  // GSAP: Hero headline character-by-character wave effect
+  const heroHeadlineRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (!heroHeadlineRef.current) return;
+    const split = new SplitText(heroHeadlineRef.current, { type: 'chars' });
+    const tween = gsap.fromTo(
+      split.chars,
+      { opacity: 0, y: 50, rotateX: -90 },
+      {
+        opacity: 1,
+        y: 0,
+        rotateX: 0,
+        duration: 0.8,
+        stagger: { each: animationDurations.letter, from: 'start', ease: 'power2.out' },
+        delay: animationDurations.delay * 0.6,
+        ease: 'back.out(1.5)',
+      },
+    );
+    return () => {
+      tween.kill();
+      split.revert();
+    };
+  }, [animationDurations.delay, animationDurations.letter]);
+
   return (
     <motion.div
+      ref={heroRef}
       className="fixed inset-0 z-10 flex flex-col items-center justify-center px-4 overflow-hidden"
-      style={{ 
+      style={{
         background: `linear-gradient(180deg, ${colors.bgPrimary} 0%, rgba(${colors.primaryRgb}, 0.03) 100%)`,
       }}
       initial={{ opacity: 0 }}
@@ -164,7 +224,7 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
       transition={{ duration: animationDurations.base * 1.5, ease: easing }}
     >
       {/* Art Deco Corner Ornaments - Theme-aware */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.08]">
+      <div ref={ornamentsRef} className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.08]">
         {/* Top Left */}
         <svg className="absolute top-8 left-8 w-24 h-24" viewBox="0 0 100 100" style={{ color: colors.primaryDark }}>
           <path d="M0,0 L40,0 L40,2 L2,2 L2,40 L0,40 Z" fill="currentColor" />
@@ -215,41 +275,42 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
         />
       </div>
 
-      {/* Brand Name - Spaced Letters with theme-aware animation */}
-      <motion.div
-        className="mb-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: animationDurations.base, delay: animationDurations.delay * 0.6 }}
-      >
+      {/* Brand Name - GSAP SplitText character-by-character wave effect */}
+      <div className="hero-content mb-6">
+        <motion.div
+          className="mb-6 flex justify-center"
+          initial={{ opacity: 0, scale: 0.85, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: animationDurations.base, delay: animationDurations.delay * 0.55, ease: 'easeOut' }}
+        >
+          <div
+            className="rounded-2xl border border-white/55 bg-white/55 p-2 backdrop-blur-sm shadow-[0_18px_42px_rgba(0,0,0,0.08)]"
+            style={{ boxShadow: `0 18px 42px rgba(${colors.primaryRgb}, 0.16)` }}
+          >
+            <LottieIcon
+              animationData={lottieIcons.conciergeOrb}
+              size={54}
+              speed={0.9}
+              glowRgb={colors.primaryRgb}
+              ariaLabel="Cinematic concierge icon"
+            />
+          </div>
+        </motion.div>
+
         <h1
-          className={`flex text-6xl tracking-[0.45em] ${animationClasses}`}
+          ref={heroHeadlineRef}
+          className={`text-6xl tracking-[0.45em] ${animationClasses}`}
           style={{
             fontFamily: fonts.display,
             fontWeight: fonts.weightHeading,
             color: colors.textPrimary,
             textShadow: `0 4px 24px rgba(${colors.primaryRgb}, 0.15)`,
+            perspective: '800px',
           }}
         >
-          {'THE LOBBI'.split('').map((char, i) => (
-            <motion.span
-              key={i}
-              initial={letterVariants.letter.initial}
-              animate={letterVariants.letter.animate}
-              transition={{
-                duration: animationDurations.base * 0.7,
-                delay: animationDurations.delay + (i * animationDurations.letter),
-                ease: easing,
-              }}
-              style={{
-                display: 'inline-block',
-              }}
-            >
-              {char === ' ' ? '\u00A0\u00A0' : char}
-            </motion.span>
-          ))}
+          THE LOBBI
         </h1>
-      </motion.div>
+      </div>
 
       {/* Triple Line Divider - Theme-aware */}
       <motion.div
@@ -367,13 +428,26 @@ export function LandingPage({ onLoginClick, organization = DEFAULT_ORG }: Landin
             textShadow: `0 1px 2px rgba(${colors.primaryRgb}, 0.2)`,
           }}
         >
+          <LottieIcon
+            animationData={lottieIcons.portalGate}
+            size={20}
+            speed={1}
+            glowRgb={colors.primaryRgb}
+            ariaLabel="Portal icon"
+          />
           Enter Your Lobbi
           <motion.div
             className="opacity-60 group-hover:opacity-100 transition-opacity"
             animate={{ x: [0, 4, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <ArrowRight className="w-4 h-4" strokeWidth={2} />
+            <LottieIcon
+              animationData={lottieIcons.routeArrow}
+              size={18}
+              speed={1.18}
+              glowRgb={colors.primaryRgb}
+              ariaLabel="Route arrow"
+            />
           </motion.div>
         </span>
       </motion.button>

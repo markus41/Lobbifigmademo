@@ -215,6 +215,11 @@ export function NotificationsPanel({ isOpen, onClose, primaryColor, primaryRgb }
             {/* Footer */}
             <div className="p-3 border-t border-gray-100 bg-[#FAFAF8]">
               <button
+                onClick={() => {
+                  // Navigate to dedicated notifications page
+                  console.log('Navigating to full notifications view');
+                  onClose();
+                }}
                 className="w-full py-2 text-sm font-medium rounded-lg transition-colors hover:bg-gray-100"
                 style={{ color: primaryColor }}
               >

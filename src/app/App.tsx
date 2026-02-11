@@ -11,6 +11,8 @@ import { TopNav } from './components/TopNav';
 import { AIBellhop } from './components/AIBellhop';
 import { CinematicBackground } from './components/CinematicBackground';
 import { GeometricOctagon } from './components/GeometricOctagon';
+import { CinematicIntro } from './components/CinematicIntro';
+import { StageCinematicTransition } from './components/StageCinematicTransition';
 import { ACCOUNTS, ORGANIZATIONS, applyTheme, type Account, type Organization } from './data/themes';
 
 // Page components
@@ -28,8 +30,22 @@ import { MemberPortal } from './components/MemberPortal';
 
 type Stage = 'logo' | 'landing' | 'email' | 'orgLogin' | 'welcome' | 'dashboardEntry' | 'dashboard' | 'memberPortal';
 
+const STAGE_TRANSITION_LABELS: Record<Stage, string> = {
+  logo: 'Initializing cinematic sequence',
+  landing: 'Opening the experience',
+  email: 'Preparing account recognition',
+  orgLogin: 'Securing your entry',
+  welcome: 'Welcoming you in',
+  dashboardEntry: 'Launching portal transition',
+  dashboard: 'Entering your command deck',
+  memberPortal: 'Switching to member view',
+};
+
 export default function App() {
-  const [stage, setStage] = useState<Stage>('landing');
+  const [stage, setStage] = useState<Stage>(() => {
+    if (typeof window === 'undefined') return 'landing';
+    return sessionStorage.getItem('lobbi_intro_seen') === '1' ? 'landing' : 'logo';
+  });
   const [_selectedEmail, setSelectedEmail] = useState('');
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
@@ -38,17 +54,24 @@ export default function App() {
   const [isBellhopOpen, setIsBellhopOpen] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionCue, setTransitionCue] = useState<{ id: number; to: Stage } | null>(null);
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Guarded stage transition to prevent overlapping animations
   const safeSetStage = (nextStage: Stage) => {
-    if (isTransitioning) return;
+    if (isTransitioning || stage === nextStage) return;
+
+    const shouldCue = !(stage === 'logo' && nextStage === 'landing');
     setIsTransitioning(true);
+    if (shouldCue) {
+      setTransitionCue({ id: Date.now(), to: nextStage });
+    }
     if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
     setStage(nextStage);
     transitionTimeoutRef.current = setTimeout(() => {
       setIsTransitioning(false);
-    }, 600); // matches exit animation duration
+      setTransitionCue(null);
+    }, 620);
   };
 
   // Cleanup transition timeout
@@ -57,14 +80,6 @@ export default function App() {
       if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current);
     };
   }, []);
-
-  // Auto-progress from logo to landing
-  useEffect(() => {
-    if (stage === 'logo') {
-      const timer = setTimeout(() => safeSetStage('landing'), 5500);
-      return () => clearTimeout(timer);
-    }
-  }, [stage]);
 
   // Apply theme when organization is selected
   useEffect(() => {
@@ -85,7 +100,7 @@ export default function App() {
   // Bug #6 fix: Hash-based routing for browser navigation
   useEffect(() => {
     const hashMap: Record<Stage, string> = {
-      logo: '#logo', landing: '#landing', email: '#login',
+      logo: '#intro', landing: '#landing', email: '#login',
       orgLogin: '#login', welcome: '#welcome', dashboardEntry: '#dashboard',
       dashboard: '#dashboard', memberPortal: '#member-portal',
     };
@@ -194,6 +209,13 @@ export default function App() {
 
       {/* Pre-dashboard stages - single AnimatePresence with mode="wait" prevents overlap */}
       <AnimatePresence mode="wait">
+        {stage === 'logo' && (
+          <CinematicIntro
+            key="logo"
+            onComplete={() => safeSetStage('landing')}
+            primaryRgb={currentRgb}
+          />
+        )}
         {stage === 'landing' && (
           <LandingPage key="landing" onLoginClick={handleLoginClick} />
         )}
@@ -222,6 +244,17 @@ export default function App() {
             onCompleted={handleDashboardEntryComplete}
             organization={selectedOrg}
             account={selectedAccount}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Cinematic transition bridge between stages */}
+      <AnimatePresence mode="wait">
+        {transitionCue && (
+          <StageCinematicTransition
+            transitionKey={`${transitionCue.id}-${transitionCue.to}`}
+            label={STAGE_TRANSITION_LABELS[transitionCue.to]}
+            primaryRgb={currentRgb}
           />
         )}
       </AnimatePresence>

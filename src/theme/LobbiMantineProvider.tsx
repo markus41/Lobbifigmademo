@@ -207,6 +207,10 @@ export function LobbiMantineProvider({
     document.documentElement.classList.add(resolvedMode)
   }, [resolvedMode])
 
+  useEffect(() => {
+    document.documentElement.setAttribute('data-org', currentOrg)
+  }, [currentOrg])
+
   return (
     <MantineProvider theme={lobbiMantineTheme} forceColorScheme={resolvedMode}>
       <Notifications position="top-right" zIndex={9999} />

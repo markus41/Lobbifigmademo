@@ -1,7 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Check, ChevronDown, Building2, User } from 'lucide-react';
+import { Check, ChevronDown, Building2, User } from 'lucide-react';
 import { ACCOUNTS, ORGANIZATIONS, type Account, type Organization } from '@/app/data/themes';
+import { LottieIcon } from './lottie/LottieIcon';
+import { lottieIcons } from '../lottie';
 
 interface EmailSelectionProps {
   onEmailSelected: (email: string) => void;
@@ -326,6 +328,18 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
   };
 
   const previewOrg = getOrgForEmail(selectedEmail);
+  const accentNodes = useMemo(
+    () => [
+      { left: '10%', top: '22%', size: 10, delay: 0.1, duration: 8.5 },
+      { left: '18%', top: '74%', size: 8, delay: 0.4, duration: 7.4 },
+      { left: '30%', top: '36%', size: 6, delay: 0.9, duration: 6.8 },
+      { left: '52%', top: '16%', size: 8, delay: 0.3, duration: 9.2 },
+      { left: '67%', top: '76%', size: 9, delay: 0.75, duration: 8.1 },
+      { left: '82%', top: '30%', size: 7, delay: 0.55, duration: 7.2 },
+      { left: '89%', top: '62%', size: 6, delay: 1.2, duration: 6.4 },
+    ],
+    [],
+  );
 
   return (
     <motion.div
@@ -335,7 +349,7 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
       transition={{ duration: 0.6 }}
       className="fixed inset-0 z-20 flex items-center justify-center p-4"
     >
-      {/* Ambient background glow */}
+      {/* Stage ambient aura */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[800px] h-[600px] rounded-full blur-[120px]"
@@ -352,30 +366,58 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             ease: [0.22, 1, 0.36, 1],
           }}
         />
+
+        <motion.div
+          className="absolute left-1/2 top-1/2 w-[720px] h-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            border: `1px solid rgba(${previewOrg?.theme.primaryRgb || '212,175,55'}, 0.18)`,
+          }}
+          animate={{
+            scale: [0.86, 1.05, 0.88],
+            opacity: [0.18, 0.34, 0.18],
+            rotate: [0, 8, 0],
+          }}
+          transition={{ duration: 11.5, repeat: Infinity, ease: [0.22, 1, 0.36, 1] }}
+        />
+
+        <motion.div
+          className="absolute left-1/2 top-1/2 w-[540px] h-[540px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            border: `1px dashed rgba(${previewOrg?.theme.primaryRgb || '212,175,55'}, 0.22)`,
+          }}
+          animate={{
+            scale: [0.9, 1.08, 0.9],
+            opacity: [0.22, 0.45, 0.22],
+            rotate: [0, -14, 0],
+          }}
+          transition={{ duration: 9.7, repeat: Infinity, ease: [0.22, 1, 0.36, 1] }}
+        />
       </div>
 
-      {/* Floating particles */}
+      {/* Cinematic accent nodes */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {accentNodes.map((node, index) => (
           <motion.div
-            key={i}
+            key={`accent-node-${index}`}
             className="absolute rounded-full"
             style={{
-              width: `${2 + Math.random() * 2.5}px`,
-              height: `${2 + Math.random() * 2.5}px`,
+              width: `${node.size}px`,
+              height: `${node.size}px`,
               background: previewOrg?.theme.primary || '#D4AF37',
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: node.left,
+              top: node.top,
+              boxShadow: `0 0 20px rgba(${previewOrg?.theme.primaryRgb || '212,175,55'}, 0.45)`,
             }}
             animate={{
-              y: [0, -30 - Math.random() * 50],
-              opacity: [0, 0.5, 0],
-              scale: [0, 1, 0],
+              y: [0, -18, 0],
+              x: [0, index % 2 === 0 ? 10 : -10, 0],
+              opacity: [0.14, 0.68, 0.14],
+              scale: [0.7, 1.18, 0.75],
             }}
             transition={{
-              duration: 4 + Math.random() * 3,
+              duration: node.duration,
               repeat: Infinity,
-              delay: Math.random() * 4,
+              delay: node.delay,
               ease: [0.22, 1, 0.36, 1],
             }}
           />
@@ -474,6 +516,17 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
               >
                 {previewOrg ? previewOrg.logoLetter : 'L'}
               </span>
+
+              <div className="absolute -right-2 -bottom-2 rounded-full border border-white/60 bg-white/80 p-1 backdrop-blur-sm">
+                <LottieIcon
+                  animationData={lottieIcons.conciergeOrb}
+                  size={20}
+                  speed={1}
+                  glowRgb={previewOrg?.theme.primaryRgb || '212,175,55'}
+                  ariaLabel="Concierge accent icon"
+                />
+              </div>
+
               {/* Shine overlay */}
               <div
                 className="absolute inset-0 rounded-2xl"
@@ -607,7 +660,13 @@ export function EmailSelection({ onEmailSelected }: EmailSelectionProps) {
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 Continue
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <LottieIcon
+                  animationData={lottieIcons.routeArrow}
+                  size={18}
+                  speed={1.2}
+                  glowRgb={previewOrg?.theme.primaryRgb || '212,175,55'}
+                  ariaLabel="Continue arrow"
+                />
               </span>
 
               {/* Shine effect */}

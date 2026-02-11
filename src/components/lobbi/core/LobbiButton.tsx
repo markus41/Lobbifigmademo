@@ -153,9 +153,43 @@ const _LobbiButton = forwardRef<HTMLButtonElement, LobbiButtonProps>(
             zIndex: 10,
           },
         }}
-        whileHover={!disabled && !isLoading ? { y: -1, scale: 1.01 } : undefined}
-        whileTap={!disabled && !isLoading ? { scale: 0.98 } : undefined}
-        transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
+        // Enhanced micro-interactions with spring physics
+        whileHover={
+          !disabled && !isLoading
+            ? {
+                y: -3,
+                scale: variant === 'primary' ? 1.05 : 1.03,
+                boxShadow:
+                  variant === 'primary'
+                    ? '0 10px 28px rgba(0,0,0,0.18), 0 5px 14px rgba(0,0,0,0.12)'
+                    : '0 6px 20px rgba(0,0,0,0.12)',
+                filter: variant === 'primary' ? 'brightness(1.1) saturate(1.15)' : 'brightness(1.03)',
+              }
+            : undefined
+        }
+        whileTap={
+          !disabled && !isLoading
+            ? {
+                y: 0,
+                scale: 0.96,
+                skewX: -0.5,
+                filter: 'brightness(0.95)',
+              }
+            : undefined
+        }
+        whileFocus={
+          !disabled
+            ? {
+                boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.4)',
+              }
+            : undefined
+        }
+        transition={{
+          type: 'spring',
+          stiffness: 550,
+          damping: 20,
+          mass: 0.4,
+        }}
         {...props}
       >
         {/* Primary variant shimmer effect */}

@@ -1,7 +1,87 @@
 import { motion } from 'motion/react';
 import { Users, TrendingUp, DollarSign, Calendar, AlertCircle, Activity } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { gsap, SplitText } from '../../lib/gsap-config';
 
 export function DashboardPage() {
+  // GSAP: Section title SplitText animations with ScrollTrigger
+  const welcomeTitleRef = useRef<HTMLHeadingElement>(null);
+  const renewalTitleRef = useRef<HTMLHeadingElement>(null);
+  const activityTitleRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Animate welcome title
+      if (welcomeTitleRef.current) {
+        const split = new SplitText(welcomeTitleRef.current, { type: 'words' });
+        gsap.fromTo(
+          split.words,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            stagger: 0.08,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: welcomeTitleRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse',
+            },
+          },
+        );
+      }
+
+      // Animate section titles with word-by-word reveal
+      [renewalTitleRef, activityTitleRef].forEach((ref) => {
+        if (ref.current) {
+          const split = new SplitText(ref.current, { type: 'words' });
+          gsap.fromTo(
+            split.words,
+            { opacity: 0, y: 15 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              stagger: 0.06,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: ref.current,
+                start: 'top 85%',
+                toggleActions: 'play none none reverse',
+              },
+            },
+          );
+        }
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  // GSAP: Staggered widget entrance animations with ScrollTrigger
+  const statsGridRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!statsGridRef.current) return;
+    const widgets = statsGridRef.current.querySelectorAll('.stat-widget');
+    gsap.fromTo(
+      widgets,
+      { opacity: 0, y: 40, scale: 0.95 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.6,
+        stagger: { each: 0.12, from: 'start' },
+        ease: 'back.out(1.4)',
+        scrollTrigger: {
+          trigger: statsGridRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none reverse',
+        },
+      },
+    );
+  }, []);
   return (
     <div className="p-8 space-y-8">
       {/* Welcome Section */}
@@ -10,12 +90,12 @@ export function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="mb-2">Welcome back, John</h1>
+        <h1 ref={welcomeTitleRef} className="mb-2">Welcome back, John</h1>
         <p className="text-gray-600">Here's what's happening with your community today.</p>
       </motion.div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div ref={statsGridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           {
             icon: Users,
@@ -49,14 +129,11 @@ export function DashboardPage() {
             trend: 'neutral',
             color: 'info'
           }
-        ].map((stat, index) => (
+        ].map((stat) => (
           <motion.div
             key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
             whileHover={{ y: -4, boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.1)' }}
-            className="bg-white rounded-xl border border-gray-200 p-6 transition-shadow"
+            className="stat-widget bg-white rounded-xl border border-gray-200 p-6 transition-shadow"
           >
             <div className="flex items-start justify-between mb-4">
               <div className={`p-3 rounded-lg bg-${stat.color === 'gold' ? 'gold-50' : stat.color === 'success' ? 'emerald-50' : 'sky-50'}`}>
@@ -86,7 +163,7 @@ export function DashboardPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="mb-1">Renewal Alerts</h3>
+              <h3 ref={renewalTitleRef} className="mb-1">Renewal Alerts</h3>
               <p className="text-sm text-gray-600">Members requiring attention</p>
             </div>
             <AlertCircle className="w-5 h-5 text-warning" />
@@ -198,7 +275,7 @@ export function DashboardPage() {
         >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="mb-1">Recent Activity</h3>
+              <h3 ref={activityTitleRef} className="mb-1">Recent Activity</h3>
               <p className="text-sm text-gray-600">Latest updates from your community</p>
             </div>
             <Activity className="w-5 h-5 text-gold-primary" />

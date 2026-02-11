@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { toast } from '@/lib/notifications';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { Organization, Account } from '@/app/data/themes';
+import { LottieIcon } from './lottie/LottieIcon';
+import { lottieIcons } from '../lottie';
 // GeometricOctagon available for org-themed login backgrounds
 // import { GeometricOctagon } from './GeometricOctagon';
 import {
@@ -156,6 +158,18 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
 
   // Logo shape from theme (use theme.logoShape)
   const logoShape = theme.logoShape;
+  const accentNodes = useMemo(
+    () => [
+      { left: '8%', top: '24%', size: 7, driftX: -10, driftY: -16, delay: 0.15, duration: 8.2 },
+      { left: '17%', top: '71%', size: 8, driftX: 8, driftY: -20, delay: 0.3, duration: 7.5 },
+      { left: '36%', top: '18%', size: 9, driftX: -6, driftY: -14, delay: 0.7, duration: 8.8 },
+      { left: '52%', top: '82%', size: 7, driftX: 10, driftY: -18, delay: 0.35, duration: 6.9 },
+      { left: '70%', top: '22%', size: 8, driftX: -10, driftY: -15, delay: 0.9, duration: 8.1 },
+      { left: '83%', top: '66%', size: 10, driftX: 7, driftY: -21, delay: 0.5, duration: 7.4 },
+      { left: '92%', top: '38%', size: 6, driftX: -5, driftY: -13, delay: 1.2, duration: 6.4 },
+    ],
+    [],
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -198,7 +212,7 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
       transition={{ duration: animationDurations.base, ease: easing }}
       className="fixed inset-0 z-20 flex items-center justify-center p-4"
     >
-      {/* Org-specific ambient background */}
+      {/* Org-specific cinematic aura */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full blur-[120px]"
@@ -215,30 +229,54 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
             ease: [0.22, 1, 0.36, 1],
           }}
         />
+
+        <motion.div
+          className="absolute left-1/2 top-1/2 w-[730px] h-[730px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{ border: `1px solid rgba(${theme.primaryRgb}, 0.22)` }}
+          animate={{
+            scale: [0.84, 1.04, 0.88],
+            opacity: [0.16, 0.34, 0.16],
+            rotate: [0, -10, 0],
+          }}
+          transition={{ duration: 10.8, repeat: Infinity, ease: [0.22, 1, 0.36, 1] }}
+        />
+
+        <motion.div
+          className="absolute left-1/2 top-1/2 w-[520px] h-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{ border: `1px dashed rgba(${theme.primaryRgb}, 0.3)` }}
+          animate={{
+            scale: [0.9, 1.1, 0.9],
+            opacity: [0.2, 0.4, 0.2],
+            rotate: [0, 14, 0],
+          }}
+          transition={{ duration: 8.8, repeat: Infinity, ease: [0.22, 1, 0.36, 1] }}
+        />
       </div>
 
-      {/* Floating org-colored particles */}
+      {/* Floating cinematic accent nodes */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 25 }).map((_, i) => (
+        {accentNodes.map((node, index) => (
           <motion.div
-            key={i}
+            key={`org-login-node-${index}`}
             className="absolute rounded-full"
             style={{
-              width: `${2 + Math.random() * 3}px`,
-              height: `${2 + Math.random() * 3}px`,
+              width: `${node.size}px`,
+              height: `${node.size}px`,
               background: colors.primary,
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: node.left,
+              top: node.top,
+              boxShadow: `0 0 24px rgba(${theme.primaryRgb}, 0.5)`,
             }}
             animate={{
-              y: [0, -40 - Math.random() * 60],
-              opacity: [0, 0.6, 0],
-              scale: [0, 1, 0],
+              y: [0, node.driftY, 0],
+              x: [0, node.driftX, 0],
+              opacity: [0.15, 0.7, 0.15],
+              scale: [0.75, 1.15, 0.75],
             }}
             transition={{
-              duration: 4 + Math.random() * 3,
+              duration: node.duration,
               repeat: Infinity,
-              delay: Math.random() * 3,
+              delay: node.delay,
               ease: [0.22, 1, 0.36, 1],
             }}
           />
@@ -370,6 +408,16 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
               >
                 {organization.logoLetter}
               </span>
+
+              <div className="absolute -bottom-2 -right-2 rounded-full border border-white/55 bg-white/80 p-1 backdrop-blur-sm">
+                <LottieIcon
+                  animationData={lottieIcons.luxeLock}
+                  size={20}
+                  speed={0.95}
+                  glowRgb={theme.primaryRgb}
+                  ariaLabel="Security icon"
+                />
+              </div>
 
               <div
                 className="absolute inset-0 rounded-[inherit] bg-gradient-to-br from-white/35 to-transparent"
@@ -617,7 +665,16 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                       Entering...
                     </div>
                   ) : (
-                    'Enter The Lobbi'
+                    <span className="flex items-center justify-center gap-2">
+                      Enter The Lobbi
+                      <LottieIcon
+                        animationData={lottieIcons.routeArrow}
+                        size={18}
+                        speed={1.2}
+                        glowRgb={theme.primaryRgb}
+                        ariaLabel="Submit arrow icon"
+                      />
+                    </span>
                   )}
 
                   {/* Shimmer effect */}
@@ -650,7 +707,18 @@ export function OrgLogin({ account, organization, onLogin }: OrgLoginProps) {
                         className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
                         style={{ background: `rgba(${theme.primaryRgb}, 0.1)` }}
                       >
-                        <MagicWandIcon className="w-8 h-8" style={{ color: colors.primary }} />
+                        <div className="relative">
+                          <MagicWandIcon className="w-8 h-8" style={{ color: colors.primary }} />
+                          <div className="absolute -right-3 -top-3 rounded-full border border-white/55 bg-white/85 p-0.5">
+                            <LottieIcon
+                              animationData={lottieIcons.conciergeOrb}
+                              size={14}
+                              speed={1.1}
+                              glowRgb={theme.primaryRgb}
+                              ariaLabel="Magic link accent"
+                            />
+                          </div>
+                        </div>
                       </div>
                       <p className="text-sm text-gray-600">
                         We'll send a magic link to your email for passwordless sign in

@@ -2,6 +2,8 @@ import { motion } from 'motion/react';
 import { useEffect, useMemo, useRef } from 'react';
 import { gsap, SplitText } from '../../lib/gsap-config';
 import { GeometricOctagon } from './GeometricOctagon';
+import { LottieIcon } from './lottie/LottieIcon';
+import { lottieIcons } from '../lottie';
 import type { Account, Organization } from '../data/themes';
 import {
   getOrgColors,
@@ -84,6 +86,25 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
         return { count: 30, duration: 3, distance: 40 };
     }
   }, [theme.animationStyle]);
+
+  const welcomeNodes = useMemo(
+    () =>
+      Array.from({ length: particleConfig.count }).map((_, index) => {
+        const baseX = 10 + ((index * 19) % 80);
+        const baseY = 12 + ((index * 23) % 76);
+        const magnitude = (index % 5) + 1;
+        return {
+          key: `welcome-node-${index}`,
+          left: `${baseX}%`,
+          top: `${baseY}%`,
+          duration: particleConfig.duration + (index % 4) * 0.75,
+          delay: animationDurations.delay + (index % 8) * 0.12,
+          swayY: particleConfig.distance * (0.45 + magnitude * 0.08),
+          swayX: (index % 2 === 0 ? 1 : -1) * (4 + magnitude * 1.5),
+        };
+      }),
+    [animationDurations.delay, particleConfig.count, particleConfig.distance, particleConfig.duration],
+  );
 
   // Auto-advance timing based on animation style (faster for energetic, slower for elegant)
   const autoAdvanceTime = useMemo(() => {
@@ -206,24 +227,26 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
 
       {/* Floating Particles - with theme-aware behavior */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: particleConfig.count }).map((_, i) => (
+        {welcomeNodes.map((node) => (
           <motion.div
-            key={i}
+            key={node.key}
             className="absolute w-1 h-1 rounded-full"
             style={{
               background: colors.primary,
-              left: `${10 + Math.random() * 80}%`,
-              top: `${10 + Math.random() * 80}%`,
+              left: node.left,
+              top: node.top,
+              boxShadow: `0 0 16px rgba(${theme.primaryRgb}, 0.4)`,
             }}
             initial={{ opacity: 0, scale: 0 }}
             animate={{
               opacity: [0, 0.4, 0.6, 0.4, 0],
               scale: [0, 1, 1.5, 1, 0],
-              y: [0, -particleConfig.distance * 0.5 - Math.random() * particleConfig.distance * 0.6, -particleConfig.distance - Math.random() * particleConfig.distance * 0.8],
+              y: [0, -node.swayY * 0.55, -node.swayY],
+              x: [0, node.swayX, 0],
             }}
             transition={{
-              duration: particleConfig.duration + Math.random() * 2,
-              delay: animationDurations.delay + Math.random() * 1.5,
+              duration: node.duration,
+              delay: node.delay,
               ease: easing,
             }}
           />
@@ -294,6 +317,13 @@ export function WelcomeScreen({ account, organization, onComplete }: WelcomeScre
               {organization.logoLetter}
             </span>
           </div>
+          <LottieIcon
+            animationData={lottieIcons.conciergeOrb}
+            size={20}
+            speed={1}
+            glowRgb={theme.primaryRgb}
+            ariaLabel="Welcome accent icon"
+          />
           <span
             className="text-lg font-semibold"
             style={{

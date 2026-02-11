@@ -66,9 +66,9 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
     },
     ref
   ) => {
-    const hoverStyles = isHoverable
-      ? 'hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:-translate-y-0.5'
-      : '';
+    // Remove CSS hover since we're using motion gestures
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const hoverStyles = '';
 
     return (
       <Card
@@ -78,19 +78,60 @@ export const LobbiCard = forwardRef<HTMLDivElement, LobbiCardProps>(
         radius="md"
         className={cn(
           'relative overflow-hidden',
-          'transition-all duration-200',
           variantStyles[variant],
-          hoverStyles,
           className
         )}
         styles={{
           root: {
             '--card-bg': 'transparent',
+            transformStyle: 'preserve-3d',
+            perspective: '1200px',
           },
         }}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        // Enhanced entrance animation with spring physics
+        initial={{ opacity: 0, y: 16, scale: 0.96, filter: 'blur(6px)' }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+        transition={{
+          type: 'spring',
+          stiffness: 300,
+          damping: 26,
+          mass: 0.7,
+        }}
+        // Polished hover/tap micro-interactions
+        whileHover={
+          isHoverable
+            ? {
+                y: -8,
+                scale: 1.02,
+                rotateX: 1,
+                boxShadow: '0 28px 56px rgba(0,0,0,0.14), 0 14px 28px rgba(0,0,0,0.1)',
+                filter: 'brightness(1.03)',
+                transition: {
+                  type: 'spring',
+                  stiffness: 400,
+                  damping: 25,
+                  mass: 0.5,
+                },
+              }
+            : undefined
+        }
+        whileTap={
+          isHoverable
+            ? {
+                y: -3,
+                scale: 0.99,
+                rotateX: 0.5,
+                boxShadow: '0 10px 20px rgba(0,0,0,0.12)',
+                transition: {
+                  type: 'spring',
+                  stiffness: 500,
+                  damping: 20,
+                },
+              }
+            : undefined
+        }
+        // Enable layout animations for smooth position changes
+        layout
         {...props}
       >
         {/* KPI Top Bar */}

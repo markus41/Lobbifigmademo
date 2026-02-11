@@ -1,6 +1,12 @@
 /**
  * FadeIn - Animation wrapper with directional reveal, blur, and spring physics.
  * Useful for scroll-triggered or delayed content reveals.
+ *
+ * Enhanced with:
+ * - Spring physics option for more natural motion
+ * - Scale animation support
+ * - Rotation hint for added depth
+ * - Layout animation support
  */
 import type { ReactNode } from 'react'
 import { motion } from 'motion/react'
@@ -14,6 +20,12 @@ interface FadeInProps {
   once?: boolean
   amount?: number
   blur?: boolean
+  /** Use spring physics instead of duration-based easing */
+  spring?: boolean
+  /** Add subtle scale animation */
+  scale?: boolean
+  /** Enable layout animations */
+  layout?: boolean
 }
 
 export function FadeIn({
@@ -25,6 +37,9 @@ export function FadeIn({
   once = true,
   amount = 0.3,
   blur = true,
+  spring = false,
+  scale = false,
+  layout = false,
 }: FadeInProps) {
   const directionMap = {
     up: { y: distance },
@@ -34,25 +49,44 @@ export function FadeIn({
     none: {},
   }
 
+  const scaleValue = scale ? 0.95 : 1
+  const rotationHint = direction === 'left' ? -2 : direction === 'right' ? 2 : 0
+
   return (
     <motion.div
       initial={{
         opacity: 0,
+        scale: scaleValue,
+        rotateY: rotationHint,
         ...directionMap[direction],
-        ...(blur ? { filter: 'blur(4px)' } : {}),
+        ...(blur ? { filter: 'blur(6px)' } : {}),
       }}
       whileInView={{
         opacity: 1,
         x: 0,
         y: 0,
+        scale: 1,
+        rotateY: 0,
         filter: 'blur(0px)',
       }}
-      viewport={{ once, amount }}
-      transition={{
-        duration,
-        delay,
-        ease: [0.22, 1, 0.36, 1],
-      }}
+      viewport={{ once, amount, margin: '-50px' }}
+      transition={
+        spring
+          ? {
+              type: 'spring',
+              stiffness: 280,
+              damping: 26,
+              mass: 0.8,
+              delay,
+            }
+          : {
+              duration,
+              delay,
+              ease: [0.22, 1, 0.36, 1],
+            }
+      }
+      layout={layout}
+      style={{ transformPerspective: '1200px' }}
     >
       {children}
     </motion.div>

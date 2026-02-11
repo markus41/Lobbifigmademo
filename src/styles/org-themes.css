@@ -1,0 +1,412 @@
+/**
+ * Organization-Specific Themes
+ *
+ * 20 unique themes with distinctive visual identities.
+ * Each org has: primary colors, gradients, shadows, accents, and unique character.
+ */
+
+/* ============================================================================
+   1. LUXE HAVEN - Classic Luxury Gold (Default)
+   Elegant, timeless, warm gold with sophisticated neutrals
+   ============================================================================ */
+[data-org="luxe-haven"] {
+  --theme-primary: #D4AF37;
+  --theme-primary-light: #F4D03F;
+  --theme-primary-dark: #B8960F;
+  --theme-primary-rgb: 212, 175, 55;
+  --theme-accent: #8B4513;
+  --theme-gradient: linear-gradient(135deg, #D4AF37 0%, #F4D03F 50%, #E5C76B 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(212,175,55,0.05) 0%, transparent 100%);
+  --theme-shadow: 0 0 40px -10px rgba(212, 175, 55, 0.4);
+  --theme-border-accent: rgba(212, 175, 55, 0.3);
+  --theme-font-display: 'Playfair Display', Georgia, serif;
+  --theme-character: elegant;
+}
+
+/* ============================================================================
+   2. PACIFIC CLUB - Ocean Blue Coastal
+   Deep ocean blues, seafoam accents, coastal luxury vibes
+   ============================================================================ */
+[data-org="pacific-club"] {
+  --theme-primary: #0077B6;
+  --theme-primary-light: #00B4D8;
+  --theme-primary-dark: #023E8A;
+  --theme-primary-rgb: 0, 119, 182;
+  --theme-accent: #48CAE4;
+  --theme-gradient: linear-gradient(135deg, #023E8A 0%, #0077B6 40%, #00B4D8 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(0,119,182,0.08) 0%, transparent 100%);
+  --theme-shadow: 0 0 50px -10px rgba(0, 180, 216, 0.35);
+  --theme-border-accent: rgba(72, 202, 228, 0.4);
+  --theme-font-display: 'Montserrat', 'DM Sans', sans-serif;
+  --theme-character: coastal;
+}
+
+/* ============================================================================
+   3. SUMMIT GROUP - Alpine Mountain Gray
+   Slate grays, ice blue accents, mountain peak imagery
+   ============================================================================ */
+[data-org="summit-group"] {
+  --theme-primary: #475569;
+  --theme-primary-light: #64748B;
+  --theme-primary-dark: #1E293B;
+  --theme-primary-rgb: 71, 85, 105;
+  --theme-accent: #38BDF8;
+  --theme-gradient: linear-gradient(135deg, #1E293B 0%, #475569 50%, #64748B 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(56,189,248,0.06) 0%, transparent 100%);
+  --theme-shadow: 0 8px 32px -8px rgba(30, 41, 59, 0.5);
+  --theme-border-accent: rgba(56, 189, 248, 0.25);
+  --theme-font-display: 'Bebas Neue', 'Oswald', sans-serif;
+  --theme-character: alpine;
+}
+
+/* ============================================================================
+   4. VERDE COLLECTIVE - Eco Green Nature
+   Lush greens, earth tones, sustainable organic feel
+   ============================================================================ */
+[data-org="verde-collective"] {
+  --theme-primary: #059669;
+  --theme-primary-light: #34D399;
+  --theme-primary-dark: #047857;
+  --theme-primary-rgb: 5, 150, 105;
+  --theme-accent: #A3E635;
+  --theme-gradient: linear-gradient(135deg, #047857 0%, #059669 40%, #34D399 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(5,150,105,0.08) 0%, transparent 100%);
+  --theme-shadow: 0 0 40px -10px rgba(52, 211, 153, 0.4);
+  --theme-border-accent: rgba(163, 230, 53, 0.35);
+  --theme-font-display: 'Cabin', 'Source Sans Pro', sans-serif;
+  --theme-character: organic;
+}
+
+/* ============================================================================
+   5. CROWN ESTATES - Royal Purple Regal
+   Deep purples, gold accents, royal nobility
+   ============================================================================ */
+[data-org="crown-estates"] {
+  --theme-primary: #7C3AED;
+  --theme-primary-light: #A78BFA;
+  --theme-primary-dark: #5B21B6;
+  --theme-primary-rgb: 124, 58, 237;
+  --theme-accent: #FFD700;
+  --theme-gradient: linear-gradient(135deg, #5B21B6 0%, #7C3AED 40%, #A78BFA 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(124,58,237,0.1) 0%, transparent 100%);
+  --theme-shadow: 0 0 50px -10px rgba(167, 139, 250, 0.5);
+  --theme-border-accent: rgba(255, 215, 0, 0.4);
+  --theme-font-display: 'Cinzel', 'Trajan Pro', serif;
+  --theme-character: regal;
+}
+
+/* ============================================================================
+   6. OBSIDIAN SOCIETY - Dark Luxury Noir
+   Deep blacks, silver/platinum accents, mysterious elite
+   ============================================================================ */
+[data-org="obsidian-society"] {
+  --theme-primary: #18181B;
+  --theme-primary-light: #3F3F46;
+  --theme-primary-dark: #09090B;
+  --theme-primary-rgb: 24, 24, 27;
+  --theme-accent: #E4E4E7;
+  --theme-gradient: linear-gradient(135deg, #09090B 0%, #18181B 50%, #27272A 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(228,228,231,0.05) 0%, transparent 100%);
+  --theme-shadow: 0 0 60px -15px rgba(228, 228, 231, 0.2);
+  --theme-border-accent: rgba(228, 228, 231, 0.15);
+  --theme-font-display: 'Didot', 'Bodoni Moda', serif;
+  --theme-character: noir;
+}
+
+/* ============================================================================
+   7. ROSE MERIDIAN - Blush Pink Feminine
+   Soft rose, champagne gold, romantic elegance
+   ============================================================================ */
+[data-org="rose-meridian"] {
+  --theme-primary: #F43F5E;
+  --theme-primary-light: #FDA4AF;
+  --theme-primary-dark: #BE123C;
+  --theme-primary-rgb: 244, 63, 94;
+  --theme-accent: #FCD34D;
+  --theme-gradient: linear-gradient(135deg, #BE123C 0%, #F43F5E 40%, #FDA4AF 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(244,63,94,0.08) 0%, transparent 100%);
+  --theme-shadow: 0 0 45px -10px rgba(253, 164, 175, 0.5);
+  --theme-border-accent: rgba(252, 211, 77, 0.35);
+  --theme-font-display: 'Cormorant Garamond', 'EB Garamond', serif;
+  --theme-character: romantic;
+}
+
+/* ============================================================================
+   8. ARCTIC CIRCLE - Ice White Frost
+   Crisp whites, ice blues, northern lights aurora
+   ============================================================================ */
+[data-org="arctic-circle"] {
+  --theme-primary: #E0F2FE;
+  --theme-primary-light: #F0F9FF;
+  --theme-primary-dark: #7DD3FC;
+  --theme-primary-rgb: 224, 242, 254;
+  --theme-accent: #818CF8;
+  --theme-gradient: linear-gradient(135deg, #7DD3FC 0%, #BAE6FD 30%, #E0F2FE 60%, #C4B5FD 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(125,211,252,0.1) 0%, rgba(196,181,253,0.05) 100%);
+  --theme-shadow: 0 0 60px -10px rgba(129, 140, 248, 0.3);
+  --theme-border-accent: rgba(129, 140, 248, 0.25);
+  --theme-font-display: 'Quicksand', 'Nunito', sans-serif;
+  --theme-character: aurora;
+}
+
+/* ============================================================================
+   9. FLAME STONE - Volcanic Fire Red
+   Deep reds, orange fire, volcanic power
+   ============================================================================ */
+[data-org="flame-stone"] {
+  --theme-primary: #DC2626;
+  --theme-primary-light: #F87171;
+  --theme-primary-dark: #991B1B;
+  --theme-primary-rgb: 220, 38, 38;
+  --theme-accent: #FB923C;
+  --theme-gradient: linear-gradient(135deg, #7F1D1D 0%, #DC2626 30%, #F87171 70%, #FB923C 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(220,38,38,0.1) 0%, transparent 100%);
+  --theme-shadow: 0 0 50px -10px rgba(248, 113, 113, 0.5);
+  --theme-border-accent: rgba(251, 146, 60, 0.4);
+  --theme-font-display: 'Staatliches', 'Impact', sans-serif;
+  --theme-character: volcanic;
+}
+
+/* ============================================================================
+   10. MARIGOLD SOCIETY - Sunflower Yellow
+   Warm yellows, amber honey, cheerful sunshine
+   ============================================================================ */
+[data-org="marigold-society"] {
+  --theme-primary: #F59E0B;
+  --theme-primary-light: #FCD34D;
+  --theme-primary-dark: #B45309;
+  --theme-primary-rgb: 245, 158, 11;
+  --theme-accent: #92400E;
+  --theme-gradient: linear-gradient(135deg, #B45309 0%, #F59E0B 40%, #FCD34D 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(245,158,11,0.1) 0%, transparent 100%);
+  --theme-shadow: 0 0 50px -10px rgba(252, 211, 77, 0.5);
+  --theme-border-accent: rgba(146, 64, 14, 0.3);
+  --theme-font-display: 'Poppins', 'Nunito Sans', sans-serif;
+  --theme-character: sunshine;
+}
+
+/* ============================================================================
+   11. MIDNIGHT AZURE - Deep Night Blue
+   Midnight blues, starlight silver, cosmic mystery
+   ============================================================================ */
+[data-org="midnight-azure"] {
+  --theme-primary: #1E3A5F;
+  --theme-primary-light: #3B82F6;
+  --theme-primary-dark: #0F172A;
+  --theme-primary-rgb: 30, 58, 95;
+  --theme-accent: #F1F5F9;
+  --theme-gradient: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E40AF 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(59,130,246,0.08) 0%, transparent 100%);
+  --theme-shadow: 0 0 60px -15px rgba(59, 130, 246, 0.4);
+  --theme-border-accent: rgba(241, 245, 249, 0.15);
+  --theme-font-display: 'Space Grotesk', 'Roboto Mono', monospace;
+  --theme-character: cosmic;
+}
+
+/* ============================================================================
+   12. JADE DYNASTY - Asian Jade Green
+   Deep jade, gold accents, imperial Asian elegance
+   ============================================================================ */
+[data-org="jade-dynasty"] {
+  --theme-primary: #065F46;
+  --theme-primary-light: #10B981;
+  --theme-primary-dark: #064E3B;
+  --theme-primary-rgb: 6, 95, 70;
+  --theme-accent: #D4AF37;
+  --theme-gradient: linear-gradient(135deg, #064E3B 0%, #065F46 40%, #10B981 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(16,185,129,0.08) 0%, transparent 100%);
+  --theme-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.4);
+  --theme-border-accent: rgba(212, 175, 55, 0.4);
+  --theme-font-display: 'Noto Serif', 'Source Serif Pro', serif;
+  --theme-character: imperial;
+}
+
+/* ============================================================================
+   13. COPPER OAK - Rustic Warm Brown
+   Copper tones, wood browns, rustic craftsman
+   ============================================================================ */
+[data-org="copper-oak"] {
+  --theme-primary: #B45309;
+  --theme-primary-light: #D97706;
+  --theme-primary-dark: #78350F;
+  --theme-primary-rgb: 180, 83, 9;
+  --theme-accent: #059669;
+  --theme-gradient: linear-gradient(135deg, #78350F 0%, #B45309 40%, #D97706 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(180,83,9,0.08) 0%, transparent 100%);
+  --theme-shadow: 0 0 40px -10px rgba(217, 119, 6, 0.4);
+  --theme-border-accent: rgba(5, 150, 105, 0.35);
+  --theme-font-display: 'Bitter', 'Merriweather', serif;
+  --theme-character: craftsman;
+}
+
+/* ============================================================================
+   14. LAVENDER FIELDS - Soft Purple Calm
+   Soft lavenders, sage greens, Provencal tranquility
+   ============================================================================ */
+[data-org="lavender-fields"] {
+  --theme-primary: #9333EA;
+  --theme-primary-light: #C4B5FD;
+  --theme-primary-dark: #7E22CE;
+  --theme-primary-rgb: 147, 51, 234;
+  --theme-accent: #86EFAC;
+  --theme-gradient: linear-gradient(135deg, #7E22CE 0%, #9333EA 40%, #C4B5FD 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(196,181,253,0.12) 0%, transparent 100%);
+  --theme-shadow: 0 0 50px -10px rgba(196, 181, 253, 0.5);
+  --theme-border-accent: rgba(134, 239, 172, 0.35);
+  --theme-font-display: 'Lora', 'Libre Baskerville', serif;
+  --theme-character: tranquil;
+}
+
+/* ============================================================================
+   15. SLATE MODERN - Minimalist Gray
+   Clean slate, minimal design, modern architecture
+   ============================================================================ */
+[data-org="slate-modern"] {
+  --theme-primary: #64748B;
+  --theme-primary-light: #94A3B8;
+  --theme-primary-dark: #334155;
+  --theme-primary-rgb: 100, 116, 139;
+  --theme-accent: #F97316;
+  --theme-gradient: linear-gradient(135deg, #334155 0%, #64748B 50%, #94A3B8 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(100,116,139,0.06) 0%, transparent 100%);
+  --theme-shadow: 0 4px 24px -4px rgba(51, 65, 85, 0.25);
+  --theme-border-accent: rgba(249, 115, 22, 0.3);
+  --theme-font-display: 'Inter', 'Helvetica Neue', sans-serif;
+  --theme-character: minimal;
+}
+
+/* ============================================================================
+   16. NEON DISTRICT - Cyberpunk Neon
+   Electric neons, dark backgrounds, futuristic cyber
+   ============================================================================ */
+[data-org="neon-district"] {
+  --theme-primary: #06FFA5;
+  --theme-primary-light: #39FFBD;
+  --theme-primary-dark: #00CC83;
+  --theme-primary-rgb: 6, 255, 165;
+  --theme-accent: #FF00FF;
+  --theme-gradient: linear-gradient(135deg, #06FFA5 0%, #00D4FF 50%, #FF00FF 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(6,255,165,0.1) 0%, rgba(255,0,255,0.05) 100%);
+  --theme-shadow: 0 0 60px -5px rgba(6, 255, 165, 0.6), 0 0 30px -10px rgba(255, 0, 255, 0.4);
+  --theme-border-accent: rgba(6, 255, 165, 0.5);
+  --theme-font-display: 'Orbitron', 'Rajdhani', sans-serif;
+  --theme-character: cyberpunk;
+
+  /* Neon-specific overrides */
+  --background: #0A0A0A;
+  --foreground: #E4E4E7;
+  --card: rgba(10, 10, 10, 0.8);
+}
+
+/* ============================================================================
+   17. ZEN GARDEN - Japanese Minimalist
+   Soft neutrals, bamboo greens, serene Japanese aesthetics
+   ============================================================================ */
+[data-org="zen-garden"] {
+  --theme-primary: #78716C;
+  --theme-primary-light: #A8A29E;
+  --theme-primary-dark: #57534E;
+  --theme-primary-rgb: 120, 113, 108;
+  --theme-accent: #84CC16;
+  --theme-gradient: linear-gradient(135deg, #57534E 0%, #78716C 50%, #D6D3D1 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(132,204,22,0.06) 0%, transparent 100%);
+  --theme-shadow: 0 2px 20px -5px rgba(87, 83, 78, 0.3);
+  --theme-border-accent: rgba(132, 204, 22, 0.25);
+  --theme-font-display: 'Noto Sans JP', 'Source Sans Pro', sans-serif;
+  --theme-character: zen;
+}
+
+/* ============================================================================
+   18. THE FORGE - Industrial Steel
+   Steel grays, molten orange, industrial strength
+   ============================================================================ */
+[data-org="the-forge"] {
+  --theme-primary: #374151;
+  --theme-primary-light: #6B7280;
+  --theme-primary-dark: #1F2937;
+  --theme-primary-rgb: 55, 65, 81;
+  --theme-accent: #F97316;
+  --theme-gradient: linear-gradient(135deg, #1F2937 0%, #374151 40%, #F97316 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(249,115,22,0.08) 0%, transparent 100%);
+  --theme-shadow: 0 0 50px -10px rgba(249, 115, 22, 0.4);
+  --theme-border-accent: rgba(249, 115, 22, 0.4);
+  --theme-font-display: 'Archivo Black', 'Oswald', sans-serif;
+  --theme-character: industrial;
+}
+
+/* ============================================================================
+   19. GOLDEN ERA - Art Deco Glamour
+   Art deco gold, geometric patterns, 1920s glamour
+   ============================================================================ */
+[data-org="golden-era"] {
+  --theme-primary: #CA8A04;
+  --theme-primary-light: #EAB308;
+  --theme-primary-dark: #A16207;
+  --theme-primary-rgb: 202, 138, 4;
+  --theme-accent: #0D9488;
+  --theme-gradient: linear-gradient(135deg, #A16207 0%, #CA8A04 30%, #EAB308 60%, #FEF08A 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(234,179,8,0.1) 0%, transparent 100%);
+  --theme-shadow: 0 0 50px -10px rgba(234, 179, 8, 0.5);
+  --theme-border-accent: rgba(13, 148, 136, 0.35);
+  --theme-font-display: 'Poiret One', 'Josefin Sans', sans-serif;
+  --theme-character: artdeco;
+}
+
+/* ============================================================================
+   20. PIXEL PIONEERS - Retro Gaming
+   Pixel art colors, 8-bit nostalgia, gaming culture
+   ============================================================================ */
+[data-org="pixel-pioneers"] {
+  --theme-primary: #8B5CF6;
+  --theme-primary-light: #A78BFA;
+  --theme-primary-dark: #6D28D9;
+  --theme-primary-rgb: 139, 92, 246;
+  --theme-accent: #22D3EE;
+  --theme-gradient: linear-gradient(135deg, #6D28D9 0%, #8B5CF6 25%, #22D3EE 50%, #4ADE80 75%, #FACC15 100%);
+  --theme-gradient-subtle: linear-gradient(180deg, rgba(139,92,246,0.1) 0%, rgba(34,211,238,0.05) 100%);
+  --theme-shadow: 0 0 40px -5px rgba(139, 92, 246, 0.5), 0 0 20px -10px rgba(34, 211, 238, 0.3);
+  --theme-border-accent: rgba(34, 211, 238, 0.4);
+  --theme-font-display: 'Press Start 2P', 'VT323', monospace;
+  --theme-character: retro;
+}
+
+/* ============================================================================
+   GLOBAL THEME APPLICATION
+   Apply theme variables to semantic colors
+   ============================================================================ */
+
+[data-org] {
+  --primary: var(--theme-primary);
+  --primary-foreground: #ffffff;
+  --ring: var(--theme-primary);
+  --sidebar-primary: var(--theme-primary);
+  --chart-1: var(--theme-primary);
+}
+
+/* Glow effects using theme colors */
+[data-org] .glow {
+  box-shadow: var(--theme-shadow);
+}
+
+[data-org] .gradient-text {
+  background: var(--theme-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-org] .gradient-bg {
+  background: var(--theme-gradient);
+}
+
+[data-org] .accent-border {
+  border-color: var(--theme-border-accent);
+}
+
+/* Font application */
+[data-org] h1,
+[data-org] h2,
+[data-org] h3,
+[data-org] .heading {
+  font-family: var(--theme-font-display);
+}

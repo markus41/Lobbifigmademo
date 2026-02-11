@@ -1,6 +1,8 @@
 import { motion } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { gsap, SplitText } from '../../lib/gsap-config';
+import { LottieIcon } from './lottie/LottieIcon';
+import { lottieIcons } from '../lottie';
 import type { Account, Organization } from '../data/themes';
 
 interface DashboardEntryAnimationProps {
@@ -97,6 +99,21 @@ export function DashboardEntryAnimation({
     >
       {/* Welcome Message - GSAP timeline sequence */}
       <div className="text-center" style={{ perspective: '600px' }}>
+        <motion.div
+          className="mx-auto mb-6 inline-flex items-center justify-center rounded-2xl border border-white/50 bg-white/75 p-2 shadow-[0_16px_48px_rgba(0,0,0,0.16)]"
+          initial={{ opacity: 0, scale: 0.7, rotate: -8 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <LottieIcon
+            animationData={lottieIcons.portalGate}
+            size={58}
+            speed={0.95}
+            glowRgb={organization.theme.primaryRgb}
+            ariaLabel="Portal opening icon"
+          />
+        </motion.div>
+
         <p
           ref={welcomeRef}
           className="text-sm uppercase tracking-[0.3em] mb-4 font-medium opacity-0"

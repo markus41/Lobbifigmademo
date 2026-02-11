@@ -19,6 +19,7 @@ import {
 import { Box, Flex, Text, Badge } from "@mantine/core";
 import { motion, AnimatePresence } from "motion/react";
 import gsap from "gsap";
+import { useOrgTheme, AVAILABLE_ORGS, ORG_NAMES, type OrgId } from "../../theme/LobbiMantineProvider";
 
 /* --- Types -------------------------------------------------------- */
 
@@ -260,12 +261,17 @@ export function PlatformDemoBanner({
   const [isExpanded, setIsExpanded] = useState(false);
   const [showPhaseMenu, setShowPhaseMenu] = useState(false);
   const [showRoleMenu, setShowRoleMenu] = useState(false);
+  const [showOrgMenu, setShowOrgMenu] = useState(false);
   const [bannerHeight, setBannerHeight] = useState(48);
+
+  // Get org theme from context
+  const { currentOrg, setOrg } = useOrgTheme();
 
   const bannerRef = useRef<HTMLDivElement>(null);
   const shimmerRef = useRef<HTMLDivElement>(null);
   const phaseMenuRef = useRef<HTMLDivElement>(null);
   const roleMenuRef = useRef<HTMLDivElement>(null);
+  const orgMenuRef = useRef<HTMLDivElement>(null);
 
   const phaseInfo = useMemo(
     () => SPRINT_PHASES.find((p) => p.id === currentPhase) ?? SPRINT_PHASES[0],
@@ -325,6 +331,9 @@ export function PlatformDemoBanner({
       if (roleMenuRef.current && !roleMenuRef.current.contains(target)) {
         setShowRoleMenu(false);
       }
+      if (orgMenuRef.current && !orgMenuRef.current.contains(target)) {
+        setShowOrgMenu(false);
+      }
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -370,7 +379,7 @@ export function PlatformDemoBanner({
               bg="var(--mantine-color-dark-9, #111827)"
               c="white"
               style={{
-                overflow: "hidden",
+                overflow: "visible",
                 position: "relative",
                 borderBottom: `2px solid ${phaseInfo.color}`,
               }}
@@ -598,6 +607,117 @@ export function PlatformDemoBanner({
                                 <Text fz={10} c="dimmed">
                                   L{role.level}
                                 </Text>
+                              </Flex>
+                            ))}
+                          </Box>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </Box>
+
+                  {/* Org Selector Dropdown */}
+                  <Box pos="relative" ref={orgMenuRef}>
+                    <Flex
+                      component="button"
+                      onClick={() => { setShowOrgMenu(!showOrgMenu); setShowPhaseMenu(false); setShowRoleMenu(false); }}
+                      align="center"
+                      gap={6}
+                      px={10}
+                      py={4}
+                      style={{
+                        borderRadius: 6,
+                        background: "rgba(139, 92, 246, 0.2)",
+                        cursor: "pointer",
+                        border: "1px solid rgba(139, 92, 246, 0.4)",
+                        color: "white",
+                        transition: "all 0.15s",
+                      }}
+                    >
+                      <Box
+                        w={6}
+                        h={6}
+                        style={{
+                          borderRadius: "50%",
+                          background: "var(--theme-primary, #8b5cf6)",
+                          boxShadow: "0 0 6px var(--theme-primary, #8b5cf6)",
+                        }}
+                      />
+                      <Text fz="xs" fw={500} style={{ maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {ORG_NAMES[currentOrg] || currentOrg}
+                      </Text>
+                      <ChevronDown size={12} />
+                    </Flex>
+
+                    <AnimatePresence>
+                      {showOrgMenu && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                          transition={{ duration: 0.15 }}
+                          style={{
+                            position: "absolute",
+                            top: "100%",
+                            right: 0,
+                            marginTop: "4px",
+                            zIndex: 10001,
+                          }}
+                        >
+                          <Box
+                            style={{
+                              background: "#1f2937",
+                              border: "1px solid #4b5563",
+                              borderRadius: 8,
+                              padding: "4px 0",
+                              minWidth: 220,
+                              maxHeight: 400,
+                              overflowY: "auto",
+                              boxShadow: "0 20px 25px -5px rgba(0,0,0,0.3), 0 0 15px rgba(139, 92, 246, 0.15)",
+                            }}
+                          >
+                            <Text fz={10} c="dimmed" px="sm" py={4} fw={600} style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                              Organization Theme
+                            </Text>
+                            {AVAILABLE_ORGS.map((orgId) => (
+                              <Flex
+                                key={orgId}
+                                component="button"
+                                onClick={() => { setOrg(orgId); setShowOrgMenu(false); }}
+                                align="center"
+                                gap="xs"
+                                px="sm"
+                                py={6}
+                                w="100%"
+                                style={{
+                                  background: orgId === currentOrg ? "rgba(139, 92, 246, 0.2)" : "transparent",
+                                  border: "none",
+                                  color: "white",
+                                  cursor: "pointer",
+                                  transition: "all 0.1s",
+                                  borderLeft: orgId === currentOrg ? "2px solid #8b5cf6" : "2px solid transparent",
+                                }}
+                              >
+                                <Box
+                                  w={8}
+                                  h={8}
+                                  style={{
+                                    borderRadius: "50%",
+                                    background: orgId === currentOrg ? "#8b5cf6" : "rgba(255,255,255,0.2)",
+                                    transition: "all 0.15s",
+                                  }}
+                                />
+                                <Text fz="xs" fw={orgId === currentOrg ? 600 : 400} style={{ flex: 1, textAlign: "left" }}>
+                                  {ORG_NAMES[orgId] || orgId}
+                                </Text>
+                                {orgId === currentOrg && (
+                                  <Badge
+                                    variant="light"
+                                    size="xs"
+                                    style={{ background: "rgba(139, 92, 246, 0.3)", color: "#c4b5fd" }}
+                                  >
+                                    Active
+                                  </Badge>
+                                )}
                               </Flex>
                             ))}
                           </Box>

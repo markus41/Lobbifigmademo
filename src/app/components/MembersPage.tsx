@@ -1,7 +1,11 @@
 import { motion } from 'motion/react';
 import { Search, Plus, Filter, Download, Upload } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from '@/lib/notifications';
 
 export function MembersPage() {
+  const [showFilters, setShowFilters] = useState(false);
+
   const members = [
     { id: 1, name: 'Sarah Johnson', email: 'sarah.j@example.com', type: 'Gold Member', status: 'Active', joinDate: 'Jan 2022' },
     { id: 2, name: 'Michael Chen', email: 'michael.c@example.com', type: 'Silver Member', status: 'Active', joinDate: 'Mar 2022' },
@@ -27,6 +31,10 @@ export function MembersPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+            onClick={() => {
+              console.log('Import CSV clicked');
+              toast.info('CSV import wizard coming soon!');
+            }}
           >
             <Upload className="w-4 h-4" />
             Import CSV
@@ -35,6 +43,10 @@ export function MembersPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+            onClick={() => {
+              console.log('Export members clicked');
+              toast.success('Generating CSV export...');
+            }}
           >
             <Download className="w-4 h-4" />
             Export
@@ -43,6 +55,10 @@ export function MembersPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="px-6 py-2 bg-gold-primary text-white rounded-lg hover:bg-gold-dark transition-colors flex items-center gap-2 font-medium"
+            onClick={() => {
+              console.log('Add Member clicked');
+              toast.info('Member registration form coming soon!');
+            }}
           >
             <Plus className="w-5 h-5" />
             Add Member
@@ -66,7 +82,14 @@ export function MembersPage() {
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-primary/20 focus:border-gold-primary transition-all"
             />
           </div>
-          <button className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
+          <button
+            className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+            onClick={() => {
+              console.log('Filters toggled');
+              setShowFilters(!showFilters);
+              toast.info(showFilters ? 'Filters hidden' : 'Filters panel coming soon!');
+            }}
+          >
             <Filter className="w-4 h-4" />
             Filters
           </button>
